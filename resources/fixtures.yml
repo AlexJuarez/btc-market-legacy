@@ -1,0 +1,31 @@
+users:
+  - login: "dpr"
+    alias: "dpralias"
+    vendor: true
+    admin: true
+    description: "you can not kill an idea"
+    pub_key: "test"
+    is_active: false
+    pass: "test"
+  - login: "testvendor"
+    alias: "testvenderalias"
+    vendor: true
+    admin: false
+    description: "The finest vendor of trinkets and things"
+    pub_key: "test"
+    pass: "test"
+  - login: "testbuyer"
+    alias: "testbuyeralias"
+    description: "buying is my thing"
+    pub_key: "i have one of these too, but you should not be able to see it"
+    pass: "test"
+
+messages:
+  - content: "this is the first message!"
+    user_id: 2
+    receiver_id: 3
+    subject: "did you get this?"
+
+currencies:
+  - name: "USD"
+  - value: 1200000
