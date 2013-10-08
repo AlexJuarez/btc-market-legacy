@@ -3,7 +3,7 @@
     (:require [noir.response :as resp]
               [clojure.java.io :refer [as-url]]
               [noir.session :as session]
-              [whitecity.models.db :as db]
+              [whitecity.db :as db]
               [noir.io :as io]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
@@ -44,7 +44,7 @@
     "reads a markdown file from public/md and returns an HTML string"
     [filename]
     (->> 
-          (io/slurp-resource "md" filename)      
+          (io/slurp-resource filename)      
           (md/md-to-html-string)))
 
 (defn gen-captcha-text []

@@ -7,46 +7,36 @@
             [noir.util.cache :as cache]
             [noir.session :as session]
             [noir.response :as resp]
-            [whitecity.models.db :as db]
+            [whitecity.models.user :as user]
             [clojure.string :as s]))
 
-(defn create-admin-page [admin]
-  (layout/render "create-admin.html" admin))
+(defn registration-page
+  ([params]
+   (layout/render "register.html"))
 
-(defn login
+  ([login pass confirm]
+   (let [user (user/add! {:login login :pass pass :confirm confirm})]
+     (if (nil? (:errors user))
+       (layout/render "login.html" {:success "User has been created"})
+       (layout/render "register.html" (conj user {:login login} ))))))
+
+(defn login-page
   ([params]
       (layout/render "login.html"))
 
-  ([handle pass]
-    (if-let [admin ]
-      (if (and (= handle (:handle admin))
-               (crypt/compare pass (:pass admin)))
-        (do (cache/invalidate! :home)
-            (session/put! :admin admin))))
-    (resp/redirect "/")))
-
-(defn check-admin-fields [{:keys [title handle pass pass1] :as params}]
-  (cond
-    (not= pass pass1) (text :pass-mismatch)
-    (empty? handle) (text :admin-required)
-    (empty? title) (text :blog-title-required)
-    :else nil))
-
-(defn create-admin [admin]
-  (if (db/get-admin)
-    (resp/redirect "/")
-    (if-let [error (check-admin-fields admin)]
-      (create-admin-page (assoc admin :error error))
-      (do
-        (-> admin (dissoc :pass1) (update-in [:pass] crypt/encrypt) (db/set-admin))
-        (resp/redirect "/login")))))
-
+  ([login pass]
+    (let [user (user/login! {:login login :pass pass})]
+      (if (nil? (:error user))
+        (do (session/put! :user user)
+            (resp/redirect "/market/"))
+          (layout/render "login.html" user)))))
+   
 (defroutes auth-routes
-  (GET "/register"  {params :params}  (create-admin-page params))
-  (POST "/register" {params :params}  (create-admin params))
-  (GET "/"         {params :params} (login params))
-  (POST "/"        [handle pass]    (login handle pass))
-  (GET "/market/logout" []
+  (GET "/"         {params :params} (login-page params))
+  (POST "/"        [login pass]    (login-page login pass))
+  (GET "/register" {params :params} (registration-page params))
+  (POST "/register"[login pass confirm] (registration-page login pass confirm))
+  (GET "/logout" []
        (session/clear!)
        (cache/invalidate! :home)
        (resp/redirect "/")))

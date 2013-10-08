@@ -6,15 +6,15 @@
 (defmigration add-users-table
   (up [] (create
           (tbl :users
-               (varchar :login 30 :unique)
-               (varchar :alias 30 :unique)
+               (varchar :login 64 :unique)
+               (varchar :alias 64 :unique)
                (boolean :vendor (default false))
                (boolean :admin (default false))
                (text :description)
                (text :pub_key) 
                (timestamp :last_login)
                (boolean :is_active)
-               (varchar :pass 100)
+               (varchar :pass 128)
                (varchar :wallet 34)
                (varchar :key 64)
                (bigint :btc (default 0))
@@ -37,7 +37,7 @@
   (up [] (create
            (tbl :images
                 (refer-to :users)
-                (varchar :path 100 :unique :not-null))))
+                (varchar :path 128 :unique :not-null))))
   (down [] (drop (table :images))))
 
 (defmigration add-currencies-table
@@ -53,18 +53,19 @@
                 (varchar :name 30)
                 (integer :count)
                 (integer :parent))))
-  (down [] (drop (table :catagories))))
+  (down [] (drop (table :categories))))
 
 (defmigration add-listings-table
   (up [] (create
            (tbl :listings
                 (boolean :public (default false))
                 (boolean :published (default false))
+                (varchar :title 100)
                 (refer-to :users)
                 (refer-to :images)
                 (bigint :price :not-null)
                 (refer-to :currencies)
-                (integer :catagory_id [:refer :catagories :id])
+                (integer :category_id [:refer :categories :id])
                 (text :description))))
   (down [] (drop (table :listings))))
 

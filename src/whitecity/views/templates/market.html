@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Welcome to whitecity</title>
+  </head>
+  <body>
+    <header>
+      <div id="banner"></div>
+      <nav class="account">
+      Hi, <a href="/market/account">{{user.login}}</a>
+        | <a href="/market/messages">messages <strong>{{messages}}</strong></a> 
+        | <a href="/market/orders">orders <strong>{{orders}}</strong></a>
+        | <a href="/market/account/wallet">wallet &#3647;{{user.btc}}</strong></a>
+        | <a href="/logout">logout</a>
+      </nav>
+      <form action="/market/search" method="POST" class="search">
+        <label for="query">Search</label>
+        <input type="search" name="query" />
+        <span class="submit">
+          <input type="submit" class="btn" value="GO" /> 
+        </span>
+      </form>
+      <div class="cart">
+        <span class="cart-icon"></span>
+        <strong>{{cart}}</strong>
+      </div>
+    </header>
+    <section class="container">
+      {% block content %}
+      {% endblock %}
+    </section>
+    <script type="text/javascript">
+        var context = "{{servlet-context}}";
+    </script>
+  </body>
+</html>

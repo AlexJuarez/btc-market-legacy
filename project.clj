@@ -13,6 +13,7 @@
    [markdown-clj "0.9.33"]
    [net.sf.jlue/jlue-core "1.3"]
    [postgresql/postgresql "9.1-901.jdbc4"]
+   [metis "0.3.3"]
    [korma "0.3.0-RC5"]
    [lobos "1.0.0-beta1"]
    [log4j
