@@ -22,3 +22,7 @@
 (v/defvalidator user-validator
   [:login [:presence :login-taken :in-range {:start 3 :end 64}]]
   [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
+
+(v/defvalidator listing-validator
+  [:title [:presence :in-range {:start 4 :end 100}]]
+  [:price [:presence :numericality {:greater-than 0}]]) 

@@ -5,6 +5,8 @@
         [whitecity.models.message])
   (:require 
         [whitecity.validator :as v]
+        [clj-time.core :as cljtime]
+        [clj-time.coerce :as tc]
         [noir.util.crypt :as warden]))
 
 (defentity users
@@ -43,12 +45,17 @@
       (-> {:login login :pass pass} (prep) (store!))
       {:errors check})))
 
+(defn last-login [id]
+  (update users
+          (set-fields {:last_login (tc/to-sql-date (cljtime/now))})
+          (where {:id id})))
+
 (defn login! [{:keys [login pass] :as user}]
  (let [userstore (get-by-login login)]
     (if (nil? userstore)
       (assoc user :error "Username does not exist")
     (if (and (:pass userstore) (warden/compare pass (:pass userstore)))
-        (dissoc userstore :pass)
+        (do (last-login (:id userstore)) (dissoc userstore :pass))
         (assoc user :error "Password Incorrect")))))
 
 (defn remove! [login]

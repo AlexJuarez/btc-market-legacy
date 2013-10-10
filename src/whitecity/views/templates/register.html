@@ -5,6 +5,7 @@
 		<div class="entry-content">
 		<h2>Register</h2>
 		<form action="/register" method="POST">
+      {% csrf-token %}
 			<table class="padded-table">
 				<tr>
 					<td><label for="login">Username</label></td>

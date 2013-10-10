@@ -1,15 +1,18 @@
 (ns whitecity.models.message
   (:use [korma.db :only (defdb)]
+        [korma.core]
         [whitecity.db])
   (:require 
-        [korma.core :as sql]
-        [metis.core :as v]
         [whitecity.models.schema :as schema]))
 
-(sql/defentity messages)
+(defentity messages)
 
 ;;Gets
-(defn get-messages-count [id]
-  (:cnt (first (sql/select messages
-    (sql/aggregate (count :*) :cnt)
-    (sql/where {:user_id id})))))
+(defn count [id]
+  (:cnt (first (select messages
+    (aggregate (count :*) :cnt)
+    (where {:user_id id})))))
+
+(defn all [id]
+  (select messages
+          (where {:user_id id}) (order :created_on :ASC))) 

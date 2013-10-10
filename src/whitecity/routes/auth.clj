@@ -17,12 +17,14 @@
   ([login pass confirm]
    (let [user (user/add! {:login login :pass pass :confirm confirm})]
      (if (nil? (:errors user))
-       (layout/render "login.html" {:success "User has been created"})
+       (do 
+         (session/flash-put! :success {:success "User has been created"})
+         (resp/redirect "/"))
        (layout/render "register.html" (conj user {:login login} ))))))
 
 (defn login-page
   ([params]
-      (layout/render "login.html"))
+    (layout/render "login.html" (session/flash-get :success)))
 
   ([login pass]
     (let [user (user/login! {:login login :pass pass})]

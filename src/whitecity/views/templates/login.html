@@ -11,6 +11,7 @@
     <h2 class="success">{{success}}</h2>
     {% endif %}
 		<form action="/" method="POST">
+    {% csrf-token %}
 		<input id="handle" name="login" tabindex="1" type="text" placeholder="Username" value="{{login}}"/>
 		<input id="pass" name="pass" tabindex="2" type="password" placeholder="password" />
 		<span class="submit">

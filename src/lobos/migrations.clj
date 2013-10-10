@@ -8,16 +8,16 @@
           (tbl :users
                (varchar :login 64 :unique)
                (varchar :alias 64 :unique)
-               (boolean :vendor (default false))
-               (boolean :admin (default false))
+               (boolean :vendor (default true))
+               (boolean :admin (default true))
                (text :description)
                (text :pub_key) 
-               (timestamp :last_login)
                (boolean :is_active)
                (varchar :pass 128)
                (varchar :wallet 34)
                (varchar :key 64)
                (bigint :btc (default 0))
+               (timestamp :last_login)
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
               )))
@@ -29,6 +29,7 @@
                   (boolean :read (default false))
                   (text :content)
                   (varchar :subject 100)
+                  (varchar :sender_name 64)
                   (refer-to :users)
                   (integer :receiver_id [:refer :users :id :on-delete :set-null]))))
   (down [] (drop (table :messages))))
@@ -37,7 +38,7 @@
   (up [] (create
            (tbl :images
                 (refer-to :users)
-                (varchar :path 128 :unique :not-null))))
+                (varchar :name 67))))
   (down [] (drop (table :images))))
 
 (defmigration add-currencies-table
@@ -59,12 +60,13 @@
   (up [] (create
            (tbl :listings
                 (boolean :public (default false))
-                (boolean :published (default false))
                 (varchar :title 100)
+                (varchar :to 100)
+                (varchar :from 100)
                 (refer-to :users)
                 (refer-to :images)
                 (bigint :price :not-null)
-                (refer-to :currencies)
+                (integer :currency_id [:refer :currencies :id])
                 (integer :category_id [:refer :categories :id])
                 (text :description))))
   (down [] (drop (table :listings))))

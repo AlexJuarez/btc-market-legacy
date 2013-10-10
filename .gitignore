@@ -7,3 +7,5 @@ pom.xml
 *.class
 /.lein-*
 /.env
+*.swp
+*~

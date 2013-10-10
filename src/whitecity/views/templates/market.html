@@ -6,12 +6,15 @@
   </head>
   <body>
     <header>
-      <div id="banner"></div>
+      <div id="banner"><a href="/market/">home</a></div>
       <nav class="account">
       Hi, <a href="/market/account">{{user.login}}</a>
-        | <a href="/market/messages">messages <strong>{{messages}}</strong></a> 
-        | <a href="/market/orders">orders <strong>{{orders}}</strong></a>
+        | <a href="/market/messages">messages <strong>{{user.messages}}</strong></a> 
+        | <a href="/market/orders">orders <strong>{{user.orders}}</strong></a>
         | <a href="/market/account/wallet">wallet &#3647;{{user.btc}}</strong></a>
+        {% if user.vendor %}
+        | <a href="/market/listings">my listings <strong>{{user.listing_count}}</strong></a>
+        {% endif %}
         | <a href="/logout">logout</a>
       </nav>
       <form action="/market/search" method="POST" class="search">
@@ -23,13 +26,14 @@
       </form>
       <div class="cart">
         <span class="cart-icon"></span>
-        <strong>{{cart}}</strong>
+        <strong>{{user.cart}}</strong>
       </div>
     </header>
     <section class="container">
       {% block content %}
       {% endblock %}
     </section>
+    {% style "/css/screen.css" %}
     <script type="text/javascript">
         var context = "{{servlet-context}}";
     </script>

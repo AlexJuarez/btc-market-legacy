@@ -1,10 +1,29 @@
 html,
 body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    height: 100%;
-    padding-top: 70px;
 }
 
 .error {
     color: red;
+}
+
+.listings .listing-row .thumbnail-wrapper {
+  overflow: hidden;
+  height: 150px;
+  float: left;
+}
+
+.listings .listing-row .info {
+  float: left;
+  margin: 0 0 0 20px;
+}
+
+.listings .listing-row .info h2 {
+  margin: 0 0 10px 0;
+}
+
+.listings .listing-row .cost {
+  float: right;
+  width: 150px;
+  text-align: center;
 }

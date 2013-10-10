@@ -27,6 +27,12 @@
         [:table]
         (vec (partition 3 fields))))
 
+(defn parse-int [s]
+  (if-not (nil? s)
+    (let [i (re-find #"\d" s)]
+      (if-not (empty? i)
+        (Integer. i)))))
+
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is
        \"dd MMM, yyyy\" and a custom one can be passed in as the second argument"

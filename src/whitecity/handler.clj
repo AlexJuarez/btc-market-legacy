@@ -4,13 +4,20 @@
   (:require [compojure.core :refer [defroutes]]            
             [whitecity.models.schema :as schema]
             [noir.util.middleware :as middleware]
+            [selmer.parser :refer [add-tag!]]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
+            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [compojure.route :as route]
             [taoensso.timbre :as timbre]
+            [noir.session :as session]
             [com.postspectacular.rotor :as rotor]))
 
 (defroutes app-routes
   (route/resources "/")
   (route/not-found "Not Found"))
+
+(defn user-access [request]
+  (session/get :user))
 
 (defn init
   "init will be called once when
@@ -33,6 +40,8 @@
   (if-not (schema/actualized?)
     (schema/actualize))
 
+  (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
+
   (timbre/info "whitecity started successfully"))
 
 (defn destroy
@@ -47,9 +56,9 @@
             market-routes
             app-routes]
            ;; add custom middleware here
-           :middleware []
+           :middleware [wrap-anti-forgery]
            ;; add access rules here
-           :access-rules []
+           :access-rules [user-access]
            ;; serialize/deserialize the following data formats
            ;; available formats:
            ;; :json :json-kw :yaml :yaml-kw :edn :yaml-in-html

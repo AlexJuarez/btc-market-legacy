@@ -1,22 +1,54 @@
 (ns whitecity.models.listing
   (:use [korma.db :only (defdb)]
+        [korma.core]
         [whitecity.db])
   (:require 
-        [whitecity.models.user :as user]
-        [korma.core :as sql]
-        [noir.util.crypt :as warden]
-        [metis.core :as v]))
+        [whitecity.validator :as v]
+        [clj-time.core :as cljtime]
+        [clj-time.coerce :as tc]
+        [whitecity.util :as util]
+        [whitecity.models.user :as user]))
 
-(sql/defentity listings
-  (sql/belongs-to user/users))
+(defentity listings
+  (belongs-to user/users))
 
-(defn publish! [id]
-  (sql/select listings
-    (sql/where {:id id})))
+(defn check-field [map key]
+  (if-not (nil? (key map))
+    {key (util/parse-int (key map))}))
 
-(defn remove! [id]
-  (sql/delete listings
-    (sql/where {:id id})))
+(defn prep [{:keys [title description from to public] :as listing}]
+  (conj {:title title :description description :from from :to to :public (if (= public "true") true false) :updated_on (tc/to-sql-date (cljtime/now))} (mapcat #(check-field listing %) [:image_id :price :category_id :currency_id])))
 
-(defn add! [{:keys [title user_id image description currency_id category_id] :as listing}]
-  )
+(defn get [id]
+  (first (select listings
+    (where {:id (util/parse-int id)}))))
+
+(defn count [id]
+  (:cnt (first (select listings
+    (aggregate (count :*) :cnt)
+    (where {:user_id id})))))
+
+(defn remove! [id user-id]
+  (delete listings
+    (where {:id id :user_id user-id})))
+
+(defn store! [listing]
+  (insert listings (values (prep listing))))
+
+(defn add! [listing]
+  (let [check (v/listing-validator listing)]
+    (if (empty? check)
+      (store! listing)
+      {:errors check})))
+
+(defn update! [listing id user-id]
+  (let [check (v/listing-validator listing)]
+    (if (empty? check)
+      (update listings
+        (set-fields (prep listing))
+       (where {:id (util/parse-int id) :user_id user-id}))
+      {:errors check})))
+
+(defn all [id]
+  (select listings
+    (where {:user_id id})))
