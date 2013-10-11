@@ -1,7 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 so you wanna make a new listing huh?
-<form action="/market/listing/{{id}}/edit" enctype="multipart/form-data" method="POST">
+<form action="/market/listings/create" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
   <p>
     Upload a Image (.jpg):
@@ -35,7 +35,7 @@ so you wanna make a new listing huh?
   </p>
   <p>
     <label for="ships_to">Ships to:</label>
-    <input name="from" value="{{to}}" id="ships_to" />
+    <input name="to" value="{{to}}" id="ships_to" />
   </p>
   <p>
     {% if errors.title %}

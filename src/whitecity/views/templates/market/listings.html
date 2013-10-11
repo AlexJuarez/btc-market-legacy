@@ -5,7 +5,9 @@
 {% for listing in listings %}
   <div class="listing-row">
     <div class="thumbnail-wrapper">
-      <img src="/uploads/{{listing.image_id}}.jpg" width="200" class="thumbnail" />
+      {% if listing.image_id %}
+        <img src="/uploads/{{listing.image_id}}.jpg" width="200" class="thumbnail" />
+      {% endif %}
     </div>
     <div class="info">
       <h2>{{listing.title}}

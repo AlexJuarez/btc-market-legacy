@@ -28,10 +28,11 @@
         (vec (partition 3 fields))))
 
 (defn parse-int [s]
-  (if-not (nil? s)
+  (if (and (not (nil? s)) (= (type s) (type "")))
     (let [i (re-find #"\d" s)]
       (if-not (empty? i)
-        (Integer. i)))))
+        (Integer. i)))
+    s))
 
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is

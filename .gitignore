@@ -9,3 +9,4 @@ pom.xml
 /.env
 *.swp
 *~
+/resources/public/uploads/

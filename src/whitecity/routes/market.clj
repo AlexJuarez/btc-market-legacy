@@ -49,16 +49,21 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (conj {:images (image/get (user-id))} (set-info) listing)))) 
+    (layout/render "listings/edit.html" (conj {:images (image/get (user-id))} (set-info) listing))))
 
-(defn listing-save [{:keys [id title category_id price currency_id description image_id image] :as slug}]
-  (let [listing (listing/update! slug id (user-id))]
+(defn listing-save [{:keys [id image image_id] :as slug}]
+  (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
     (layout/render "listings/edit.html" (conj {:id id :images (image/get (user-id))} listing (set-info)))))
 
 (defn listing-create
   "Listing creation page" 
-  []
-   (layout/render "listings/create.html" (conj {:errors {}} (set-info))))
+  ([]
+   (layout/render "listings/create.html" (conj {:errors {} :images (image/get (user-id))} (set-info))))
+  ([{:keys [image image_id] :as slug}]
+   (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
+     (if (nil? (:errors listing))
+      (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
+      (layout/render "listings/create.html" (conj {:images (image/get (user-id))} (set-info) listing))))))
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
@@ -68,5 +73,5 @@
     (GET "/market/listing/:id/edit" [id] (listing-edit id))
     (GET "/market/listing/:id/remove" [id] (listing-remove id))
     (POST "/market/listing/:id/edit" {params :params} (listing-save params))
-    (POST "/market/listings/create" {params :params} (listing-save params))
+    (POST "/market/listings/create" {params :params} (listing-create params))
     (GET "/market/about" [] (about-page)))

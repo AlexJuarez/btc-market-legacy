@@ -35,7 +35,7 @@ so you wanna make a new listing huh?
   </p>
   <p>
     <label for="ships_to">Ships to:</label>
-    <input name="from" value="{{to}}" id="ships_to" />
+    <input name="to" value="{{to}}" id="ships_to" />
   </p>
   <p>
     {% if errors.title %}
@@ -47,7 +47,7 @@ so you wanna make a new listing huh?
     <label for="title">Title</label>
     <input name="title" id="title" tabindex="1" type="text" value="{{title}}" />
     <label>Public? (check for yes)</label>
-    <input type="checkbox" name="public" value="true">
+    <input {% if public %}checked="checked"{% endif %} type="checkbox" name="public" value="true">
     <label for="category_id">Category: </label>
     <select tabindex="4" id="category_id" name="category_id">
       {% for category in categories %}

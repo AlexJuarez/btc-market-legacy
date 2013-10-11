@@ -17,7 +17,7 @@
     {key (util/parse-int (key map))}))
 
 (defn prep [{:keys [title description from to public] :as listing}]
-  (conj {:title title :description description :from from :to to :public (if (= public "true") true false) :updated_on (tc/to-sql-date (cljtime/now))} (mapcat #(check-field listing %) [:image_id :price :category_id :currency_id])))
+  (conj {:title title :description description :from from :to to :public (= public "true") :updated_on (tc/to-sql-date (cljtime/now))} (mapcat #(check-field listing %) [:image_id :price :category_id :currency_id])))
 
 (defn get [id]
   (first (select listings
@@ -30,15 +30,15 @@
 
 (defn remove! [id user-id]
   (delete listings
-    (where {:id id :user_id user-id})))
+    (where {:id (util/parse-int id) :user_id user-id})))
 
-(defn store! [listing]
-  (insert listings (values (prep listing))))
+(defn store! [listing user-id]
+  (insert listings (values (assoc (prep listing) :user_id user-id))))
 
-(defn add! [listing]
+(defn add! [listing user-id]
   (let [check (v/listing-validator listing)]
     (if (empty? check)
-      (store! listing)
+      (store! listing user-id)
       {:errors check})))
 
 (defn update! [listing id user-id]
