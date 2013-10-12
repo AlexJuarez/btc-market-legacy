@@ -9,9 +9,6 @@
         [clj-time.coerce :as tc]
         [noir.util.crypt :as warden]))
 
-(defentity users
-  (has-many messages))
-
 ;; Gets
 (defn get-user [id]
   (first (select users

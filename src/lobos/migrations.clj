@@ -66,7 +66,7 @@
                 (refer-to :users)
                 (refer-to :images)
                 (bigint :price :not-null)
-                (integer :quantity)
+                (integer :quantity (default 0))
                 (integer :currency_id [:refer :currencies :id])
                 (integer :category_id [:refer :categories :id])
                 (text :description))))

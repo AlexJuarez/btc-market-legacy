@@ -5,8 +5,6 @@
     [metis.core :as v]
     [korma.core :as sql]))
 
-(sql/defentity users)
-
 (defn get-by-login [login]
   (first (sql/select users
     (sql/where {:login login}))))
@@ -25,4 +23,5 @@
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
-  [:price [:presence :numericality {:greater-than 0}]]) 
+  [:price [:presence :numericality {:gte 0}]]
+  [:quantity [:presence :numericality {:gte 0}]]) 

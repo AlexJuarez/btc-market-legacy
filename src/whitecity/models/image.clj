@@ -5,8 +5,6 @@
   (:require 
         [whitecity.models.schema :as schema]))
 
-(defentity images)
-
 (defn add! [user-id]
   (insert images (values {:user_id user-id}))) 
 

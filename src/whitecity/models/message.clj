@@ -5,8 +5,6 @@
   (:require 
         [whitecity.models.schema :as schema]))
 
-(defentity messages)
-
 ;;Gets
 (defn count [id]
   (:cnt (first (select messages

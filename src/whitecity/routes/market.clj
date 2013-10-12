@@ -18,10 +18,15 @@
   (:id (session/get :user)))
 
 (defn set-info []
-  {:user (conj (session/get :user) {:listing_count (listing/count (user-id)) :errors {} :orders 0 :messages (message/count (user-id)) :cart 0})})
+  {:user (merge 
+           (session/get :user) 
+           {:listing_count (listing/count (user-id)) 
+            :errors {} 
+            :orders 0 
+            :messages (message/count (user-id)) :cart 0})})
 
 (defn home-page []
-  (layout/render "market.html" (set-info)))
+  (layout/render "market/index.html" (conj {:listings (listing/public)} (set-info))))
 
 (defn about-page []
   (layout/render "about.html"))
@@ -49,21 +54,21 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (conj {:images (image/get (user-id))} (set-info) listing))))
+    (layout/render "listings/edit.html" (merge {:images (image/get (user-id))} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/edit.html" (conj {:id id :images (image/get (user-id))} listing (set-info)))))
+    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id))} listing (set-info)))))
 
 (defn listing-create
   "Listing creation page" 
   ([]
-   (layout/render "listings/create.html" (conj {:errors {} :images (image/get (user-id))} (set-info))))
+   (layout/render "listings/create.html" (conj {:images (image/get (user-id))} (set-info))))
   ([{:keys [image image_id] :as slug}]
    (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
      (if (nil? (:errors listing))
       (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
-      (layout/render "listings/create.html" (conj {:images (image/get (user-id))} (set-info) listing))))))
+      (layout/render "listings/create.html" (merge {:images (image/get (user-id))} (set-info) listing))))))
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))

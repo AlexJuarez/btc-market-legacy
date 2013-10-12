@@ -1,0 +1,30 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+{{listings}}
+<div class="ls">
+{% for listing in listings %}
+<div class="listing-row">
+  <div class="thumbnail">
+  {% if listing.image_id %}
+    <img src="/uploads/{{listing.image_id}}.jpg" />
+  {% endif %}  
+  </div>
+  <div class="sale">
+    <span>{{listing.price}}</span>
+    <br />
+    <a href="/market/cart/add/{{listing.id}}">add to cart</a>
+  </div>
+  <h1><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></h1>
+  <p>
+    <span>seller: <a href="/market/user/{{listing.user_id}}">username</a></span>
+    <br />
+    <span>ships from: {{listing.from|default-if-empty:"Undeclared"}}</span>
+    <br />
+    {% if not listing.to|empty? %}
+    <span>ships to: {{listing.to}}</span>
+    {% endif %}
+  </p>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

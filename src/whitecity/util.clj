@@ -5,6 +5,7 @@
               [noir.session :as session]
               [whitecity.db :as db]
               [noir.io :as io]
+              [clojure.string :as s]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
@@ -28,12 +29,13 @@
         (vec (partition 3 fields))))
 
 (defn parse-int [s]
-  (if (and (not (nil? s)) (= (type s) (type "")))
-    (let [i (re-find #"\d" s)]
-      (if-not (empty? i)
+  (if (string? s)
+    (let [i (re-find #"\d+" s)]
+      (if-not (s/blank? i)
         (Integer. i)))
     s))
 
+;;Probably not needed
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is
        \"dd MMM, yyyy\" and a custom one can be passed in as the second argument"

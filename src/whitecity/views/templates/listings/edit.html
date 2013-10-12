@@ -38,6 +38,13 @@ so you wanna make a new listing huh?
     <input name="to" value="{{to}}" id="ships_to" />
   </p>
   <p>
+    {% if errors.quantity %}
+      <p>{{errors.quantity|join:", "}}</p>
+    {% endif %}
+    <label for="quantity">Quantity:</label>
+    <input name="quantity" value="{{quantity}}" id="quantity" />
+  </p>
+  <p>
     {% if errors.title %}
     <p>{{errors.title|join:", "}}</p>
     {% endif %}

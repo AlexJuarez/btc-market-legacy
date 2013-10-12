@@ -38,6 +38,13 @@ so you wanna make a new listing huh?
     <input name="to" value="{{to}}" id="ships_to" />
   </p>
   <p>
+    {% if errors.quantity %}
+      <p>{{errors.quantity|join:", "}}</p>
+    {% endif %}
+    <label for="quantity">Quantity:</label>
+    <input name="quantity" value="{{quantity}}" id="quantity" />
+  </p>
+  <p>
     {% if errors.title %}
     <p>{{errors.title|join:", "}}</p>
     {% endif %}
@@ -77,7 +84,7 @@ so you wanna make a new listing huh?
     <textarea id="description" tabindex="5" name="description">{{description}}</textarea>
   </p>
   <span class="submit">
-    <input type="submit" tabindex="6" class="btn" value="update" />
+    <input type="submit" tabindex="6" class="btn" value="create" />
   </span>
 </form>
 {% endblock %}

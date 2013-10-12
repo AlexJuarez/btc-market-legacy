@@ -32,3 +32,37 @@ body {
   width: 150px;
   text-align: center;
 }
+
+/* ls is the main pages listings **/
+.ls .listing-row {
+  overflow: hidden;
+  background: #C5C1C1;
+  margin-bottom: 10px;
+}
+
+.ls .listing-row .thumbnail {
+  background: #1e1e1e;
+  height: 150px;
+  width: 200px;
+  overflow: hidden;
+  float: left;
+  margin-right: 20px;
+}
+
+.ls .listing-row .thumbnail img {
+  width: 200px;
+}
+
+.ls .listing-row .sale {
+  float: right;
+  width: 200px;
+  padding-top: 56px;
+  height: 150px;
+  box-sizing:border-box;
+  text-align: center;
+  background: #B1ABAB;
+}
+
+.ls .listing-row .sale span {
+  margin-top: 30px;
+}
