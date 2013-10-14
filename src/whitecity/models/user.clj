@@ -1,18 +1,20 @@
 (ns whitecity.models.user
   (:use [korma.db :only (defdb)]
         [whitecity.db]
-        [korma.core]
-        [whitecity.models.message])
+        [korma.core])
   (:require 
         [whitecity.validator :as v]
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
+        [whitecity.util :as util]
+        [whitecity.models.message :as message]
         [noir.util.crypt :as warden]))
 
 ;; Gets
-(defn get-user [id]
+(defn get [id]
   (first (select users
-                 (where {:id id}))))
+           (fields :id :login :alias :vendor :description :pub_key :last_login :created_on)
+           (where {:id (util/parse-int id)}))))
 
 (defn get-by-login [login]
   (first (select users

@@ -1,0 +1,38 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+{% if not id %}
+<p>Listing not found</p>
+{% else %}
+<div class="listing">
+  <img src="/uploads/{{id}}.jpg" />
+  <h1>{{tilte}}</h1>
+  <p>
+    <span class="price">{{price}}</span>
+    <a href="/market/cart/add/{{id}}">add to cart</a>
+  </p>
+  <p class="well">
+    <ul>
+      <li>seller: <a href="/market/user/{{user_id}}" class="seller">{% if user_alias %}{{user_alias}}{% else %}{{user_login}}{% endif %}</a></li>
+      <li>ships from: {{from}}</li>
+      <li>ships to: {{to}}</li>
+      <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
+      <li><a href="/market/bookmark/{{id}}">bookmark this item</a></li>
+    </ul>
+  </p>
+  <p class="postage">
+    <span>postage options: </span>
+    <select id="postage">
+      {% for postage in postages %}
+      <option>{{postage.title}} - {{postage.price}}</option>
+      {% endfor %}
+    </select>
+  </p>
+  <p class="well">
+    <a href="/market/listing/{{id}}/report">report this item</a>
+  </p>
+  <p class="well description">
+    {{description}}
+  </p>
+</div>
+{% endif %}
+{% endblock %}

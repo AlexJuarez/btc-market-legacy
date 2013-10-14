@@ -13,4 +13,5 @@
 
 (defn all [id]
   (select messages
-          (where {:user_id id}) (order :created_on :ASC))) 
+          (where {:user_id id}) 
+          (order :created_on :ASC))) 

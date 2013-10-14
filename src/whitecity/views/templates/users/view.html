@@ -1,0 +1,57 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+{% if not id %}
+<p>User not found</p>
+{% else %}
+<h1>{% if alias %}{{alias}}{% else %}{{login}}{% endif %}</h1>
+<a href="/market/messages/{{id}}">send a message</a>
+<p class="well">
+  has been a member for: <strong class="pretty-time" time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
+  <br />
+  was last seen: <strong class="pretty-time" time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
+  <br />
+  ranked in the top % of sellers with % positive feedback from more than x tranactions
+  <br />
+  has 922 followers - <a href="/market/user/{{id}}/follow">follow</a>
+</p>
+<p class="well">
+  <a href="/market/user/{{id}}/report">report this vendor</a>
+</p>
+<p class="well">
+  <pre>
+    {{description}}
+  </pre>
+</p>
+<p class="well">
+  {{pub_key}}
+</p>
+{% if listings %}
+<table class="userlistings">
+  <thead>
+    <tr>
+      <th>category</th>
+      <th>item</th>
+      <th>price</th>
+      <th>ships to</th>
+      <th>ships from</th>
+      <th><th>
+    </tr>
+  </thead>
+  <tbody>
+{% for listing in listings %}
+  <tr>
+    <td></td>
+    <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
+    <td>{{listing.price}}</td>
+    <td>{{listing.to}}</td>
+    <td>{{listing.from}}</td>
+    <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
+  </tr>
+{% endfor %}
+  </tbody>
+<table>
+{% else %}
+The users does not currently have active public listings
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -6,17 +6,34 @@
 
 (defdb db schema/db-spec)
 
-(declare users messages listings images)
+(declare users messages listings postage images category currency)
 
 (defentity users
-  (has-many listings messages images))
+  (table :user)
+  (has-many listings messages images postage))
 
 (defentity listings
+  (table :listing)
   (belongs-to users)
+  (belongs-to category)
+  (belongs-to currency)
   (has-one images))
 
 (defentity messages
+  (table :message)
   (belongs-to users))
 
 (defentity images
+  (table :image)
   (belongs-to users))
+
+(defentity postage
+  (belongs-to users))
+
+(defentity category
+  (has-many listings)
+  (table :category))
+
+(defentity currency
+  (has-many listings)
+  (table :currency))

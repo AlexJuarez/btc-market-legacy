@@ -15,15 +15,13 @@
     <a href="/market/cart/add/{{listing.id}}">add to cart</a>
   </div>
   <h1><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></h1>
-  <p>
-    <span>seller: <a href="/market/user/{{listing.user_id}}">username</a></span>
-    <br />
-    <span>ships from: {{listing.from|default-if-empty:"Undeclared"}}</span>
-    <br />
+  <ul>
+    <li>seller: <a href="/market/user/{{listing.user_id}}">{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</a></li>
+    <li>ships from: {{listing.from|default-if-empty:"Undeclared"}}</li>
     {% if not listing.to|empty? %}
-    <span>ships to: {{listing.to}}</span>
+    <li>ships to: {{listing.to}}</li>
     {% endif %}
-  </p>
+  </ul>
 </div>
 {% endfor %}
 </div>

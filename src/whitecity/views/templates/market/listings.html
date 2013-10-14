@@ -1,7 +1,34 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<a href="/market/listings/create">Create a new listing</a>
+<div class="postage well">
+<a href="/market/postage/create">add postage</a>
+{% if postages %}
+<table>
+  <thead>
+    <tr>
+      <th>title</th>
+      <th>price</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for postage in postages %}
+      <tr>
+        <td>{{postage.title}}</td>
+        <td>{{postage.price}}</td>
+        <td><a href="/market/postage/{{postage.id}}/edit">edit</a></td>
+        <td><a href="/market/postage/{{postage.id}}/remove">remove</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+You need to add postage
+{% endif %}
+</div>
 <div class="listings">
+<a href="/market/listings/create">Create a new listing</a>
 {% for listing in listings %}
   <div class="listing-row">
     <div class="thumbnail-wrapper">
@@ -15,7 +42,7 @@
         <a href="/market/listing/{{listing.id}}/remove" class="remove" oncLick="return confirm('Delete?')">delete</a></sup>
       </h2>
       <p>
-        <span class="age">
+        <span class="age pretty-time" time="{{listing.created_on|date:fullDateTime}}">
           {{listing.created_on|date:shortDate}}
         </span>
         <span class="public">

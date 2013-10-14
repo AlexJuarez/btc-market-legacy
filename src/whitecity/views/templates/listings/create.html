@@ -48,9 +48,6 @@ so you wanna make a new listing huh?
     {% if errors.title %}
     <p>{{errors.title|join:", "}}</p>
     {% endif %}
-    {% if errors.category_id %}
-    <p>{{errors.category_id|join:", "}}</p>
-    {% endif %}
     <label for="title">Title</label>
     <input name="title" id="title" tabindex="1" type="text" value="{{title}}" />
     <label>Public? (check for yes)</label>

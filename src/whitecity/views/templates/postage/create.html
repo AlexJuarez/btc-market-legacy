@@ -1,0 +1,29 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<form action="/market/postage/create" method="POST">
+  {% csrf-token %}
+  <p>
+    {% if errors.title %}
+    <p>{{errors.title|join:", "}}</p>
+    {% endif %}
+    <label for="title">Title</label>
+    <input name="title" id="title" tabindex="1" type="text" value="{{title}}" />
+  </p>
+  <p>
+    {% if errors.price  %}
+    <p>{{errors.price|join:", "}} </p>
+    {% endif %}
+    <label for="price">Price: </label>
+    <input name="price" id="price" tabindex="2" type="text" value="{{price}}" />
+    <label for="currency_id">Currency: </label>
+    <select tabindex="3" name="currency_id" id="currency_id">
+      {% for currency in currencies %}
+      <option value="{{currency.id}}">{{currency.name}}</option>
+      {% endfor %}
+    </select>
+  </p>
+  <span class="submit">
+    <input type="submit" tabindex="6" class="btn" value="create" />
+  </span>
+</form>
+{% endblock %}

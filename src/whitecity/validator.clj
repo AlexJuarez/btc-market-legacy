@@ -25,3 +25,7 @@
   [:title [:presence :in-range {:start 4 :end 100}]]
   [:price [:presence :numericality {:gte 0}]]
   [:quantity [:presence :numericality {:gte 0}]]) 
+
+(v/defvalidator postage-validator
+  [:price [:presence :numericality {:gte 0}]]
+  [:title [:presence :in-range {:start 4 :end 100}]])

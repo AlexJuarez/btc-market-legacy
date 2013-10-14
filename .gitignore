@@ -9,4 +9,5 @@ pom.xml
 /.env
 *.swp
 *~
+.nrepl-port
 /resources/public/uploads/

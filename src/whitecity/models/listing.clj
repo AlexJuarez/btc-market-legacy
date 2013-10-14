@@ -21,8 +21,20 @@
           :updated_on (tc/to-sql-date (cljtime/now))} 
          (mapcat #(check-field listing %) [:quantity :image_id :price :category_id :currency_id])))
 
-(defn get [id]
+(defn get 
+  ([id]
+    (first (select listings
+      (where {:id (util/parse-int id)}))))
+  ([id user-id]
+    (first (select listings
+      (where {:id (util/parse-int id) :user_id user-id})))))
+
+(defn view [id]
   (first (select listings
+    (fields :id :title :currency_id [:currency.name :currency_name] [:currency.value :currency_value] [:category.name :category_name] :category_id :description :image_id :user_id [:user.login :user_login] [:user.alias :user_alias] :price :to :from)
+    (with currency)
+    (with category)
+    (with users)
     (where {:id (util/parse-int id)}))))
 
 (defn count [id]
@@ -51,11 +63,17 @@
        (where {:id (util/parse-int id) :user_id user-id}))
       (conj {:errors check} listing))))
 
-(defn public []
-  (select listings
+(defn public
+  ([] 
+   (select listings
     (with users)
-    (fields :login :image_id :from :to :price :id :currency_id)
+    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id)
     (where {:public true})))
+  ([id]
+   (select listings
+    (with users)
+    (fields  :title :from :to :price :id :currency_id)
+    (where {:public true :user_id (util/parse-int id)}))))
 
 (defn all [id]
   (select listings

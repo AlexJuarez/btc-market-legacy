@@ -5,7 +5,7 @@
 
 (defmigration add-users-table
   (up [] (create
-          (tbl :users
+          (tbl :user
                (varchar :login 64 :unique)
                (varchar :alias 64 :unique)
                (boolean :vendor (default true))
@@ -21,83 +21,93 @@
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
               )))
-  (down [] (drop (table :users))))
+  (down [] (drop (table :user))))
 
 (defmigration add-messages-table
   (up [] (create
-           (tbl :messages
+           (tbl :message
                   (boolean :read (default false))
                   (text :content)
                   (varchar :subject 100)
                   (varchar :sender_name 64)
-                  (refer-to :users)
-                  (integer :receiver_id [:refer :users :id :on-delete :set-null]))))
+                  (refer-to :user)
+                  (integer :receiver_id [:refer :user :id :on-delete :set-null]))))
   (down [] (drop (table :messages))))
 
 (defmigration add-images-table
   (up [] (create
-           (tbl :images
-                (refer-to :users)
+           (tbl :image
+                (refer-to :user)
                 (varchar :name 67))))
-  (down [] (drop (table :images))))
+  (down [] (drop (table :image))))
 
 (defmigration add-currencies-table
   (up [] (create
-           (tbl :currencies
+           (tbl :currency
                 (varchar :name 30 :unique :not-null)
                 (bigint :value))))
-  (down [] (drop (table :currencies))))
+  (down [] (drop (table :currency))))
 
 (defmigration add-categories-table
   (up [] (create
-           (tbl :categories
+           (tbl :category
                 (varchar :name 30)
                 (integer :count)
                 (integer :parent))))
-  (down [] (drop (table :categories))))
+  (down [] (drop (table :category))))
 
 (defmigration add-listings-table
   (up [] (create
-           (tbl :listings
+           (tbl :listing
                 (boolean :public (default false))
                 (varchar :title 100)
                 (varchar :to 100)
                 (varchar :from 100)
-                (refer-to :users)
-                (refer-to :images)
+                (refer-to :user)
+                (refer-to :image)
                 (bigint :price :not-null)
                 (integer :quantity (default 0))
-                (integer :currency_id [:refer :currencies :id])
-                (integer :category_id [:refer :categories :id])
+                (refer-to :currency)
+                (refer-to :category)
                 (text :description))))
-  (down [] (drop (table :listings))))
+  (down [] (drop (table :listing))))
+
+(defmigration add-postage-table
+  (up [] (create
+           (tbl :postage
+                (refer-to :user)
+                (varchar :title 100)
+                (bigint :price :not-null)
+                (refer-to :currency))))
+  (down [] (drop (table :postage))))
 
 (defmigration add-orders-table
   (up [] (create
-           (tbl :orders
+           (tbl :order
                 (bigint :amount)
                 (boolean :hedged)
-                (refer-to :listings)
-                (refer-to :users)
+                (refer-to :listing)
+                (refer-to :postage)
+                (refer-to :user)
                 (smallint :status))))
-  (down [] (drop (table :orders))))
+  (down [] (drop (table :order))))
 
 (defmigration add-reviews-table
   (up [] (create
-           (tbl :reviews
+           (tbl :review
                 (boolean :published (default false))
-                (refer-to :users)
-                (refer-to :listings)
+                (refer-to :user)
+                (refer-to :listing)
                 (text :content)
                 (smallint :rating :not-null (default 5))
                 (boolean :shipped (default true))
                 )))
-  (down [] (drop (table :reviews))))
+  (down [] (drop (table :review))))
 
 (defmigration add-audits-table
   (up [] (create
-           (tbl :audits
-                (refer-to :users)
-                (refer-to :orders)
+           (tbl :audit
+                (refer-to :user)
+                (refer-to :order)
                 (bigint :amount))))
-  (down [] (drop (table :audits))))
+  (down [] (drop (table :audit))))

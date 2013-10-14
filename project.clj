@@ -16,7 +16,7 @@
    [postgresql/postgresql "9.1-901.jdbc4"]
    [ring-anti-forgery "0.2.1"]
    [metis "0.3.3"]
-   [korma "0.3.0-RC5"]
+   [korma "0.3.0-RC6"]
    [lobos "1.0.0-beta1"]
    [log4j
     "1.2.17"
