@@ -7,8 +7,7 @@
         [whitecity.models.schema :as schema]
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
-        [whitecity.util :as util]
-    ))
+        [whitecity.util :as util]))
 
 (defn all [user-id]
   (select postage

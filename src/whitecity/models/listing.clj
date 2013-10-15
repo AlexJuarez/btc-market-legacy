@@ -31,10 +31,10 @@
 
 (defn view [id]
   (first (select listings
-    (fields :id :title :currency_id [:currency.name :currency_name] [:currency.value :currency_value] [:category.name :category_name] :category_id :description :image_id :user_id [:user.login :user_login] [:user.alias :user_alias] :price :to :from)
-    (with currency)
-    (with category)
-    (with users)
+    (fields :id :title :currency_id :category_id :description :image_id :user_id :price :to :from)
+    (with currency (fields [:name :currency_name] [:value :currency_value]))
+    (with category (fields [:name :category_name]))
+    (with users (fields [:login :user_login] [:alias :user_alias]))
     (where {:id (util/parse-int id)}))))
 
 (defn count [id]

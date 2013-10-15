@@ -29,9 +29,8 @@
                   (boolean :read (default false))
                   (text :content)
                   (varchar :subject 100)
-                  (varchar :sender_name 64)
                   (refer-to :user)
-                  (integer :receiver_id [:refer :user :id :on-delete :set-null]))))
+                  (integer :sender_id [:refer :user :id :on-delete :set-null]))))
   (down [] (drop (table :messages))))
 
 (defmigration add-images-table

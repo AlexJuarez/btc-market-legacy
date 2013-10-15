@@ -29,3 +29,6 @@
 (v/defvalidator postage-validator
   [:price [:presence :numericality {:gte 0}]]
   [:title [:presence :in-range {:start 4 :end 100}]])
+
+(v/defvalidator message-validator
+  [:content [:presence]])

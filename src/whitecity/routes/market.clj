@@ -33,10 +33,17 @@
   (layout/render "about.html"))
 
 (defn messages-page []
-  (layout/render "market/messages.html" (conj (set-info) {:messages (message/all (user-id))})))
+  (layout/render "messages/index.html" (conj (set-info) {:messages (message/all (user-id))})))
+
+(defn messages-thread
+  ([receiver-id]
+   (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
+  ([slug &options]
+   (let [message (message/add! slug (user-id) (:id slug))]
+     (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
 
 (defn listings-page []
-  (layout/render "market/listings.html" (conj (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
+  (layout/render "market/listings.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
 
 ;;TODO add thumbnail parsing with imagez
 (defn parse-image [image_id image]
@@ -113,6 +120,8 @@
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
     (GET "/market/messages" [] (messages-page))
+    (GET "/market/messages/:id" [id] (messages-thread id))
+    (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
     (POST "/market/postage/:id/edit" {params :params} (postage-save params))
