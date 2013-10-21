@@ -1,90 +1,108 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-so you wanna make a new listing huh?
-<form action="/market/listing/{{id}}/edit" enctype="multipart/form-data" method="POST">
+<form action="/market/listings/{{id}}/edit" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
-  <p>
-    Upload a Image (.jpg):
-    <input type="file" name="image" accept="image/jpeg" />
-  </p>
-  <p>
+  <div class="image">
   {% if image_id %}
     <img src="/uploads/{{image_id}}.jpg" />
-    <br />
+  {% else %}
+    300<em>px</em> x <em>400px</em>
   {% endif %}
-  {% if images %}
-    <label for="images">select an image:</label>
-    <select id="images" name="image_id">
-    <option value {% if not image_id %}selected="selected"{% endif %}>None</option>
-    {% for image in images %}
-    <option {% ifequal image_id image.id %}selected="selected"{% endifequal %} value="{{image.id}}">
-    {% if image.name %}
-    {{image.name}}
-    {% else %}
-    {{image.id}}
-    {% endif %}
-    </option>
-    {% endfor %}
-    </select>
-    <a href="/market/images">manage images</a>
-  {% endif %}
-  </p>
-  <p>
-    <label for="ships_from">Ships from:</label>
-    <input name="from" value="{{from}}" id="ships_from" />
-  </p>
-  <p>
-    <label for="ships_to">Ships to:</label>
-    <input name="to" value="{{to}}" id="ships_to" />
-  </p>
-  <p>
-    {% if errors.quantity %}
-      <p>{{errors.quantity|join:", "}}</p>
-    {% endif %}
-    <label for="quantity">Quantity:</label>
-    <input name="quantity" value="{{quantity}}" id="quantity" />
-  </p>
-  <p>
+  </div>
+  <div class="top form-group {% if errors.title %}has-error{% endif %}">
+    <label for="title">Title:
     {% if errors.title %}
-    <p>{{errors.title|join:", "}}</p>
+      {{errors.title|join:", "}}
     {% endif %}
-    {% if errors.category_id %}
-    <p>{{errors.category_id|join:", "}}</p>
+    </label>
+    <input name="title" id="title" class="form-control" tabindex="1" type="text" value="{{title}}" />
+  </div>
+  <div class="form-group top public">
+      <label>Public?</label>
+      <div> 
+        <input type="checkbox" name="public" value="true">
+        (check for yes)
+      </div>
+  </div>
+  <div class="top well">
+    <div class="form-group">
+      <label>Upload a Image (.jpg):</label>
+      <div>
+        <input type="file" name="image" accept="image/jpeg" />
+      </div>
+    </div>
+    {% if images %}
+    <div class="form-group">
+      <label for="images">Select an image:</label>
+      <div> 
+        <select id="images" name="image_id">
+        <option value {% if not image_id %}selected="selected"{% endif %}>None</option>
+        {% for image in images %}
+        <option {% ifequal image_id image.id %}selected="selected"{% endifequal %} value="{{image.id}}">
+        {% if image.name %}
+        {{image.name}}
+        {% else %}
+        {{image.id}}
+        {% endif %}
+        </option>
+        {% endfor %}
+        </select>
+        <a href="/market/images">manage images</a>
+      </div>
+    </div>
     {% endif %}
-    <label for="title">Title</label>
-    <input name="title" id="title" tabindex="1" type="text" value="{{title}}" />
-    <label>Public? (check for yes)</label>
-    <input {% if public %}checked="checked"{% endif %} type="checkbox" name="public" value="true">
+  </div>
+  <div class="form-group">
     <label for="category_id">Category: </label>
-    <select tabindex="4" id="category_id" name="category_id">
-      {% for category in categories %}
-      <option value="{{category.id}}">{{category.name}}</option>
-      {% endfor %}
-    </select>
-  </p>
-  <p>
-    {% if errors.price  %}
-    <p>{{errors.price|join:", "}} </p>
-    {% endif %}
-    {% if errors.currency_id %}
-    <p>{{errors.curreny_id|join:", "}}</p>
-    {% endif %}
-    <label for="price">Price: </label>
-    <input name="price" id="price" tabindex="2" type="text" value="{{price}}" />
-    <label for="currency_id">Currency: </label>
-    <select tabindex="3" name="currency_id" id="currency_id">
+    <div>
+      <select tabindex="4" id="category_id" name="category_id">
+        {% for category in categories %}
+        <option value="{{category.id}}">{{category.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-group {% if errors.title %}has-error{% endif %}">
+    <label for="price">
+    <select title="currency" tabindex="3" name="currency_id" id="currency_id">
       {% for currency in currencies %}
       <option value="{{currency.id}}">{{currency.name}}</option>
       {% endfor %}
     </select>
-  </p>
-  <p>
-    <label for="description">description</label>
-    <br />
-    <textarea id="description" tabindex="5" name="description">{{description}}</textarea>
-  </p>
-  <span class="submit">
-    <input type="submit" tabindex="6" class="btn" value="update" />
-  </span>
+    {% if errors.currency_id %}
+    {{errors.currency_id|join:", "}}
+    {% endif %}
+    Price: 
+    {% if errors.price  %}
+    {{errors.price|join:", "}}
+    {% endif %}
+    </label>
+    <div>
+      <input name="price" id="price" class="form-control" tabindex="2" type="text" value="{{price}}" />
+    </div>
+  </div>
+  <div class="form-group {% if errors.quantity %}has-error{% endif %}">
+    <label for="quantity">Quantity:
+      {% if errors.quantity %}
+        {{errors.quantity|join:", "}}
+      {% endif %}
+    </label>
+    <input class="form-control" name="quantity" value="{{quantity}}" id="quantity" />
+  </div>
+  <div class="form-group">
+    <label for="ships_from">Ships from:</label>
+    <input class="form-control" name="from" value="{{from}}" id="ships_from" />
+  </div>
+  <div class="form-group">
+    <label for="ships_to">Ships to:</label>
+    <input class="form-control" name="to" value="{{to}}" id="ships_to" />
+  </div>
+  <div class="form-group">
+    <label for="description">Description:</label>
+    <textarea id="description" class="form-control" tabindex="5" rows="4" name="description">{{description}}</textarea>
+  </div>
+  <div class="form-group">
+    <button type="submit" tabindex="6" class="btn">update</button>
+  </div>
 </form>
 {% endblock %}

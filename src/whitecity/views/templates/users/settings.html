@@ -1,0 +1,25 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<div class="well">
+  <ul>
+    <li>Account
+      <ul>
+          <li><a href="/market/account">my settings</a></li>
+          <li><a href="/market/account/wallet">my wallet</a></li>
+          <li><a href="/market/listings">my listings</a></li>
+          <li><a href="/market/orders">my orders</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<form class="settings" action="/market/postage/create" method="POST">
+  {% csrf-token %}
+  <p>
+    {% if errors.alias %}
+    <p>{{errors.alias|join:", "}}</p>
+    {% endif %}
+    <label for="alias">Alias</label>
+    <input name="alias" id="alias" tabindex="1" type="text" value="{{alias}}" />
+  </p>
+</form>
+{% endblock %}

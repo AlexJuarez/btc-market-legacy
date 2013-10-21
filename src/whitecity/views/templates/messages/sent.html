@@ -11,10 +11,10 @@
     <div class="message">
       <span class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</span>
       {% if message.read %}
-      <span class="subject"><a href="/market/messages/{{message.sender_id}}">{{message.subject}}</a></span>
+      <span class="subject"><a href="/market/messages/{{message.user_id}}">{{message.subject}}</a></span>
       {% else %}
       <span class="subject">
-        <strong><a href="/market/messages/{{message.sender_id}}">{{message.subject}}</a></strong>
+        <strong><a href="/market/messages/{{message.user_id}}">{{message.subject}}</a></strong>
       </span>
       {% endif %}
       <span time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span>

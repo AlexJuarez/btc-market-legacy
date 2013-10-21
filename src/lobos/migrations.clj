@@ -16,6 +16,7 @@
                (varchar :pass 128)
                (varchar :wallet 34)
                (varchar :key 64)
+               (integer :pin)
                (bigint :btc (default 0))
                (timestamp :last_login)
                (check :login (> (length :login) 2))

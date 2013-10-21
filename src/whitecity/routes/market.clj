@@ -35,6 +35,9 @@
 (defn messages-page []
   (layout/render "messages/index.html" (conj (set-info) {:messages (message/all (user-id))})))
 
+(defn messages-sent []
+  (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
+
 (defn messages-thread
   ([receiver-id]
    (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
@@ -120,6 +123,7 @@
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
     (GET "/market/messages" [] (messages-page))
+    (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))

@@ -17,14 +17,20 @@
 <p class="well">
   <a href="/market/user/{{id}}/report">report this vendor</a>
 </p>
-<p class="well">
-  <pre>
-    {{description}}
-  </pre>
-</p>
-<p class="well">
-  {{pub_key}}
-</p>
+{% if vendor %}
+  {% if description %}
+  <p class="well">
+    <pre>
+      {{description}}
+    </pre>
+  </p>
+  {% endif %}
+  {% if pub_key %}
+  <p class="well">
+    {{pub_key}}
+  </p>
+  {% endif %}
+{% endif %}
 {% if listings %}
 <table class="userlistings">
   <thead>

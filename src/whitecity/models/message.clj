@@ -18,11 +18,19 @@
           (set-fields {:read true})
           (where {:user_id id :sender_id receiver-id})))
 
+(defn sent [id]
+  (select messages
+    (fields :subject :content :created_on :user_id :sender_id :read)
+    (with users (fields [:login :user_login] [:alias :user_alias]))
+    (where {:sender_id id})))
+
 (defn all 
   ([id]
     (select messages
-      (with users (fields [:login :user_login] [:alias :user_alias]))
-      (where (or {:sender_id id} {:user_id id})) 
+      (fields [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
+      (join
+        users (= :user.id :sender_id)) 
+      (where {:user_id id}) 
       (order :created_on :ASC)))
   ([id receiver-id]
    (let [rid (util/parse-int receiver-id)]
