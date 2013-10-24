@@ -29,6 +29,14 @@
     (first (select listings
       (where {:id (util/parse-int id) :user_id user-id})))))
 
+(defn get-in [cart]
+  (select listings
+    (fields [:id :lid] :quantity :title :price :description :user.login :user.alias :user.pub_key)
+          (with users
+                (with postage)
+          (fields :id :login :alias :pub_key))
+          (where {:id [in cart]})))
+
 (defn view [id]
   (first (select listings
     (fields :id :title :currency_id :category_id :description :image_id :user_id :price :to :from)

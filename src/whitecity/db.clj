@@ -10,7 +10,10 @@
 
 (defentity users
   (table :user)
-  (has-many listings messages images postage))
+  (has-many listings)
+  (has-many messages)
+  (has-many images)
+  (has-many postage))
 
 (defentity listings
   (table :listing)

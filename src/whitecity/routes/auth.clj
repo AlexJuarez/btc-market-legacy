@@ -30,6 +30,7 @@
     (let [user (user/login! {:login login :pass pass})]
       (if (nil? (:error user))
         (do (session/put! :user user)
+            (session/put! :cart {})
             (resp/redirect "/market/"))
           (layout/render "login.html" user)))))
    

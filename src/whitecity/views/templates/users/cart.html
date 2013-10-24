@@ -1,0 +1,54 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<h1>Shopping Cart</h1>
+{% if listings %}
+<table>
+  <thead>
+    <tr>
+      <th>seller</th>
+      <th>item</th>
+      <th>price</th>
+      <th>quantity</th>
+      <th>sub-total</th>
+      <th>postage</th>
+      <th>total</th>
+      <th>hedged</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for listing in listings %}
+  {{listing}}
+  <tr>
+    <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
+    <td>{{listing.title}}</td>
+    <td>{{listing.price}}</td>
+    <td><input type="text" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
+    <td>{{listing.subtotal}}</td>
+    <td>
+      <select>
+        <option>select one</option>
+        {% for postage in listing.postage %}
+        <option value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>{{listing.total}}</td>
+    <td>{% if liisting.hedged %}hedged{% else %}unhedged{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p>
+  <input type="submit" name="submit" value="Update Cart" />
+</p>
+<div class="well">
+  <label for="address">Address</label>
+  <textarea rows="4" class="form-control" id="address" name="address">{{address}}</textarea> 
+  <label for="pin">Pin: </label>
+    <input type="password" name="pin" id="pin" />
+  <input type="submit" />
+</div>
+{% else %}
+  <p class="well">Your cart is empty!</p>
+{% endif %}
+{% endblock %}

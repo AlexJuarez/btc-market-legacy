@@ -84,8 +84,13 @@
 (defmigration add-orders-table
   (up [] (create
            (tbl :order
-                (bigint :amount)
+                (bigint :price)
+                (bigint :postage-price)
+                (integer :quantity)
                 (boolean :hedged)
+                (varchar :title)
+                (text :address)
+                (refer-to :currency)
                 (refer-to :listing)
                 (refer-to :postage)
                 (refer-to :user)

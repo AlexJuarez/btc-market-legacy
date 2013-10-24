@@ -24,7 +24,8 @@
            {:listing_count (listing/count (user-id)) 
             :errors {} 
             :orders 0 
-            :messages (message/count (user-id)) :cart 0})})
+            :messages (message/count (user-id)) 
+            :cart (count (session/get :cart))})})
 
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public)} (set-info))))
@@ -114,10 +115,19 @@
   (do (session/flash-put! :success {:success "postage removed"})
     (resp/redirect "/market/listings")))))
 
-(defn add-to-cart
+(defn cart-add
   "add a item to the cart"
   [id]
-  (do (session/put! :cart (conj [] (session/get :cart) id))))
+  (do (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1}}))
+      (resp/redirect "/market/cart")))
+
+(defn cart-get
+  [id key]
+   (key ((session/get :cart) id)))
+
+(defn cart-view []
+  (let [listings (map #(conj % {:subtotal (* (:price %) (cart-get (:lid %) :quantity))}) (listing/get-in (keys (session/get :cart))))]
+    (layout/render "users/cart.html" (merge {:listings listings} (set-info)))))
 
 
 (def-restricted-routes market-routes
@@ -125,6 +135,8 @@
     (GET "/market/messages" [] (messages-page))
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
+    (GET "/market/cart/add/:id" [id] (cart-add id))
+    (GET "/market/cart" [] (cart-view))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
@@ -139,5 +151,4 @@
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
     (POST "/market/listing/:id/edit" {params :params} (listing-save params))
     (POST "/market/listings/create" {params :params} (listing-create params))
-    (GET "/market/listing/:id/add" [id] (add-to-cart id))
     (GET "/market/about" [] (about-page)))
