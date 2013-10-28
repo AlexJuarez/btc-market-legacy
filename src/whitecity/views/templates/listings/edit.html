@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<form action="/market/listings/{{id}}/edit" enctype="multipart/form-data" method="POST">
+<form action="/market/listing/{{id}}/edit" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
   <div class="image">
   {% if image_id %}
@@ -20,7 +20,7 @@
   <div class="form-group top public">
       <label>Public?</label>
       <div> 
-        <input type="checkbox" name="public" value="true">
+        <input type="checkbox" {% if public %}checked{% endif %} name="public" value="true">
         (check for yes)
       </div>
   </div>

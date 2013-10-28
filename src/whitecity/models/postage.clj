@@ -14,6 +14,9 @@
           (where {:user_id (util/parse-int user-id)})))
 
 (defn get 
+  ([id]
+   (first (select postage
+      (where {:id (util/parse-int id)}))))
   ([id user-id]
     (first (select postage
       (where {:id (util/parse-int id) :user_id user-id})))))

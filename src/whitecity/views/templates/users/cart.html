@@ -1,10 +1,10 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1>Shopping Cart</h1>
-{{slug}}
 {% for item in cart %}
 {{item}}
 {% endfor %}
+{{errors}}
 {% if listings %}
 <form class="my-cart" action"/market/cart" method="POST">
 {% csrf-token %}
@@ -34,12 +34,12 @@
       <select name="postage[{{listing.lid}}]">
         <option>select one</option>
         {% for postage in listing.postage %}
-        <option value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
+        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
         {% endfor %}
       </select>
     </td>
     <td>{{listing.total}}</td>
-    <td>{% if liisting.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
   </tr>
   {% endfor %}
   </tbody>

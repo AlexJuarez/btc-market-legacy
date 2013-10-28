@@ -10,10 +10,14 @@
 
 (defentity users
   (table :user)
+  (has-many orders)
   (has-many listings)
   (has-many messages)
   (has-many images)
   (has-many postage))
+
+(defentity sellers
+  (table :user))
 
 (defentity listings
   (table :listing)
@@ -24,6 +28,7 @@
 
 (defentity orders
   (table :order)
+  (belongs-to sellers {:fk :seller_id})
   (belongs-to users)
   (belongs-to currency)
   (belongs-to listings)

@@ -60,6 +60,7 @@
   (up [] (create
            (tbl :listing
                 (boolean :public (default false))
+                (boolean :hedged (default false))
                 (varchar :title 100)
                 (varchar :to 100)
                 (varchar :from 100)
@@ -88,7 +89,7 @@
                 (bigint :postage_price)
                 (integer :quantity)
                 (boolean :hedged)
-                (varchar :title)
+                (varchar :title 100)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :currency)

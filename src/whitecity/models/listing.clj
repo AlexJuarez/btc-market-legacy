@@ -31,7 +31,7 @@
 
 (defn get-in [cart]
   (select listings
-    (fields [:id :lid] :quantity :title :price :description :user.login :user.alias :user.pub_key)
+    (fields [:id :lid] :hedged :quantity :title :price :description :user.login :user.alias :user.pub_key)
           (with users
                 (with postage)
           (fields :id :login :alias :pub_key))
@@ -39,7 +39,7 @@
 
 (defn view [id]
   (first (select listings
-    (fields :id :title :currency_id :category_id :description :image_id :user_id :price :to :from)
+    (fields :id :title :currency_id :hedged :category_id :description :image_id :user_id :price :to :from)
     (with currency (fields [:name :currency_name] [:value :currency_value]))
     (with category (fields [:name :category_name]))
     (with users (fields [:login :user_login] [:alias :user_alias]))

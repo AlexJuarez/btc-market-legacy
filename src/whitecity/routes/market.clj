@@ -7,6 +7,7 @@
             [whitecity.models.listing :as listing]
             [whitecity.models.image :as image]
             [whitecity.models.postage :as postage]
+            [whitecity.models.order :as order]
             [noir.response :as resp]
             [clj-time.core :as cljtime]
             [clj-time.coerce :as tc]
@@ -23,7 +24,7 @@
            (session/get :user) 
            {:listing_count (listing/count (user-id)) 
             :errors {} 
-            :orders 0 
+            :orders (order/count (user-id)) 
             :messages (message/count (user-id)) 
             :cart (count (session/get :cart))})})
 
@@ -97,7 +98,7 @@
   ([slug]
    (let [post (postage/add! slug (user-id))]
      (if (empty? (:errors post))
-       (resp/redirect (str "/market/postage/" (:id post) "/edit"))
+       (resp/redirect "/market/listings")
        (layout/render "postage/create.html" (merge (set-info) post))))))
 
 (defn postage-edit [id]
@@ -118,16 +119,24 @@
 (defn cart-add
   "add a item to the cart"
   [id]
-  (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1}}))
+  (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1 :postage nil}}))
   (resp/redirect "/market/cart"))
 
 (defn cart-get
   [id key]
    (key ((session/get :cart) id)))
 
-(defn cart-view []
-  (let [listings (map #(conj % {:subtotal (* (:price %) (cart-get (:lid %) :quantity))}) (listing/get-in (keys (session/get :cart))))]
-    (layout/render "users/cart.html" (merge {:listings listings} (set-info)))))
+(defn postage-get-price
+  [id postages]
+  (if (nil? id)
+    0
+    (:price (first (filter #(= id (:id %)) postages)))))
+
+(defn cart-view [& option]
+  (let [listings (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
+                             total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
+                         (conj % {:subtotal subtotal :total total})) (listing/get-in (keys (session/get :cart))))]
+    (layout/render "users/cart.html" (merge {:errors {} :listings listings} (first option) (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
   (session/put! :cart 
@@ -136,12 +145,16 @@
                           #(hash-map (key %) (merge (val %) {:quantity (util/parse-int (quantity (str (key %)))) :postage (util/parse-int (postage (str (key %))))})) 
                           (session/get :cart))))
   (if (= "Update Cart" submit)
-    (layout/render "users/cart.html" (merge {:errors {} :slug slug :cart (session/get :cart)} (set-info)))
-    (let [order (order/add (session/get :cart) address pin (user-id))]
+    (cart-view)
+    (let [order (order/add! (session/get :cart) address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/market/orders")
-        (layout/render "users/cart.html" (merge order (set-info)))))))
+        (cart-view order)))))
 
+(defn orders-page 
+  ([]
+   (let [orders (order/all (user-id))]
+     (layout/render "orders/index.html" (merge {:errors {} :orders orders} (set-info))))))
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
@@ -149,6 +162,7 @@
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
     (GET "/market/cart/add/:id" [id] (cart-add id))
+    (GET "/market/orders" [] (orders-page))
     (GET "/market/cart" [] (cart-view))
     (POST "/market/cart" {params :params} (cart-update params))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))

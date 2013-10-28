@@ -11,17 +11,23 @@
         [whitecity.models.listing :as listings]
         [whitecity.util :as util]))
 
+(defn all [id]
+  (select orders
+    (with sellers (fields :login :alias))
+    (where {:user_id id})))
+
 (defn check-item [item]
   (let [id (key item)
         quantity (:quantity (val item)) 
         post (:postage (val item)) 
+        listing (listings/get id)
         errors (merge
-                (let [error [(when-not (< 0 quantity) "Quantity must be greater than 0") 
-                             (when-not (< quantity (listings/max id)) "You can not order more than the max")]]
+                (let [error (reduce merge [(when-not (< 0 quantity) ["Quantity must be greater than 0"]) 
+                             (when-not (<= quantity (:quantity listing)) ["You can not order more than the max"])])]
                   (when-not (empty? error)
                    {:quantity error}))
-                (let [error [(when (nil? post) "You need to select a postage")
-                             (when (nil? postage/get post (:user_id (listings/get id))) "You need to select a valid postage option")]]
+                (let [error (reduce merge [(when (nil? post) ["You need to select a postage"])
+                             (when (nil? (postage/get post (:user_id listing))) ["You need to select a valid postage option"])])]
                   (when-not (empty? error)
                     {:postage error})))]
     (when-not (empty? errors)
@@ -50,10 +56,15 @@
      :status 0}))
 
 (defn add! [cart address pin user-id]
-  (let [cart-check {:cart (reduce merge (map check-item cart))}
+  (let [cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         address-check (when (empty? address) {:address "You need to enter an address"})
         pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
         errors (merge cart-check address-check pin-check)]
     (if (empty? errors)
-      (map #(store! (prep % address user-id)) cart)
+      (apply #(store! (prep % address user-id)) cart)
       {:address address :errors errors})))
+
+(defn count [id]
+  (:cnt (first (select orders
+    (aggregate (count :*) :cnt)
+    (where {:user_id id})))))
