@@ -1,0 +1,45 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<h1>My orders</h1>
+{{orders}}
+{% if listings %}
+<table>
+  <thead>
+    <tr>
+      <th>seller</th>
+      <th>item</th>
+      <th>price</th>
+      <th>quantity</th>
+      <th>sub-total</th>
+      <th>postage</th>
+      <th>total</th>
+      <th>hedged</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for listing in listings %}
+  {{listing}}
+  <tr>
+    <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
+    <td>{{listing.title}}</td>
+    <td>{{listing.price}}</td>
+    <td><input type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
+    <td>{{listing.subtotal}}</td>
+    <td>
+      <select name="postage[{{listing.lid}}]">
+        <option>select one</option>
+        {% for postage in listing.postage %}
+        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>{{listing.total}}</td>
+    <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="well">You don't have any pending orders.</p>
+{% endif %}
+{% endblock %}
