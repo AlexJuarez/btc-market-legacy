@@ -85,11 +85,12 @@
   (up [] (create
            (tbl :order
                 (bigint :price)
-                (bigint :postage-price)
+                (bigint :postage_price)
                 (integer :quantity)
                 (boolean :hedged)
                 (varchar :title)
                 (text :address)
+                (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :currency)
                 (refer-to :listing)
                 (refer-to :postage)

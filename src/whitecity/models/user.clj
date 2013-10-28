@@ -24,6 +24,11 @@
   (first (select users
           (where {:alias a}))))
 
+(defn get-with-pin [id pin]
+  (first (select users
+          (fields :login)
+          (where {:id id :pin (util/parse-int pin)}))))
+
 ;; Mutations and Checks
 
 (defn prep [{pass :pass :as user}]

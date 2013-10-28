@@ -118,8 +118,8 @@
 (defn cart-add
   "add a item to the cart"
   [id]
-  (do (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1}}))
-      (resp/redirect "/market/cart")))
+  (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1}}))
+  (resp/redirect "/market/cart"))
 
 (defn cart-get
   [id key]
@@ -129,6 +129,19 @@
   (let [listings (map #(conj % {:subtotal (* (:price %) (cart-get (:lid %) :quantity))}) (listing/get-in (keys (session/get :cart))))]
     (layout/render "users/cart.html" (merge {:listings listings} (set-info)))))
 
+(defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
+  (session/put! :cart 
+                (reduce merge 
+                        (map 
+                          #(hash-map (key %) (merge (val %) {:quantity (util/parse-int (quantity (str (key %)))) :postage (util/parse-int (postage (str (key %))))})) 
+                          (session/get :cart))))
+  (if (= "Update Cart" submit)
+    (layout/render "users/cart.html" (merge {:errors {} :slug slug :cart (session/get :cart)} (set-info)))
+    (let [order (order/add (session/get :cart) address pin (user-id))]
+      (if (empty? (:errors order))
+        (resp/redirect "/market/orders")
+        (layout/render "users/cart.html" (merge order (set-info)))))))
+
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
@@ -137,6 +150,7 @@
     (GET "/market/messages/:id" [id] (messages-thread id))
     (GET "/market/cart/add/:id" [id] (cart-add id))
     (GET "/market/cart" [] (cart-view))
+    (POST "/market/cart" {params :params} (cart-update params))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))

@@ -1,7 +1,13 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1>Shopping Cart</h1>
+{{slug}}
+{% for item in cart %}
+{{item}}
+{% endfor %}
 {% if listings %}
+<form class="my-cart" action"/market/cart" method="POST">
+{% csrf-token %}
 <table>
   <thead>
     <tr>
@@ -22,10 +28,10 @@
     <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
     <td>{{listing.title}}</td>
     <td>{{listing.price}}</td>
-    <td><input type="text" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
+    <td><input type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
     <td>{{listing.subtotal}}</td>
     <td>
-      <select>
+      <select name="postage[{{listing.lid}}]">
         <option>select one</option>
         {% for postage in listing.postage %}
         <option value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
@@ -45,9 +51,13 @@
   <label for="address">Address</label>
   <textarea rows="4" class="form-control" id="address" name="address">{{address}}</textarea> 
   <label for="pin">Pin: </label>
+    {% if errors.pin %}
+      {{errors.pin}}
+    {% endif %}
     <input type="password" name="pin" id="pin" />
-  <input type="submit" />
+    <input type="submit" name="submit" value="Place Order" onclick="return confirm('Order?')" />
 </div>
+</form>
 {% else %}
   <p class="well">Your cart is empty!</p>
 {% endif %}
