@@ -1,8 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1>My orders</h1>
-{{orders}}
-{% if listings %}
+{% if orders %}
 <table>
   <thead>
     <tr>
@@ -11,30 +10,24 @@
       <th>price</th>
       <th>quantity</th>
       <th>sub-total</th>
-      <th>postage</th>
+      <th>postage (cost)</th>
       <th>total</th>
       <th>hedged</th>
+      <th>status</th>
     </tr>
   </thead>
   <tbody>
-  {% for listing in listings %}
-  {{listing}}
+  {% for order in orders %}
   <tr>
-    <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
-    <td>{{listing.title}}</td>
-    <td>{{listing.price}}</td>
-    <td><input type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
-    <td>{{listing.subtotal}}</td>
-    <td>
-      <select name="postage[{{listing.lid}}]">
-        <option>select one</option>
-        {% for postage in listing.postage %}
-        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
-        {% endfor %}
-      </select>
-    </td>
-    <td>{{listing.total}}</td>
-    <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td><a href="/market/user/{{order.seller_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
+    <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
+    <td>{{order.price}}</td>
+    <td>{{order.quantity}}</td>
+    <td>{{order.subtotal}}</td>
+    <td>{{order.postage_price}}</td>
+    <td>{{order.total}}</td>
+    <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td><em>{{order.status|get-status}}</em></td>
   </tr>
   {% endfor %}
   </tbody>

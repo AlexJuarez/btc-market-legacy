@@ -13,3 +13,8 @@
 (add-filter! :postage-cart
              (fn [x]
                (:postage ((session/get :cart) x))))
+
+(add-filter! :get-status
+             (fn [x]
+               (if (= x 0) "processing"
+               (if (= x 1) "shipping" "in resolution"))))

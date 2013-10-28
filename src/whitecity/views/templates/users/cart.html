@@ -1,6 +1,9 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1>Shopping Cart</h1>
+<p class="well">
+  <a href="/market/cart/empty">empty cart</a>
+</p>
 {% for item in cart %}
 {{item}}
 {% endfor %}

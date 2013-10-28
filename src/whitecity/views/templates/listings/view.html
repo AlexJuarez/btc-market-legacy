@@ -10,7 +10,7 @@
     <span class="price">{{price}}</span>
     <a href="/market/cart/add/{{id}}">add to cart</a>
   </p>
-  <p class="well">
+  <div class="well">
     <ul>
       <li>seller: <a href="/market/user/{{user_id}}" class="seller">{% if user_alias %}{{user_alias}}{% else %}{{user_login}}{% endif %}</a></li>
       <li>ships from: {{from}}</li>
@@ -18,7 +18,7 @@
       <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
       <li><a href="/market/bookmark/{{id}}">bookmark this item</a></li>
     </ul>
-  </p>
+  </div>
   <p class="postage">
     <span>postage options: </span>
     <select id="postage">

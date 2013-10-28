@@ -9,6 +9,7 @@
         [whitecity.models.user :as user]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
+        [noir.session :as session]
         [whitecity.util :as util]))
 
 (defn all [id]
@@ -31,7 +32,7 @@
                   (when-not (empty? error)
                     {:postage error})))]
     (when-not (empty? errors)
-      {(key item) errors})))
+      {id errors})))
 
 (defn store! [order]
   (insert orders (values order)))
@@ -61,7 +62,8 @@
         pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
         errors (merge cart-check address-check pin-check)]
     (if (empty? errors)
-      (apply #(store! (prep % address user-id)) cart)
+      (-> (session/put! :cart {}) 
+        (apply #(store! (prep % address user-id)) cart))
       {:address address :errors errors})))
 
 (defn count [id]

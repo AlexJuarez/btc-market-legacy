@@ -48,7 +48,7 @@
      (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
 
 (defn listings-page []
-  (layout/render "market/listings.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
+  (layout/render "listings/index.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
 
 ;;TODO add thumbnail parsing with imagez
 (defn parse-image [image_id image]
@@ -153,7 +153,9 @@
 
 (defn orders-page 
   ([]
-   (let [orders (order/all (user-id))]
+  (let [orders (map #(let [subtotal (* (:price %) (:quantity %))
+                             total (+ subtotal (:postage_price %))] 
+                         (conj % {:subtotal subtotal :total total})) (order/all (user-id)))]
      (layout/render "orders/index.html" (merge {:errors {} :orders orders} (set-info))))))
 
 (def-restricted-routes market-routes
