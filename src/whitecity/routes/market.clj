@@ -136,9 +136,10 @@
     (:price (first (filter #(= id (:id %)) postages)))))
 
 (defn cart-view [& option]
-  (let [listings (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
+  (let [ls (listing/get-in (keys (session/get :cart)))
+        listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
                              total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
-                         (conj % {:subtotal subtotal :total total})) (listing/get-in (keys (session/get :cart))))]
+                         (conj % {:subtotal subtotal :total total})) ls))]
     (layout/render "users/cart.html" (merge {:errors {} :listings listings} (first option) (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
@@ -154,10 +155,10 @@
         (resp/redirect "/market/orders")
         (cart-view order)))))
 
-(defn orders-page 
-  ([]
-  (let [orders (order/all (user-id))]
-     (layout/render "orders/index.html" (merge {:errors {} :orders orders} (set-info))))))
+(defn orders-page []
+  (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
+                         (conj % {:auto_finalize autofinalize})) (order/all (user-id)))]
+     (layout/render "orders/index.html" (merge {:errors {} :orders orders} (set-info)))))
 
 (defn sales-page 
   ([]

@@ -30,12 +30,13 @@
       (where {:id (util/parse-int id) :user_id user-id})))))
 
 (defn get-in [cart]
+  (if-not (nil? cart)
   (select listings
     (fields [:id :lid] :hedged :quantity :title :price :description :user.login :user.alias :user.pub_key)
           (with users
                 (with postage)
           (fields :id :login :alias :pub_key))
-          (where {:id [in cart]})))
+          (where {:id [in cart]}))))
 
 (defn view [id]
   (first (select listings

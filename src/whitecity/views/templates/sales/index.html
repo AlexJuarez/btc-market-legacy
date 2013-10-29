@@ -2,14 +2,17 @@
 {% block content %}
 <h1>My Sales</h1>
 {% if sales %}
+<input type="submit" value="in transit" />
+<input type="submit" value="reject" />
 <table>
   <thead>
     <tr>
-      <th>buyer</th>
+      <th></th>
+      <th>order #</th>
       <th>item</th>
-      <th>price</th>
-      <th>quantity</th>
       <th>postage type</th>
+      <th>quantity</th>
+      <th>buyer</th>
       <th>total</th>
       <th>hedged</th>
       <th>status</th>
@@ -18,11 +21,12 @@
   <tbody>
   {% for order in sales %}
   <tr>
-    <td><a href="/market/user/{{order.user_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
+    <td><input type="checkbox" /></td>
+    <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
-    <td>{{order.price}}</td>
-    <td>{{order.quantity}}</td>
     <td>{{order.postage_title}}</td>
+    <td>{{order.quantity}}</td>
+    <td><a href="/market/user/{{order.user_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
     <td>{{order.total}}</td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td><em>{{order.status|get-status}}</em></td>

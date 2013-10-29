@@ -20,6 +20,7 @@
 (defn sold [id]
   (select orders
     (with users (fields :login :alias))
+    (with postage (fields [:title :postage_title]))
     (where {:seller_id id})))
 
 

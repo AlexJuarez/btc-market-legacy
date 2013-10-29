@@ -12,10 +12,12 @@
       <th>status</th>
       <th>hedged</th>
       <th>auto finalize</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
   {% for order in orders %}
+  {{order}}
   <tr>
     <td><a href="/market/orders/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
@@ -23,7 +25,8 @@
     <td><a href="/market/user/{{order.seller_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
     <td><em>{{order.status|get-status}}</em></td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
-    <td><a href="/market/orders/{{order.id}}/resolve">resolve</a> | <a href="/market/orders/{{order.id}}/finalize">finalize<a></td>
+    <td><span time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span></td>
+    <td>{% if order.status = 1 %} <a href="/market/orders/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/orders/{{order.id}}/finalize">finalize<a></td>
   </tr>
   {% endfor %}
   </tbody>
