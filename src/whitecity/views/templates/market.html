@@ -14,7 +14,8 @@
             | <a href="/market/orders">orders <strong>{{user.orders}}</strong></a>
             | <a href="/market/account/wallet">wallet &#3647;{{user.btc|double-format:4}}</strong></a>
             {% if user.vendor %}
-            | <a href="/market/listings">listings <strong>{{user.listing_count}}</strong></a>
+            | <a href="/market/sales">sales <strong>{{user.sales}}</strong></a>
+            | <a href="/market/listings">listings <strong>{{user.listings}}</strong></a>
             {% endif %}
           </nav>
           <form action="/market/search" method="POST" class="search">

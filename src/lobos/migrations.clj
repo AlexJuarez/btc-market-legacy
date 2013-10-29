@@ -87,6 +87,7 @@
            (tbl :order
                 (bigint :price)
                 (bigint :postage_price)
+                (varchar :postage_title 100)
                 (integer :quantity)
                 (boolean :hedged)
                 (varchar :title 100)

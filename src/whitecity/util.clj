@@ -9,6 +9,28 @@
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
+(def alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
+
+(defn int-to-base36
+  "Converts an integer to a tx id"
+  ([n] (int-to-base36 (rem n 36) (quot n 36) ""))
+  ([remainder number accum]
+   (cond
+     (zero? number) (str (nth alphabet remainder) accum)
+     :else (recur (rem number 36) (quot number 36) (str (nth alphabet remainder) accum)))))
+
+(defn base36-to-int
+  "Converts tx to an id"
+  ([str] (base36-to-int (reverse str) 0 0))
+  ([inverse-str power accum]
+   (cond
+     (empty? inverse-str) accum
+     :else (base36-to-int
+             (rest inverse-str)
+             (inc power)
+             (+ accum (* (long (Math/pow 36 power))
+                         (.indexOf alphabet (str (first inverse-str)))))))))
+
 (defn format-title-url [id title]
   (if title
     (let [sb (new StringBuffer)]

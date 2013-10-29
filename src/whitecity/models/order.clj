@@ -17,6 +17,12 @@
     (with sellers (fields :login :alias))
     (where {:user_id id})))
 
+(defn sold [id]
+  (select orders
+    (with users (fields :login :alias))
+    (where {:seller_id id})))
+
+
 (defn check-item [item]
   (let [id (key item)
         quantity (:quantity (val item)) 
@@ -45,6 +51,7 @@
         listing (listings/get id)]
     {:price (:price listing) 
      :postage_price (:price post) 
+     :postage_title (:title post)
      :quantity quantity
      :hedged (:hedged listing)
      :title (:title listing)
@@ -70,3 +77,8 @@
   (:cnt (first (select orders
     (aggregate (count :*) :cnt)
     (where {:user_id id})))))
+
+(defn count-sales [id]
+  (:cnt (first (select orders
+    (aggregate (count :*) :cnt)
+    (where {:seller_id id})))))

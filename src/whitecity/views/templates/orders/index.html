@@ -5,29 +5,25 @@
 <table>
   <thead>
     <tr>
-      <th>seller</th>
+      <th>order #</th>
       <th>item</th>
-      <th>price</th>
       <th>quantity</th>
-      <th>sub-total</th>
-      <th>postage (cost)</th>
-      <th>total</th>
-      <th>hedged</th>
+      <th>seller</th>
       <th>status</th>
+      <th>hedged</th>
+      <th>auto finalize</th>
     </tr>
   </thead>
   <tbody>
   {% for order in orders %}
   <tr>
-    <td><a href="/market/user/{{order.seller_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
+    <td><a href="/market/orders/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
-    <td>{{order.price}}</td>
     <td>{{order.quantity}}</td>
-    <td>{{order.subtotal}}</td>
-    <td>{{order.postage_price}}</td>
-    <td>{{order.total}}</td>
-    <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td><a href="/market/user/{{order.seller_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
     <td><em>{{order.status|get-status}}</em></td>
+    <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td><a href="/market/orders/{{order.id}}/resolve">resolve</a> | <a href="/market/orders/{{order.id}}/finalize">finalize<a></td>
   </tr>
   {% endfor %}
   </tbody>
