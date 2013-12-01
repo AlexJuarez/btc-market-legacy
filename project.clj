@@ -18,6 +18,7 @@
    [metis "0.3.3"]
    [korma "0.3.0-RC6"]
    [lobos "1.0.0-beta1"]
+   [cheshire "5.2.0"]
    [log4j
     "1.2.17"
     :exclusions

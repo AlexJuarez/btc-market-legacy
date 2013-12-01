@@ -1,6 +1,7 @@
 (ns whitecity.handler  
   (:use whitecity.routes.market
-        whitecity.routes.auth)
+        whitecity.routes.auth
+        whitecity.routes.sales)
   (:require [compojure.core :refer [defroutes]]            
             [whitecity.models.schema :as schema]
             [noir.util.middleware :as middleware]
@@ -38,7 +39,7 @@
     {:path "whitecity.log" :max-size (* 512 1024) :backlog 10})
   
   (if-not (schema/actualized?)
-    (schema/actualize))
+    (do (schema/actualize) (schema/load-fixtures)))
 
   (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
 
@@ -54,6 +55,7 @@
            ;; add your application routes here
            [auth-routes
             market-routes
+            sales-routes
             app-routes]
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]

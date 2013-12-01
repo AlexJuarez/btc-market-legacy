@@ -1,9 +1,7 @@
 (ns whitecity.models.image
   (:use [korma.db :only (defdb)]
         [korma.core]
-        [whitecity.db])
-  (:require 
-        [whitecity.models.schema :as schema]))
+        [whitecity.db]))
 
 (defn add! [user-id]
   (insert images (values {:user_id user-id}))) 

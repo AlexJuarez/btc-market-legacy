@@ -45,15 +45,14 @@
   (up [] (create
            (tbl :currency
                 (varchar :name 30 :unique :not-null)
-                (bigint :value))))
+                (float :value))))
   (down [] (drop (table :currency))))
 
 (defmigration add-categories-table
   (up [] (create
            (tbl :category
                 (varchar :name 30)
-                (integer :count)
-                (integer :parent))))
+                (integer :count))))
   (down [] (drop (table :category))))
 
 (defmigration add-listings-table
@@ -66,7 +65,7 @@
                 (varchar :from 100)
                 (refer-to :user)
                 (refer-to :image)
-                (bigint :price :not-null)
+                (float :price :not-null)
                 (integer :quantity (default 0))
                 (refer-to :currency)
                 (refer-to :category)
@@ -78,15 +77,15 @@
            (tbl :postage
                 (refer-to :user)
                 (varchar :title 100)
-                (bigint :price :not-null)
+                (float :price :not-null)
                 (refer-to :currency))))
   (down [] (drop (table :postage))))
 
 (defmigration add-orders-table
   (up [] (create
            (tbl :order
-                (bigint :price)
-                (bigint :postage_price)
+                (float :price)
+                (float :postage_price)
                 (varchar :postage_title 100)
                 (integer :quantity)
                 (boolean :hedged)

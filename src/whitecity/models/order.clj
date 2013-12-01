@@ -17,11 +17,18 @@
     (with sellers (fields :login :alias))
     (where {:user_id id})))
 
-(defn sold [id]
-  (select orders
+(defn sold 
+  ([id]
+   (select orders
     (with users (fields :login :alias))
     (with postage (fields [:title :postage_title]))
     (where {:seller_id id})))
+ ([status id]
+  (select orders
+    (with users (fields :login :alias))
+    (with postage (fields [:title :postage_title]))
+    (where {:seller_id id :status status}))))
+
 
 
 (defn check-item [item]
@@ -70,9 +77,19 @@
         pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
         errors (merge cart-check address-check pin-check)]
     (if (empty? errors)
-      (-> (session/put! :cart {}) 
+      (do (session/put! :cart {}) 
         (apply #(store! (prep % address user-id)) cart))
       {:address address :errors errors})))
+
+(defn update-sales [sales seller-id status]
+  (update orders
+          (set-fields {:status status})
+          (where {:seller_id seller-id :id [in sales]})))
+
+(defn reject-sales [sales seller-id]
+  (delete orders
+          (where {:seller_id seller-id :id [in sales]})))
+
 
 (defn count [id]
   (:cnt (first (select orders
@@ -82,4 +99,4 @@
 (defn count-sales [id]
   (:cnt (first (select orders
     (aggregate (count :*) :cnt)
-    (where {:seller_id id})))))
+    (where {:seller_id id :status 0})))))

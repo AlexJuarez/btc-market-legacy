@@ -1,6 +1,7 @@
 (ns whitecity.routes.market
   (:use compojure.core
-        noir.util.route)
+        noir.util.route
+        whitecity.helpers.route)
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
             [whitecity.models.message :as message]
@@ -15,21 +16,6 @@
             [noir.session :as session]
             [noir.io :as io]
             [whitecity.util :as util]))
-
-(defn user-id []
-  (:id (session/get :user)))
-
-(defn set-info []
-  (let [user (session/get :user) id (:id user)]
-    {:user (merge 
-             user
-             (when (:vendor user) 
-               {:listings (listing/count id) 
-                :sales (order/count-sales id)})
-             {:errors {} 
-              :orders (order/count id) 
-              :messages (message/count id) 
-              :cart (count (session/get :cart))})}))
 
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public)} (set-info))))
@@ -158,14 +144,7 @@
 (defn orders-page []
   (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
                          (conj % {:auto_finalize autofinalize})) (order/all (user-id)))]
-     (layout/render "orders/index.html" (merge {:errors {} :orders orders} (set-info)))))
-
-(defn sales-page 
-  ([]
-  (let [sales (map #(let [subtotal (* (:price %) (:quantity %))
-                             total (+ subtotal (:postage_price %))] 
-                         (conj % {:subtotal subtotal :total total})) (order/sold (user-id)))]
-     (layout/render "sales/index.html" (merge {:errors {} :sales sales} (set-info))))))
+     (layout/render "orders/index.html" (merge {:errors {} :orders orders :user-id (user-id)} (set-info)))))
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
@@ -174,7 +153,6 @@
     (GET "/market/messages/:id" [id] (messages-thread id))
     (GET "/market/cart/add/:id" [id] (cart-add id))
     (GET "/market/orders" [] (orders-page))
-    (GET "/market/sales" [] (sales-page))
     (GET "/market/cart" [] (cart-view))
     (POST "/market/cart" {params :params} (cart-update params))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))

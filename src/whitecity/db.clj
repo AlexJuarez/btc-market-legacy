@@ -1,10 +1,15 @@
 (ns whitecity.db
   (:use korma.core
         [korma.db :only (defdb)]
-        [korma.core])
-  (:require [whitecity.models.schema :as schema]))
+        [korma.core]))
 
-(defdb db schema/db-spec)
+(def db-spec
+  {:subprotocol "postgresql"
+   :subname "//localhost/whitecity"
+   :user "devil"
+   :password "admin"})
+
+(defdb db db-spec)
 
 (declare users orders messages listings postage images category currency)
 

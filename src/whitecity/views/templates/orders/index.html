@@ -17,7 +17,6 @@
   </thead>
   <tbody>
   {% for order in orders %}
-  {{order}}
   <tr>
     <td><a href="/market/orders/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
