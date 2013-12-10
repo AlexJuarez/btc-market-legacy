@@ -22,3 +22,7 @@
               :messages (message/count id) 
               :cart (count (session/get :cart))})}))
 
+(defn cc
+  "Converts a currency"
+  [{:keys [currency_id price] :as slug}]
+  (if (not (= currency_id (:currency_id (session/get :user))))

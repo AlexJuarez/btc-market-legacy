@@ -8,6 +8,7 @@
             [whitecity.models.listing :as listing]
             [whitecity.models.image :as image]
             [whitecity.models.postage :as postage]
+            [whitecity.models.currency :as currency]
             [whitecity.models.order :as order]
             [noir.response :as resp]
             [clj-time.core :as cljtime]
@@ -57,21 +58,21 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (merge {:images (image/get (user-id))} (set-info) listing))))
+    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id))} listing (set-info)))))
+    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id)) :currencies (currency/all)} listing (set-info)))))
 
 (defn listing-create
   "Listing creation page" 
   ([]
-   (layout/render "listings/create.html" (conj {:images (image/get (user-id))} (set-info))))
+   (layout/render "listings/create.html" (conj {:images (image/get (user-id)) :currencies (currency/all)} (set-info))))
   ([{:keys [image image_id] :as slug}]
    (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
      (if (empty? (:errors listing))
       (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
-      (layout/render "listings/create.html" (merge {:images (image/get (user-id))} (set-info) listing))))))
+      (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :currencies (currency/all)} (set-info) listing))))))
 
 (defn profile-view [id]
   (let [user (user/get id)]
@@ -83,20 +84,20 @@
 
 (defn postage-create
   ([]
-   (layout/render "postage/create.html" (set-info)))
+   (layout/render "postage/create.html" (merge {:currencies (currency/all)} (set-info))))
   ([slug]
    (let [post (postage/add! slug (user-id))]
      (if (empty? (:errors post))
        (resp/redirect "/market/listings")
-       (layout/render "postage/create.html" (merge (set-info) post))))))
+       (layout/render "postage/create.html" (merge {:currencies (currency/all)} (set-info) post))))))
 
 (defn postage-edit [id]
   (let [postage (postage/get id (user-id))]
-    (layout/render "postage/edit.html" (merge (set-info) postage))))
+    (layout/render "postage/edit.html" (merge {:currencies (currency/all)} (set-info) postage))))
 
 (defn postage-save [{:keys [id] :as slug}]
   (let [post (postage/update! slug id (user-id))]
-    (layout/render "postage/edit.html" (merge {:id id} post (set-info)))))
+    (layout/render "postage/edit.html" (merge {:currencies (currency/all) :id id} post (set-info)))))
 
 (defn postage-remove [id]
   (let [record (postage/remove! id (user-id))]

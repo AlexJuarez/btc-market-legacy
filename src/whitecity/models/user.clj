@@ -8,6 +8,7 @@
         [clj-time.coerce :as tc]
         [whitecity.util :as util]
         [whitecity.models.message :as message]
+        [whitecity.models.currency :as currency]
         [noir.util.crypt :as warden]))
 
 ;; Gets
@@ -46,7 +47,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :pass pass} (prep) (store!))
+      (-> {:login login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id]

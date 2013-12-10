@@ -19,6 +19,7 @@
                (integer :pin)
                (bigint :btc (default 0))
                (timestamp :last_login)
+               (refer-to :currency)
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
               )))

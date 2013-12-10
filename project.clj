@@ -9,6 +9,7 @@
    [selmer "0.4.3"]
    [com.taoensso/timbre "2.6.2"]
    [com.postspectacular/rotor "0.1.0"]
+   [clojurewerkz/spyglass "1.1.0"]
    [com.taoensso/tower "1.7.1"]
    [markdown-clj "0.9.33"]
    [clj-time "0.6.0"]
