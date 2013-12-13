@@ -12,14 +12,15 @@
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
-(defn prep [{:keys [title description from to public] :as listing}]
+(defn prep [{:keys [title description from to public currency] :as listing}]
   (merge {:title title 
           :description description 
+          :currency currency
           :from from 
           :to to 
           :public (= public "true") 
           :updated_on (tc/to-sql-date (cljtime/now))} 
-         (mapcat #(check-field listing %) [:quantity :image_id :price :category_id :currency_id])))
+         (mapcat #(check-field listing %) [:quantity :image_id :price :category_id])))
 
 (defn get 
   ([id]
@@ -40,8 +41,8 @@
 
 (defn view [id]
   (first (select listings
-    (fields :id :title :currency_id :hedged :category_id :description :image_id :user_id :price :to :from)
-    (with currency (fields [:name :currency_name] [:value :currency_value]))
+    (fields :id :title :currency :hedged :category_id :description :image_id :user_id :price :to :from)
+    (with currency (fields [:name :currency_name]))
     (with category (fields [:name :category_name]))
     (with users (fields [:login :user_login] [:alias :user_alias]))
     (where {:id (util/parse-int id)}))))
@@ -76,12 +77,12 @@
   ([] 
    (select listings
     (with users)
-    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id)
+    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency)
     (where {:public true})))
   ([id]
    (select listings
     (with users)
-    (fields  :title :from :to :price :id :currency_id)
+    (fields  :title :from :to :price :id :currency)
     (where {:public true :user_id (util/parse-int id)}))))
 
 (defn all [id]

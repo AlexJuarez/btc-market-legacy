@@ -11,7 +11,7 @@
 
 (defdb db db-spec)
 
-(declare users orders messages listings postage images category currency)
+(declare users orders messages listings postage images category currency exchange)
 
 (defentity users
   (table :user)
@@ -57,3 +57,6 @@
 (defentity currency
   (has-many listings)
   (table :currency))
+
+(defentity exchange
+  (table :exchangerate))

@@ -3,6 +3,13 @@
      :exclude [alter drop bigint boolean char double float time])
        (:use (lobos [migration :only [defmigration]] core schema config helpers)))
 
+(defmigration add-currencies-table
+  (up [] (create
+           (tbl :currency
+                (varchar :key 3 :unique :not-null)
+                (varchar :name 200))))
+  (down [] (drop (table :currency))))
+
 (defmigration add-users-table
   (up [] (create
           (tbl :user
@@ -19,7 +26,7 @@
                (integer :pin)
                (bigint :btc (default 0))
                (timestamp :last_login)
-               (refer-to :currency)
+               (varchar :currency 3)
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
               )))
@@ -42,12 +49,15 @@
                 (varchar :name 67))))
   (down [] (drop (table :image))))
 
-(defmigration add-currencies-table
+(defmigration add-exchange-rate-table
   (up [] (create
-           (tbl :currency
-                (varchar :name 30 :unique :not-null)
-                (float :value))))
-  (down [] (drop (table :currency))))
+           (table :exchangerate
+                (varchar :from 3 :not-null)
+                (varchar :to 3 :not-null)
+                (float :value)
+                (timestamp :updated_on (default (now)))
+                  )))
+  (down [] (drop (table :exchangerate))))
 
 (defmigration add-categories-table
   (up [] (create
@@ -68,7 +78,7 @@
                 (refer-to :image)
                 (float :price :not-null)
                 (integer :quantity (default 0))
-                (refer-to :currency)
+                (varchar :currency 3)
                 (refer-to :category)
                 (text :description))))
   (down [] (drop (table :listing))))
@@ -79,7 +89,7 @@
                 (refer-to :user)
                 (varchar :title 100)
                 (float :price :not-null)
-                (refer-to :currency))))
+                (varchar :currency 3))))
   (down [] (drop (table :postage))))
 
 (defmigration add-orders-table
@@ -93,7 +103,7 @@
                 (varchar :title 100)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
-                (refer-to :currency)
+                (varchar :currency 3)
                 (refer-to :listing)
                 (refer-to :postage)
                 (refer-to :user)

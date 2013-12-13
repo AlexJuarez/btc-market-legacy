@@ -13,6 +13,8 @@ and you will need [couchbase][3] 2.2.0
 
 ## Running
 
+To check on the application stats visit http://ubuntu:8091/index.html
+
 To start a web server for the application, run:
 
     lein ring server

@@ -3,7 +3,6 @@
         [korma.core]
         [whitecity.db]))
 
-
 (defn get [id]
   (select currency
           (where {:id id})))

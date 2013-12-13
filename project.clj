@@ -13,6 +13,7 @@
    [com.taoensso/tower "1.7.1"]
    [markdown-clj "0.9.33"]
    [clj-time "0.6.0"]
+   [clj-http "0.7.8"]
    [net.sf.jlue/jlue-core "1.3"]
    [postgresql/postgresql "9.1-901.jdbc4"]
    [ring-anti-forgery "0.2.1"]

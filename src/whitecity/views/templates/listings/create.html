@@ -64,7 +64,7 @@
     <label for="price">
     <select title="currency" tabindex="3" name="currency_id" id="currency_id">
       {% for currency in currencies %}
-      <option value="{{currency.id}}">{{currency.name}}</option>
+      <option value="{{currency.key}}">{{currency.name}}</option>
       {% endfor %}
     </select>
     {% if errors.currency_id %}

@@ -10,9 +10,16 @@
 (defcommand pending-migrations []
               (lm/pending-migrations db/db-spec sname))
 
-(defn load-fixtures []
-  (c/add! (jr/parse-string (slurp "resources/currencies.json") true)))
+(defn load-currencies []
+  (c/add! (distinct 
+            (map 
+              #(-> {:key (second %) :name (first %)}) 
+              (jr/parse-string (slurp "resources/currencies.json") true)))))
 
+
+(defn load-fixtures []
+  (load-currencies))
+  
 (defn actualized?
     "checks if there are no pending migrations"
     []
