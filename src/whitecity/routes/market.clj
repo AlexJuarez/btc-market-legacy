@@ -58,7 +58,7 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :listing listing :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]

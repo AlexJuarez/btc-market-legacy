@@ -41,7 +41,7 @@
       {{errors.title|join:", "}}
     {% endif %}
     </label>
-    <input name="title" id="title" class="form-control" tabindex="1" type="text" value="{{title}}" />
+    <input name="title" id="title" class="form-control" type="text" value="{{title}}" />
   </div>
   <div class="form-group public">
       <label>Public?</label>
@@ -53,7 +53,7 @@
   <div class="form-group">
     <label for="category_id">Category: </label>
     <div>
-      <select tabindex="4" id="category_id" name="category_id">
+      <select id="category_id" name="category_id">
         {% for category in categories %}
         <option value="{{category.id}}">{{category.name}}</option>
         {% endfor %}
@@ -62,13 +62,13 @@
   </div>
   <div class="form-group {% if errors.title %}has-error{% endif %}">
     <label for="price">
-    <select title="currency" tabindex="3" name="currency_id" id="currency_id">
+    <select title="currency" name="currency" id="currency">
       {% for currency in currencies %}
-      <option value="{{currency.key}}">{{currency.name}}</option>
+      <option value="{{currency.key}}" {% ifequal currency.key user.currency %}selected="selected"{% endifequal %}>{{currency.name}}</option>
       {% endfor %}
     </select>
-    {% if errors.currency_id %}
-    {{errors.currency_id|join:", "}}
+    {% if errors.currency %}
+    {{errors.currency|join:", "}}
     {% endif %}
     Price: 
     {% if errors.price  %}
@@ -76,7 +76,7 @@
     {% endif %}
     </label>
     <div>
-      <input name="price" id="price" class="form-control" tabindex="2" type="text" value="{{price}}" />
+      <input name="price" id="price" class="form-control" type="text" value="{{price}}" />
     </div>
   </div>
   <div class="form-group {% if errors.quantity %}has-error{% endif %}">
@@ -97,10 +97,10 @@
   </div>
   <div class="form-group">
     <label for="description">Description:</label>
-    <textarea id="description" class="form-control" tabindex="5" rows="4" name="description">{{description}}</textarea>
+    <textarea id="description" class="form-control" rows="4" name="description">{{description}}</textarea>
   </div>
   <div class="form-group">
-    <button type="submit" tabindex="6" class="btn">create</button>
+    <button type="submit" class="btn">create</button>
   </div>
 </form>
 {% endblock %}
