@@ -18,7 +18,7 @@
     <label for="currency_id">Currency: </label>
     <select tabindex="3" name="currency_id" id="currency_id">
       {% for currency in currencies %}
-      <option value="{{currency.id}}">{{currency.name}}</option>
+      <option value="{{currency.id}}" {% ifequal currency.id currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
       {% endfor %}
     </select>
   </p>

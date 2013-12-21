@@ -4,8 +4,9 @@
         [whitecity.db]))
 
 (defn get [id]
-  (select currency
-          (where {:id id})))
+  (first
+    (select currency
+            (where {:id id}))))
 
 (defn all []
   (select currency))
@@ -14,5 +15,6 @@
   (insert currency (values currencies)))
 
 (defn find [name]
-  (select currency
-          (where {:name name})))
+  (first
+    (select currency
+            (where {:key name}))))

@@ -9,9 +9,16 @@
         [clj-time.coerce :as tc]
         [whitecity.util :as util]))
 
+(defn convert [postages]
+  (map #(assoc % :price (util/convert-currency %)) postages))
+
 (defn all [user-id]
   (select postage
-          (where {:user_id (util/parse-int user-id)})))
+      (where {:user_id (util/parse-int user-id)})))
+
+(defn public [user-id]
+  (convert (select postage
+      (where {:user_id (util/parse-int user-id)}))))
 
 (defn get 
   ([id]

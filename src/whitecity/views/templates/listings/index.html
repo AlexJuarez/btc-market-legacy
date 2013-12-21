@@ -1,5 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+{{user}}
 <div class="postage well">
 <a href="/market/postage/create">add postage</a>
 {% if postages %}
@@ -14,7 +15,7 @@
   </thead>
   <tbody>
     {% for postage in postages %}
-      <tr>
+    <tr>
         <td>{{postage.title}}</td>
         <td>{{postage.price}}</td>
         <td><a href="/market/postage/{{postage.id}}/edit">edit</a></td>
@@ -63,7 +64,7 @@ You need to add postage
     </div>
     <div class="cost">
       <h3>Price: {{listing.price}}</h3>
-      <h4>Currency: {{listing.currency_id}}</h4>
+      <h4>Currency: {{listing.currency_key}}</h4>
     </div>
   </div>
 {% endfor %}

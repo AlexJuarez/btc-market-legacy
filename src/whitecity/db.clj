@@ -19,7 +19,8 @@
   (has-many listings)
   (has-many messages)
   (has-many images)
-  (has-many postage))
+  (has-many postage)
+  (belongs-to currency))
 
 (defentity sellers
   (table :user))
@@ -48,7 +49,8 @@
   (belongs-to users))
 
 (defentity postage
-  (belongs-to users))
+  (belongs-to users)
+  (belongs-to currency))
 
 (defentity category
   (has-many listings)

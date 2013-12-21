@@ -80,7 +80,7 @@
 
 (defn listing-view [id]
   (let [listing (listing/view id)]
-    (layout/render "listings/view.html" (merge {:postages (postage/all (:user_id listing))} (set-info) listing))))
+    (layout/render "listings/view.html" (merge (set-info) listing))))
 
 (defn postage-create
   ([]

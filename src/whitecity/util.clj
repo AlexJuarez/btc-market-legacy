@@ -5,6 +5,7 @@
               [noir.session :as session]
               [whitecity.db :as db]
               [noir.io :as io]
+              [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
@@ -18,6 +19,14 @@
    (cond
      (zero? number) (str (nth alphabet remainder) accum)
      :else (recur (rem number 36) (quot number 36) (str (nth alphabet remainder) accum)))))
+
+(defn convert-currency [{:keys [currency_id price]}]
+  (let [user_currency (:currency_id (session/get :user))]
+  (if-not (= currency_id user_currency)
+    (let [rate (exchange/get currency_id user_currency)]
+         (if-not (and (nil? rate) (nil? (:value rate))) 
+           (* price (:value rate))))
+    price)))
 
 (defn base36-to-int
   "Converts tx to an id"

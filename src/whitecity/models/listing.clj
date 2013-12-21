@@ -8,19 +8,24 @@
         [clj-time.coerce :as tc]
         [whitecity.util :as util]))
 
+(defn convert-post [postage]
+  (map #(assoc % :price (util/convert-currency %) ) postage))
+
+(defn convert [listings]
+  (map #(assoc % :price (util/convert-currency %) :postage (convert-post (:postage %))) listings))
+
 (defn check-field [map key]
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
-(defn prep [{:keys [title description from to public currency] :as listing}]
+(defn prep [{:keys [title description from to public] :as listing}]
   (merge {:title title 
           :description description 
-          :currency currency
           :from from 
           :to to 
           :public (= public "true") 
           :updated_on (tc/to-sql-date (cljtime/now))} 
-         (mapcat #(check-field listing %) [:quantity :image_id :price :category_id])))
+         (mapcat #(check-field listing %) [:quantity :image_id :currency_id :price :category_id])))
 
 (defn get 
   ([id]
@@ -32,20 +37,21 @@
 
 (defn get-in [cart]
   (if-not (nil? cart)
-  (select listings
-    (fields [:id :lid] :hedged :quantity :title :price :description :user.login :user.alias :user.pub_key)
+  (convert (select listings
+    (fields [:id :lid] :hedged :quantity :title :price :currency_id :description :user.login :user.alias :user.pub_key)
           (with users
-                (with postage)
+            (with postage)
           (fields :id :login :alias :pub_key))
-          (where {:id [in cart]}))))
+          (where {:id [in cart]})))))
 
 (defn view [id]
-  (first (select listings
-    (fields :id :title :currency :hedged :category_id :description :image_id :user_id :price :to :from)
-    (with currency (fields [:name :currency_name]))
+  (first (convert (select listings
+    (fields :id :title :hedged :category_id :description :image_id :user_id :price :to :from)
+    (with currency (fields [:name :currency_name] [:key :currency_key]))
     (with category (fields [:name :category_name]))
-    (with users (fields [:login :user_login] [:alias :user_alias]))
-    (where {:id (util/parse-int id)}))))
+    (with users (fields [:login :user_login] [:alias :user_alias])
+          (with postage))
+    (where {:id (util/parse-int id)})))))
 
 (defn count [id]
   (:cnt (first (select listings
@@ -75,16 +81,19 @@
 
 (defn public
   ([] 
-   (select listings
+   (convert (select listings
     (with users)
-    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency)
-    (where {:public true})))
+    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id)
+    (with currency (fields [:name :currency_name] [:key :currency_key]))
+    (where {:public true}))))
   ([id]
-   (select listings
+   (convert (select listings
     (with users)
-    (fields  :title :from :to :price :id :currency)
-    (where {:public true :user_id (util/parse-int id)}))))
+    (fields  :title :from :to :price :id :currency_id)
+    (with currency (fields [:name :currency_name] [:key :currency_key]))
+    (where {:public true :user_id (util/parse-int id)})))))
 
 (defn all [id]
   (select listings
+      (with currency (fields [:name :currency_name] [:key :currency_key]))
     (where {:user_id id})))

@@ -14,11 +14,12 @@
 ;; Gets
 (defn get [id]
   (first (select users
-           (fields :id :login :alias :vendor :currency :description :pub_key :last_login :created_on)
+           (fields :id :login :alias :vendor :description :pub_key :last_login :created_on)
            (where {:id (util/parse-int id)}))))
 
 (defn get-by-login [login]
   (first (select users
+    (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
     (where {:login login}))))
 
 (defn get-by-alias [a]
@@ -47,7 +48,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :currency "btc" :pass pass} (prep) (store!))
+      (-> {:login login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id]

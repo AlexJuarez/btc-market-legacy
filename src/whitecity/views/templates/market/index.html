@@ -1,8 +1,8 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-{{listings}}
 <div class="ls">
 {% for listing in listings %}
+{{listing}}
 <div class="listing-row">
   <div class="thumbnail">
   {% if listing.image_id %}

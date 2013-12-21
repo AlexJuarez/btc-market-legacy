@@ -64,9 +64,9 @@
   </div>
   <div class="form-group {% if errors.title %}has-error{% endif %}">
     <label for="price">
-    <select title="currency" name="currency" id="currency">
+    <select title="currency" name="currency_id" id="currency_id">
       {% for curr in currencies %}
-      <option value="{{curr.key}}" {% ifequal curr.key currency %}selected="selected"{% endifequal %}>{{curr.name}}</option>
+      <option value="{{curr.id}}" {% ifequal curr.id currency_id %}selected="selected"{% endifequal %}>{{curr.name}}</option>
       {% endfor %}
     </select>
     {% if errors.currency_id %}

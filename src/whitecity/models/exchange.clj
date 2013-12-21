@@ -3,9 +3,10 @@
         [whitecity.db]
         [korma.core]
         [korma.db :only (transaction)]
-        [clojure.string :only (split)])
+        [clojure.string :only (split lower-case)])
   (:require
     [whitecity.cache :as cache]
+    [whitecity.models.currency :as currency]
     [clj-http.client :as client]))
 
 (defn update-from-remote []
@@ -16,7 +17,8 @@
               ;; :follow-redirects false
               ;; :as :json
               ;; :accept :json})) 
-        prep (map #(let [s (split (str (key %)) #"_")] {:from (.substring (first s) 0 3) :to (.substring (last s) 0 3) :value (Float/parseFloat (val %))}) response)]
+        currencies (apply merge (map #(assoc {} (lower-case (:key %)) (:id %)) (currency/all)))
+        prep (map #(let [s (split (str (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response)]
     (if-not (empty? response)
       (transaction
         (delete exchange)
@@ -24,8 +26,8 @@
                 (values prep))))))
 
 (defn get [from to]
-  (cache/get-set (str from "_" to)
-  (do (-> (Thread. update-from-remote) .start)
-    (select exchange
-          (where {:from from :to to})))))
-
+  (when-not (or (nil? from) (nil? to))
+    (cache/get-set (str from "-" to)
+      (do (-> (Thread. update-from-remote) .start)
+        (first (select exchange
+              (where {:from from :to to})))))))

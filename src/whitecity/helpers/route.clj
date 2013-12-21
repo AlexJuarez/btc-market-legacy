@@ -17,7 +17,8 @@
              (when (:vendor user) 
                {:listings (listing/count id) 
                 :sales (order/count-sales id)})
-             {:errors {} 
+             {:user user
+              :errors {} 
               :orders (order/count id) 
               :messages (message/count id) 
               :cart (count (session/get :cart))})}))

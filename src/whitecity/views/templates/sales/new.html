@@ -2,7 +2,7 @@
 {% block section %}
 {% if not sales|empty? %}
 <h1>New sales</h1>
-<form action="/market/postage/create" method="POST">
+<form action="/market/sales/new" method="POST">
   {% csrf-token %}
   <input type="submit" name="submit" value="accept" />
   <input type="submit" name="submit" value="reject" />

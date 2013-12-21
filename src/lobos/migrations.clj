@@ -7,7 +7,8 @@
   (up [] (create
            (tbl :currency
                 (varchar :key 3 :unique :not-null)
-                (varchar :name 200))))
+                (varchar :name 200)
+                (varchar :symbol 2))))
   (down [] (drop (table :currency))))
 
 (defmigration add-users-table
@@ -26,7 +27,7 @@
                (integer :pin)
                (bigint :btc (default 0))
                (timestamp :last_login)
-               (varchar :currency 3)
+               (refer-to :currency)
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
               )))
@@ -52,8 +53,8 @@
 (defmigration add-exchange-rate-table
   (up [] (create
            (table :exchangerate
-                (varchar :from 3 :not-null)
-                (varchar :to 3 :not-null)
+                (integer :from [:refer :currency :id :on-delete :set-null])
+                (integer :to [:refer :currency :id :on-delete :set-null])
                 (float :value)
                 (timestamp :updated_on (default (now)))
                   )))
@@ -78,7 +79,7 @@
                 (refer-to :image)
                 (float :price :not-null)
                 (integer :quantity (default 0))
-                (varchar :currency 3)
+                (refer-to :currency)
                 (refer-to :category)
                 (text :description))))
   (down [] (drop (table :listing))))
@@ -89,7 +90,7 @@
                 (refer-to :user)
                 (varchar :title 100)
                 (float :price :not-null)
-                (varchar :currency 3))))
+                (refer-to :currency))))
   (down [] (drop (table :postage))))
 
 (defmigration add-orders-table
@@ -103,7 +104,7 @@
                 (varchar :title 100)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
-                (varchar :currency 3)
+                (refer-to :currency)
                 (refer-to :listing)
                 (refer-to :postage)
                 (refer-to :user)
