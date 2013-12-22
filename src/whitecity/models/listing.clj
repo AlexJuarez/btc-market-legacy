@@ -46,8 +46,7 @@
 
 (defn view [id]
   (first (convert (select listings
-    (fields :id :title :hedged :category_id :description :image_id :user_id :price :to :from)
-    (with currency (fields [:name :currency_name] [:key :currency_key]))
+    (fields :id :title :hedged :category_id :description :image_id :user_id :currency_id :price :to :from)
     (with category (fields [:name :category_name]))
     (with users (fields [:login :user_login] [:alias :user_alias])
           (with postage))
