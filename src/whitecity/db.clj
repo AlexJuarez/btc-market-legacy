@@ -11,7 +11,7 @@
 
 (defdb db db-spec)
 
-(declare users orders messages listings postage images category currency exchange)
+(declare users orders messages listings postage images category currency exchange bookmarks fans)
 
 (defentity users
   (table :user)
@@ -20,6 +20,8 @@
   (has-many messages)
   (has-many images)
   (has-many postage)
+  (has-many fans)
+  (has-many bookmarks)
   (belongs-to currency))
 
 (defentity sellers
@@ -62,3 +64,11 @@
 
 (defentity exchange
   (table :exchangerate))
+
+(defentity bookmarks
+  (table :bookmark)
+  (belongs-to users))
+
+(defentity fans
+  (table :fan)
+  (belongs-to users))

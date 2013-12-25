@@ -66,6 +66,13 @@
         (Integer. i)))
     s))
 
+(defn parse-float [s]
+  (if (string? s)
+    (let [f (re-find #"[0-9]*\.?[0-9]+" s)]
+      (if-not (s/blank? f)
+        (Float. f)))
+    s))
+
 ;;Probably not needed
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is

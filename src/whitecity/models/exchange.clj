@@ -28,6 +28,6 @@
 (defn get [from to]
   (when-not (or (nil? from) (nil? to))
     (cache/get-set (str from "-" to)
-      (do (-> (Thread. update-from-remote) .start)
+      (do (-> (Thread. update-from-remote) .start) ;;TODO fix the caching stratgy
         (first (select exchange
               (where {:from from :to to})))))))

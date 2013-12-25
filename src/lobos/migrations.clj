@@ -25,6 +25,8 @@
                (varchar :wallet 34)
                (varchar :key 64)
                (integer :pin)
+               (integer :fans (default 0))
+               (integer :listings (default 0))
                (bigint :btc (default 0))
                (timestamp :last_login)
                (refer-to :currency)
@@ -79,6 +81,7 @@
                 (refer-to :image)
                 (float :price :not-null)
                 (integer :quantity (default 0))
+                (integer :bookmarks (default 0))
                 (refer-to :currency)
                 (refer-to :category)
                 (text :description))))
@@ -130,3 +133,20 @@
                 (refer-to :order)
                 (bigint :amount))))
   (down [] (drop (table :audit))))
+
+(defmigration add-bookmarks-table
+  (up [] (create
+           (tbl :bookmark
+                (index :bookmark_unique_constraint [:user_id :listing_id] :unique)
+                (refer-to :user)
+                (refer-to :listing))))
+  (down [] (drop (table :bookmark))))
+                 
+
+(defmigration add-fans-table
+  (up [] (create
+           (tbl :fan
+                (index :fan_unique_constraint [:user_id :leader_id] :unique)
+                (refer-to :user)
+                (integer :leader_id [:refer :user :id :on-delete :set-null]))))
+  (down [] (drop (table :fan))))

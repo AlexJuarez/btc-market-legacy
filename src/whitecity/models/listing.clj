@@ -18,14 +18,15 @@
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
-(defn prep [{:keys [title description from to public] :as listing}]
+(defn prep [{:keys [title description from to public price] :as listing}]
   (merge {:title title 
           :description description 
           :from from 
           :to to 
           :public (= public "true") 
+          :price (util/parse-float price)
           :updated_on (tc/to-sql-date (cljtime/now))} 
-         (mapcat #(check-field listing %) [:quantity :image_id :currency_id :price :category_id])))
+         (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id])))
 
 (defn get 
   ([id]
