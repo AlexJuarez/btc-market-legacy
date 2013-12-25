@@ -51,7 +51,7 @@
   <input type="submit" name="submit" value="Update Cart" />
 </p>
 <div class="well">
-  <label for="address">Address</label>
+  <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address}}</span> {% endif %}</label>
   <textarea rows="4" class="form-control" id="address" name="address">{{address}}</textarea> 
   <label for="pin">Pin: </label>
     {% if errors.pin %}

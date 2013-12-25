@@ -1,7 +1,8 @@
 (ns whitecity.handler  
   (:use whitecity.routes.market
         whitecity.routes.auth
-        whitecity.routes.sales)
+        whitecity.routes.sales
+        whitecity.routes.cart)
   (:require [compojure.core :refer [defroutes]]            
             [whitecity.models.schema :as schema]
             [noir.util.middleware :as middleware]
@@ -56,6 +57,7 @@
            [auth-routes
             market-routes
             sales-routes
+            cart-routes
             app-routes]
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]

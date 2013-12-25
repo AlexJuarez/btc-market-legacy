@@ -29,8 +29,6 @@
     (with postage (fields [:title :postage_title]))
     (where {:seller_id id :status status}))))
 
-
-
 (defn check-item [item]
   (let [id (key item)
         quantity (:quantity (val item)) 
@@ -41,8 +39,7 @@
                              (when-not (<= quantity (:quantity listing)) ["You can not order more than the max"])])]
                   (when-not (empty? error)
                    {:quantity error}))
-                (let [error (reduce merge [(when (nil? post) ["You need to select a postage"])
-                             (when (nil? (postage/get post (:user_id listing))) ["You need to select a valid postage option"])])]
+                (let [error (reduce merge (when (nil? (postage/get post (:user_id listing))) ["You need to select a valid postage option"]))]
                   (when-not (empty? error)
                     {:postage error})))]
     (when-not (empty? errors)
