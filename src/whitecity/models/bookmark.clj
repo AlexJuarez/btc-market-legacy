@@ -5,20 +5,31 @@
   (:require 
         [whitecity.util :as util]))
 
+(defn get [listing-id user-id]
+  (first
+    (select bookmarks
+            (where {:listing_id (util/parse-int listing-id) :user_id user-id}))))
+
 (defn add! [listing-id user-id]
-  (transaction
-    (update listings
-            (set-fields {:bookmarks (raw "bookmarks + 1")})
-            (where {:id listing-id}))
-    (insert bookmarks (values {:listing_id (util/parse-int listing-id) :user_id user-id}))))
+  (let [listing-id (util/parse-int listing-id)]
+  (try
+    (transaction
+      (update listings
+              (set-fields {:bookmarks (raw "bookmarks + 1")})
+              (where {:id listing-id}))
+      (insert bookmarks (values {:listing_id listing-id :user_id user-id})))
+    (catch Exception e
+      {:errors "You have already bookmarked this"}))))
 
 (defn remove! [listing-id user-id]
-  (transaction
-    (update listings
-            (set-fields {:bookmarks (raw "bookmarks - 1")})
-            (where {:id listing-id}))
-    (delete bookmarks
-            (where {:listing_id (util/parse-int listing-id) :user_id user-id}))))
+  (if-let [bookmark (get listing-id user-id)]
+    (let [listing-id (util/parse-int listing-id)]
+    (transaction
+      (update listings
+              (set-fields {:bookmarks (raw "bookmarks - 1")})
+              (where {:id listing-id}))
+      (delete bookmarks
+              (where {:listing_id listing-id :user_id user-id}))))))
 
 (defn all [user-id]
   (select bookmarks

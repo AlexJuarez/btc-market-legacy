@@ -7,6 +7,7 @@
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
             [whitecity.models.image :as image]
+            [whitecity.models.bookmark :as bookmark]
             [whitecity.models.postage :as postage]
             [whitecity.models.currency :as currency]
             [whitecity.models.order :as order]
@@ -80,6 +81,11 @@
   (let [listing (listing/view id)]
     (layout/render "listings/view.html" (merge (set-info) listing))))
 
+(defn listing-bookmark [id]
+  (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
+    (session/flash-put! :bookmark bookmark))
+  (resp/redirect "/market/account/bookmarks"))
+
 (defn postage-create
   ([]
    (layout/render "postage/create.html" (merge {:currencies (currency/all)} (set-info))))
@@ -122,6 +128,7 @@
     (POST "/market/postage/create" {params :params} (postage-create params))
     (GET "/market/listings" [] (listings-page))
     (GET "/market/listings/create" [] (listing-create))
+    (GET "/market/listing/:id/bookmark" [id] (listing-bookmark id))
     (GET "/market/listing/:id/edit" [id] (listing-edit id))
     (GET "/market/user/:id" [id] (profile-view id))
     (GET "/market/listing/:id" [id] (listing-view id))

@@ -5,12 +5,31 @@
   (:require 
         [whitecity.util :as util]))
 
+(defn get [leader-id user-id]
+  (first
+    (select fans
+            (where {:leader_id (util/parse-int leader-id) :user_id user-id}))))
+
 (defn add! [leader-id user-id]
-  (insert fans (values {:leader_id (util/parse-int leader-id) :user_id user-id})))
+  (let [leader-id (util/parse-int leader-id)]
+  (try
+    (transaction
+      (update users
+              (set-fields {:fans (raw "fans + 1")})
+              (where {:id leader-id}))
+      (insert fans (values {:leader_id leader-id :user_id user-id})))
+    (catch Exception e
+      {:errors "You have already bookmarked this"}))))
 
 (defn remove! [leader-id user-id]
-  (delete fans
-          (where {:leader_id (util/parse-int leader-id) :user_id user-id})))
+  (if-let [fan (get leader-id user-id)]
+    (let [leader-id (util/parse-int leader-id)]
+    (transaction
+      (update users
+              (set-fields {:fans (raw "fans - 1")})
+              (where {:id leader-id}))
+      (delete fans
+              (where {:leader_id leader-id :user_id user-id}))))))
 
 (defn all [user-id]
   (select fans

@@ -1,4 +1,4 @@
-(ns whitecity.routes.market
+(ns whitecity.routes.account
   (:use compojure.core
         noir.util.route
         whitecity.helpers.route)
@@ -17,8 +17,8 @@
             [noir.io :as io]
             [whitecity.util :as util]))
 
-(defn account-page
-  ([]
+(defn account-page [])
 
 (def-restricted-routes market-routes
-  (GET "/market/account" (account-page)))
+  (GET "/market/account" [] (account-page))
+  (GET "/market/user/:id/follow" [id] (user-follow)))
