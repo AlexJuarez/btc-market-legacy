@@ -1,16 +1,19 @@
 (ns whitecity.models.order
-  (:use [korma.db :only (defdb)]
+  (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
   (:require 
-        [whitecity.validator :as v]
-        [clj-time.core :as cljtime]
-        [clj-time.coerce :as tc]
         [whitecity.models.user :as user]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
         [noir.session :as session]
         [whitecity.util :as util]))
+
+;;Order status numbers
+;;0 - processing
+;;1 - shipping
+;;2 - resolution
+;;3 - finalized
 
 (defn all [id]
   (select orders

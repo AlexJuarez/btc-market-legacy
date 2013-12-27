@@ -12,7 +12,7 @@
   <br />
   ranked in the top % of sellers with % positive feedback from more than x tranactions
   <br />
-  has 922 followers - <a href="/market/user/{{id}}/follow">follow</a>
+  has {{fans}} {% ifequal fans 1 %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
 </p>
 <p class="well">
   <a href="/market/user/{{id}}/report">report this vendor</a>

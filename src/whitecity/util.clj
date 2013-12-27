@@ -10,6 +10,10 @@
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
+(defn session-update [item k fnc]
+  (let [old-session (session/get item)]
+    (session/put! item (assoc old-session k (fnc (old-session k))))))
+
 (def alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
 
 (defn int-to-base36
@@ -24,9 +28,9 @@
   (let [user_currency (:currency_id (session/get :user))]
   (if-not (= currency_id user_currency)
     (let [rate (exchange/get currency_id user_currency)]
-         (if-not (and (nil? rate) (nil? (:value rate))) 
-           (* price (:value rate))))
-    price)))
+         (if-not (nil? rate) 
+           (* price rate)
+           price)))))
 
 (defn base36-to-int
   "Converts tx to an id"
@@ -47,17 +51,6 @@
         (if (or (= (int c) 32) (and (> (int c) 96) (< (int c) 123))) 
         (.append sb c)))      
         (str id "-" (url-encode (.toString sb))))))
-
-(defn make-form [& fields]
-  (reduce-kv 
-  (fn [table i [id name value]]
-      (conj table
-        [:tr 
-          [:td (label id name)] 
-          [:td ((if (.startsWith id "pass") password-field text-field) 
-          {:tabindex (inc i)} id value)]]))
-        [:table]
-        (vec (partition 3 fields))))
 
 (defn parse-int [s]
   (if (string? s)
@@ -80,6 +73,9 @@
     ([time] (format-time time "dd MMM, yyyy"))
     ([time fmt]
          (.format (new java.text.SimpleDateFormat fmt) time)))
+
+(defn sanitize-uri [uri]
+  (str "/" (reduce #(str % "/" %2) (nthrest (s/split uri #"/") 3))))
 
 (defn parse-time [time-str time-format]
     (.parse 

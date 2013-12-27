@@ -1,5 +1,5 @@
 (ns whitecity.models.listing
-  (:use [korma.db :only (defdb)]
+  (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
   (:require 
@@ -47,7 +47,7 @@
 
 (defn view [id]
   (first (convert (select listings
-    (fields :id :title :hedged :category_id :description :image_id :user_id :currency_id :price :to :from)
+    (fields :id :title :bookmarks :hedged :category_id :description :image_id :user_id :currency_id :price :to :from)
     (with category (fields [:name :category_name]))
     (with users (fields [:login :user_login] [:alias :user_alias])
           (with postage))
@@ -59,11 +59,17 @@
     (where {:user_id id})))))
 
 (defn remove! [id user-id]
-  (delete listings
-    (where {:id (util/parse-int id) :user_id user-id})))
+  (util/session-update :user :listings dec)
+  (transaction
+    (update users (set-fields {:listings (raw "listings - 1")}) (where {:id user-id}))
+    (delete listings
+    (where {:id (util/parse-int id) :user_id user-id}))))
 
 (defn store! [listing user-id]
-  (insert listings (values (assoc (prep listing) :user_id user-id))))
+  (util/session-update :user :listings inc)
+  (transaction 
+    (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
+    (insert listings (values (assoc (prep listing) :user_id user-id)))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]

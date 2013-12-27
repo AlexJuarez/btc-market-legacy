@@ -13,9 +13,8 @@
 
 ;; Gets
 (defn get [id]
-  (first (select users
-           (fields :id :login :alias :vendor :description :pub_key :last_login :created_on)
-           (where {:id (util/parse-int id)}))))
+  (dissoc (first (select users
+           (where {:id (util/parse-int id)}))) :pass))
 
 (defn get-by-login [login]
   (first (select users

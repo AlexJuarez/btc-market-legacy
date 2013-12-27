@@ -4,7 +4,9 @@
 <p>Listing not found</p>
 {% else %}
 <div class="listing">
-  <img src="/uploads/{{id}}.jpg" />
+  {% if image_id %}
+    <img src="/uploads/{{image_id}}.jpg" />
+  {% endif %}
   <h1>{{title}}</h1>
   <p>
     <span class="price">{{price}}</span>
@@ -16,7 +18,12 @@
       <li>ships from: {{from}}</li>
       <li>ships to: {{to}}</li>
       <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
-      <li><a href="/market/listing/{{id}}/bookmark">bookmark this item</a></li>
+      <li>bookmarked {{bookmarks}} {% ifequal bookmarks 1 %}time{% else %}times{% endifequal %}
+      {% if bookmarked %}
+        <a href="/market/listing/{{id}}/unbookmark">unbookmark this item</a></li>
+      {% else %}
+        <a href="/market/listing/{{id}}/bookmark">bookmark this item</a></li>
+      {% endif %}
     </ul>
   </div>
   <p class="postage">

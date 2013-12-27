@@ -1,22 +1,25 @@
 (ns whitecity.models.message
-  (:use [korma.db :only (defdb)]
+  (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
   (:require 
         [whitecity.validator :as v]
-        [whitecity.models.schema :as schema]
         [whitecity.util :as util]))
 
 ;;Gets
 (defn count [id]
   (:cnt (first (select messages
     (aggregate (count :*) :cnt)
-    (where (or {:sender_id id} {:user_id id}))))))
+    (where (and {:read false } (or {:sender_id id} {:user_id id})))))))
 
 (defn update! [id receiver-id]
-  (update messages
-          (set-fields {:read true})
-          (where {:user_id id :sender_id receiver-id})))
+  (transaction
+    (update users
+            (set-fields {:messages (raw "messages - 1")})
+            (where {:id receiver-id}))
+    (update messages
+            (set-fields {:read true})
+            (where {:user_id id :sender_id receiver-id}))))
 
 (defn sent [id]
   (select messages
@@ -48,7 +51,11 @@
    :sender_id sender_id})
 
 (defn store! [message user-id receiver-id]
-  (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id})))))
+  (transaction
+    (update users
+            (set-fields {:messages (raw "messages + 1")})
+            (where {:id receiver-id}))
+    (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id}))))))
 
 (defn add! [message user-id receiver-id]
   (let [check (v/message-validator message)]

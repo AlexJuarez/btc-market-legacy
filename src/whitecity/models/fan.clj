@@ -10,6 +10,9 @@
     (select fans
             (where {:leader_id (util/parse-int leader-id) :user_id user-id}))))
 
+(defn followed? [leader-id user-id]
+  (not (empty? (get leader-id user-id))))
+
 (defn add! [leader-id user-id]
   (let [leader-id (util/parse-int leader-id)]
   (try

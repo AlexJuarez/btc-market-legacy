@@ -2,6 +2,7 @@
   (:use whitecity.routes.market
         whitecity.routes.auth
         whitecity.routes.sales
+        whitecity.routes.account
         whitecity.routes.cart)
   (:require [compojure.core :refer [defroutes]]            
             [whitecity.models.schema :as schema]
@@ -56,6 +57,7 @@
            ;; add your application routes here
            [auth-routes
             market-routes
+            account-routes
             sales-routes
             cart-routes
             app-routes]

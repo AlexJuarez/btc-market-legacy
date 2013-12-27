@@ -27,6 +27,8 @@
                (integer :pin)
                (integer :fans (default 0))
                (integer :listings (default 0))
+               (integer :bookmarks (default 0))
+               (integer :messages (default 0))
                (bigint :btc (default 0))
                (timestamp :last_login)
                (refer-to :currency)
@@ -142,7 +144,6 @@
                 (refer-to :listing))))
   (down [] (drop (table :bookmark))))
                  
-
 (defmigration add-fans-table
   (up [] (create
            (tbl :fan

@@ -1,5 +1,5 @@
 (ns whitecity.routes.auth
-  (:use compojure.core hiccup.core hiccup.form)
+  (:use compojure.core hiccup.core hiccup.form whitecity.helpers.route)
   (:require [whitecity.models.schema :as schema]
             [whitecity.util :as util] 
             [whitecity.views.layout :as layout]
@@ -29,7 +29,7 @@
   ([login pass]
     (let [user (user/login! {:login login :pass pass})]
       (if (nil? (:error user))
-        (do (session/put! :user user)
+        (do (set-info user)
             (session/put! :cart {})
             (resp/redirect "/market/"))
           (layout/render "login.html" user)))))

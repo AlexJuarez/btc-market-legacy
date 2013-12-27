@@ -8,6 +8,7 @@
             [whitecity.models.listing :as listing]
             [whitecity.models.image :as image]
             [whitecity.models.bookmark :as bookmark]
+            [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
             [whitecity.models.currency :as currency]
             [whitecity.models.order :as order]
@@ -32,7 +33,7 @@
 (defn messages-thread
   ([receiver-id]
    (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
-  ([slug &options]
+  ([slug & options]
    (let [message (message/add! slug (user-id) (:id slug))]
      (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
 
@@ -75,16 +76,20 @@
 
 (defn profile-view [id]
   (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings (listing/public id)} (set-info) user))))
+    (layout/render "users/view.html" (merge {:listings (listing/public id) :followed (follower/followed? id (user-id))} (set-info) user))))
 
 (defn listing-view [id]
   (let [listing (listing/view id)]
-    (layout/render "listings/view.html" (merge (set-info) listing))))
+    (layout/render "listings/view.html" (merge {:bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
 
 (defn listing-bookmark [id]
   (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
     (session/flash-put! :bookmark bookmark))
-  (resp/redirect "/market/account/bookmarks"))
+  (resp/redirect (str "/market/listing/" id)))
+
+(defn listing-unbookmark [id referer]
+  (bookmark/remove! id (user-id))
+  (resp/redirect referer))
 
 (defn postage-create
   ([]
@@ -129,6 +134,7 @@
     (GET "/market/listings" [] (listings-page))
     (GET "/market/listings/create" [] (listing-create))
     (GET "/market/listing/:id/bookmark" [id] (listing-bookmark id))
+    (GET "/market/listing/:id/unbookmark" {{id :id} :params {referer "referer"} :headers} (listing-unbookmark id referer))
     (GET "/market/listing/:id/edit" [id] (listing-edit id))
     (GET "/market/user/:id" [id] (profile-view id))
     (GET "/market/listing/:id" [id] (listing-view id))
