@@ -1,11 +1,12 @@
 (ns whitecity.helpers.route
   (:require [whitecity.models.user :as users]
             [whitecity.cache :as cache]
+            [whitecity.util :as util]
             [whitecity.models.order :as order]
             [noir.session :as session]))
 
 (defn user-id []
-  (:id (session/get :user)))
+  (util/user-id))
 
 (defn user-blob 
   ([]

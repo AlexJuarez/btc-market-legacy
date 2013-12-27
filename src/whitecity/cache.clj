@@ -7,7 +7,10 @@
 (def ce (c/text-connection "127.0.0.1:11211"))
 
 (defn set [key value]
-  (c/set ce key (* 60 10) value))
+  (c/set ce key (+ (* 60 10) (rand-int 600)) value)) ;;Prevent stampede
+
+(defn delete [key]
+  (c/delete ce key))
 
 (defn get [key]
   (let [value (@store key)]

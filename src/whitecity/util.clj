@@ -4,15 +4,18 @@
               [clojure.java.io :refer [as-url]]
               [noir.session :as session]
               [whitecity.db :as db]
+              [whitecity.cache :as cache]
               [noir.io :as io]
               [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
-(defn session-update [item k fnc]
-  (let [old-session (session/get item)]
-    (session/put! item (assoc old-session k (fnc (old-session k))))))
+(defn user-id []
+  (:id (session/get :user)))
+
+(defn user-clear []
+  (cache/delete (str "user_" (user-id))))
 
 (def alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
 

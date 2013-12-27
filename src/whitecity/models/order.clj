@@ -77,7 +77,9 @@
         pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
         errors (merge cart-check address-check pin-check)]
     (if (empty? errors)
-      (do (session/put! :cart {}) 
+      (do 
+        (session/put! :cart {}) 
+        (util/user-clear)
         (apply #(store! (prep % address user-id)) cart))
       {:address address :errors errors})))
 
