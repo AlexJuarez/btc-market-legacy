@@ -79,7 +79,7 @@
     (if (empty? errors)
       (do 
         (session/put! :cart {}) 
-        (util/user-clear)
+        (util/user-clear user-id)
         (apply #(store! (prep % address user-id)) cart))
       {:address address :errors errors})))
 

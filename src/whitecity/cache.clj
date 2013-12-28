@@ -10,19 +10,17 @@
   (c/set ce key (+ (* 60 10) (rand-int 600)) value)) ;;Prevent stampede
 
 (defn delete [key]
-  (c/delete ce key))
+  (do (swap! store dissoc key)
+  (c/delete ce key)))
 
 (defn get [key]
-  (let [value (@store key)]
-    (if (nil? value)
-      (let [v (c/get ce key)]
-        (if-not (nil? v)
-          (do (swap! store assoc key v) v)))
-      value)))
+  (if-let [value (@store key)]
+    value
+    (if-let [v (c/get ce key)]
+      (do (swap! store assoc key v) v))))
 
 (defmacro get-set [key & forms]
-  `(let [value# (get ~key)]
-    (if (nil? value#)
-      (let [v# (do ~@forms)]
-        (set ~key v#) v#)
-      value#))) 
+  `(if-let [value# (get ~key)]
+     value#
+     (let [v# (do ~@forms)]
+       (set ~key v#) v#)))

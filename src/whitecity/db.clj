@@ -72,3 +72,7 @@
 (defentity fans
   (table :fan)
   (belongs-to users))
+
+(defentity reports
+  (table :report)
+  (belongs-to users))

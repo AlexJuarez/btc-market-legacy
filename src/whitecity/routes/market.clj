@@ -7,6 +7,7 @@
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
             [whitecity.models.image :as image]
+            [whitecity.models.report :as report]
             [whitecity.models.bookmark :as bookmark]
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
@@ -36,6 +37,10 @@
   ([slug & options]
    (let [message (message/add! slug (user-id) (:id slug))]
      (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
+
+(defn report-add [object-id user-id table referer]
+  (report/add! object-id user-id table)
+  (resp/redirect referer))
 
 (defn listings-page []
   (layout/render "listings/index.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
@@ -136,6 +141,8 @@
     (GET "/market/listing/:id/bookmark" [id] (listing-bookmark id))
     (GET "/market/listing/:id/unbookmark" {{id :id} :params {referer "referer"} :headers} (listing-unbookmark id referer))
     (GET "/market/listing/:id/edit" [id] (listing-edit id))
+    (GET "/market/listing/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "listing" referer))
+    (GET "/market/user/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "user" referer))
     (GET "/market/user/:id" [id] (profile-view id))
     (GET "/market/listing/:id" [id] (listing-view id))
     (GET "/market/listing/:id/remove" [id] (listing-remove id))

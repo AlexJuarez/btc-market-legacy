@@ -14,8 +14,8 @@
 (defn user-id []
   (:id (session/get :user)))
 
-(defn user-clear []
-  (cache/delete (str "user_" (user-id))))
+(defn user-clear [user-id]
+  (cache/delete (str "user_" user-id)))
 
 (def alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
 

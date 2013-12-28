@@ -37,7 +37,7 @@
   (GET "/register" {params :params} (registration-page params))
   (POST "/register"[login pass confirm] (registration-page login pass confirm))
   (GET "/logout" []
+       (util/user-clear (util/user-id))
        (session/clear!)
-       (util/user-clear)
        (cache/invalidate! :home)
        (resp/redirect "/")))
