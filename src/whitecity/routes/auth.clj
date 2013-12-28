@@ -1,21 +1,18 @@
 (ns whitecity.routes.auth
   (:use compojure.core hiccup.core hiccup.form whitecity.helpers.route)
-  (:require [whitecity.models.schema :as schema]
-            [whitecity.util :as util] 
+  (:require [whitecity.util :as util] 
             [whitecity.views.layout :as layout]
-            [noir.util.crypt :as crypt]
             [noir.util.cache :as cache]
             [noir.session :as session]
             [noir.response :as resp]
-            [whitecity.models.user :as user]
-            [clojure.string :as s]))
+            [whitecity.models.user :as users]))
 
 (defn registration-page
   ([params]
    (layout/render "register.html"))
 
   ([login pass confirm]
-   (let [user (user/add! {:login login :pass pass :confirm confirm})]
+   (let [user (users/add! {:login login :pass pass :confirm confirm})]
      (if (nil? (:errors user))
        (do 
          (session/flash-put! :success {:success "User has been created"})
@@ -27,7 +24,7 @@
     (layout/render "login.html" (session/flash-get :success)))
 
   ([login pass]
-    (let [user (user/login! {:login login :pass pass})]
+    (let [user (users/login! {:login login :pass pass})]
       (if (nil? (:error user))
         (do (set-info user)
             (session/put! :cart {})
@@ -41,5 +38,6 @@
   (POST "/register"[login pass confirm] (registration-page login pass confirm))
   (GET "/logout" []
        (session/clear!)
+       (util/user-clear)
        (cache/invalidate! :home)
        (resp/redirect "/")))

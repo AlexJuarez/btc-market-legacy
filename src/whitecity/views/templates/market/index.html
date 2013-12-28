@@ -10,7 +10,7 @@
   {% endif %}  
   </div>
   <div class="sale">
-    <span>{{listing.price}}</span>
+    <span>{{listing.price|double-format:5}}</span>
     <br />
     <a href="/market/cart/add/{{listing.id}}">add to cart</a>
   </div>

@@ -21,7 +21,7 @@
         prep (map #(let [s (split (str (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response)]
     (if-not (empty? response)
       (do
-        (dorun (map #(cache/set (str (:from %) "-" (:to %)) (:value %)) prep))
+        (dorun (pmap #(cache/set (str (:from %) "-" (:to %)) (:value %)) prep))
         (transaction
           (delete exchange)
           (insert exchange

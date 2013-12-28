@@ -33,8 +33,7 @@
                (timestamp :last_login)
                (refer-to :currency)
                (check :login (> (length :login) 2))
-               (check :alias (> (length :alias) 2))
-              )))
+               (check :alias (> (length :alias) 2)))))
   (down [] (drop (table :user))))
 
 (defmigration add-messages-table
@@ -151,3 +150,12 @@
                 (refer-to :user)
                 (integer :leader_id [:refer :user :id :on-delete :set-null]))))
   (down [] (drop (table :fan))))
+
+(defmigration add-reports-table
+  (up [] (create
+           (tbl :report
+                (index :report_unique_constraint [:object_id :user_id :type] :unique)
+                (integer :object_id)
+                (refer-to :user)
+                (varchar :type 10 :not-null))))
+  (down [] (drop (table :report))))
