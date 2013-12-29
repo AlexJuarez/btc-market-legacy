@@ -36,7 +36,7 @@
   {% endif %}
 {% endif %}
 {% if listings %}
-<table class="userlistings">
+<table class="user-listings">
   <thead>
     <tr>
       <th>category</th>
@@ -48,7 +48,7 @@
     </tr>
   </thead>
   <tbody>
-{% for listing in listings %}
+{% for listing in listings-all %}
   <tr>
     <td></td>
     <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>

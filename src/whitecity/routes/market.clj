@@ -85,7 +85,7 @@
 
 (defn user-view [id]
   (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings (listing/public id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
+    (layout/render "users/view.html" (merge {:listings-all (listing/public id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
 
 (defn listing-view [id]
   (let [listing (listing/view id)]
