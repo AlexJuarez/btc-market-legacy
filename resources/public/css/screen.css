@@ -300,6 +300,14 @@ textarea.form-control {
   text-align: center;
 }
 
+/* listing view page */
+
+.listing ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 /* ls is the main pages listings **/
 .ls .listing-row {
   overflow: hidden;
@@ -332,4 +340,8 @@ textarea.form-control {
 
 .ls .listing-row .sale span {
   margin-top: 30px;
+}
+
+.ls .listing-row ul {
+  list-style: none;
 }

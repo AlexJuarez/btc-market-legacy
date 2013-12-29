@@ -4,6 +4,8 @@
             [cheshire.core :as jr]
             [taoensso.timbre :as timbre]
             [whitecity.models.currency :as c]
+            [whitecity.models.category :as cat]
+            [whitecity.models.exchange :as e]
             [whitecity.db :as db]
             [lobos.migration :as lm]))
 
@@ -18,7 +20,9 @@
 
 
 (defn load-fixtures []
-  (load-currencies))
+  (load-currencies)
+  (e/update-from-remote)
+  (cat/load-fixture))
   
 (defn actualized?
     "checks if there are no pending migrations"

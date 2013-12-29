@@ -57,7 +57,7 @@
     <div>
       <select id="category_id" name="category_id">
         {% for category in categories %}
-        <option value="{{category.id}}">{{category.name}}</option>
+        <option value="{{category.id}}" {% ifequal category.id category_id %}selected="selected"{% endifequal %}>{{category.name}}</option>
         {% endfor %}
       </select>
     </div>

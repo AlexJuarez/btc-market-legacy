@@ -6,6 +6,7 @@
             [whitecity.models.user :as user]
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
+            [whitecity.models.category :as category]
             [whitecity.models.image :as image]
             [whitecity.models.report :as report]
             [whitecity.models.bookmark :as bookmark]
@@ -67,21 +68,21 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :listing listing :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id)) :currencies (currency/all)} listing (set-info)))))
+    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
 
 (defn listing-create
   "Listing creation page" 
   ([]
-   (layout/render "listings/create.html" (conj {:images (image/get (user-id)) :currencies (currency/all)} (set-info))))
+   (layout/render "listings/create.html" (conj {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info))))
   ([{:keys [image image_id] :as slug}]
    (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
      (if (empty? (:errors listing))
       (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
-      (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :currencies (currency/all)} (set-info) listing))))))
+      (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))
 
 (defn user-view [id]
   (let [user (user/get id)]
