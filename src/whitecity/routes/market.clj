@@ -42,6 +42,10 @@
   (report/add! object-id user-id table)
   (resp/redirect referer))
 
+(defn report-remove [object-id user-id table referer]
+  (report/remove! object-id user-id table)
+  (resp/redirect referer))
+
 (defn listings-page []
   (layout/render "listings/index.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
 
@@ -79,13 +83,13 @@
       (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
       (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :currencies (currency/all)} (set-info) listing))))))
 
-(defn profile-view [id]
+(defn user-view [id]
   (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings (listing/public id) :followed (follower/followed? id (user-id))} (set-info) user))))
+    (layout/render "users/view.html" (merge {:listings (listing/public id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
 
 (defn listing-view [id]
   (let [listing (listing/view id)]
-    (layout/render "listings/view.html" (merge {:bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
+    (layout/render "listings/view.html" (merge {:reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
 
 (defn listing-bookmark [id]
   (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
@@ -143,7 +147,9 @@
     (GET "/market/listing/:id/edit" [id] (listing-edit id))
     (GET "/market/listing/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "listing" referer))
     (GET "/market/user/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "user" referer))
-    (GET "/market/user/:id" [id] (profile-view id))
+    (GET "/market/listing/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "listing" referer))
+    (GET "/market/user/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "user" referer))
+    (GET "/market/user/:id" [id] (user-view id))
     (GET "/market/listing/:id" [id] (listing-view id))
     (GET "/market/listing/:id/remove" [id] (listing-remove id))
     (GET "/market/postage/:id/remove" [id] (postage-remove id))

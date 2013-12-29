@@ -35,7 +35,11 @@
     </select>
   </p>
   <p class="well">
-    <a href="/market/listing/{{id}}/report">report this item</a>
+  {% if reported %}
+    <a href="/market/listing/{{id}}/unreport">remove my report</a>
+  {% else %}
+    <a href="/market/listing/{{id}}/report">report this listing</a>
+  {% endif %}
   </p>
   <p class="well description">
     {{description}}

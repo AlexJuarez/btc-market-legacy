@@ -15,7 +15,11 @@
   has {{fans}} {% ifequal fans 1 %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
 </p>
 <p class="well">
-  <a href="/market/user/{{id}}/report">report this vendor</a>
+  {% if reported %}
+    <a href="/market/user/{{id}}/unreport">remove my report</a>
+  {% else %}
+    <a href="/market/user/{{id}}/report">report this vendor</a>
+  {% endif %}
 </p>
 {% if vendor %}
   {% if description %}
