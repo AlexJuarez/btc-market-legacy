@@ -49,7 +49,11 @@
       {id errors})))
 
 (defn store! [order]
-  (insert orders (values order)))
+  (transaction
+    (insert orders (values order))
+    (update listings 
+            (set-fields {:quantity (raw (str "quantity - " (:quantity order)))})
+            (where {:id (:listing_id order)}))))
 
 (defn prep [item address user-id]
   (let [id (key item)

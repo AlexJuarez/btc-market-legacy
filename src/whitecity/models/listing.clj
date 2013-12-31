@@ -91,13 +91,13 @@
     (with users)
     (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
     (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where {:public true}))))
+    (where {:public true :quantity [>= 0]}))))
   ([id]
    (convert (select listings
     (with users)
     (fields  :title :from :to :price :id :currency_id)
     (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where {:public true :user_id (util/parse-int id)})))))
+    (where {:public true :quantity [>= 0] :user_id (util/parse-int id)})))))
 
 (defn all [id]
   (select listings

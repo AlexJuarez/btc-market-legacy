@@ -133,6 +133,11 @@ form .top {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 }
+.well ul {
+  list-style: none;
+  padding-left: 0;
+}
+
 
 label {
   display: inline-block;

@@ -4,10 +4,6 @@
 <p class="well">
   <a href="/market/cart/empty">empty cart</a>
 </p>
-{% for item in cart %}
-{{item}}
-{% endfor %}
-{{errors}}
 {% if listings %}
 <form class="my-cart" action"/market/cart" method="POST">
 {% csrf-token %}
@@ -30,18 +26,18 @@
   <tr>
     <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
     <td>{{listing.title}}</td>
-    <td>{{listing.price}}</td>
+    <td>{{listing.price|double-format:5}}</td>
     <td><input type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
-    <td>{{listing.subtotal}}</td>
+    <td>{{listing.subtotal|double-format:5}}</td>
     <td>
       <select name="postage[{{listing.lid}}]">
         <option>select one</option>
         {% for postage in listing.postage %}
-        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price}}</option>
+        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price|double-format:5}}</option>
         {% endfor %}
       </select>
     </td>
-    <td>{{listing.total}}</td>
+    <td>{{listing.total|double-format:5}}</td>
     <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
   </tr>
   {% endfor %}
