@@ -68,9 +68,9 @@
            (tbl :category
                 (varchar :name 30)
                 (integer :count (default 0))
-                (integer :lte :unique)
-                (integer :gte :unique)
-                (integer :level (default 0)))))
+                (integer :lte)
+                (integer :gt)
+                (integer :parent))))
   (down [] (drop (table :category))))
 
 (defmigration add-listings-table

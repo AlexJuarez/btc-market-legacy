@@ -59,17 +59,22 @@
     (where {:user_id id})))))
 
 (defn remove! [id user-id]
-  (util/user-clear user-id)
-  (transaction
-    (update users (set-fields {:listings (raw "listings - 1")}) (where {:id user-id}))
-    (delete listings
-    (where {:id (util/parse-int id) :user_id user-id}))))
+  (if-let [listing (get id user-id)] 
+    (let [category-id (:category_id listing)]
+      (util/user-clear user-id)
+      (transaction
+        (update users (set-fields {:listings (raw "listings - 1")}) (where {:id user-id}))
+        (update category (set-fields {:count (raw "count - 1")}) (where {:id category-id})) 
+        (delete listings
+          (where {:id (util/parse-int id) :user_id user-id}))))))
 
 (defn store! [listing user-id]
-  (util/user-clear user-id)
-  (transaction 
-    (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
-    (insert listings (values (assoc (prep listing) :user_id user-id)))))
+  (let [category-id (:category_id listing)]
+    (util/user-clear user-id)
+    (transaction 
+      (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
+      (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})) 
+      (insert listings (values (assoc (prep listing) :user_id user-id))))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]

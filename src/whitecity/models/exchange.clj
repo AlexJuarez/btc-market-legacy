@@ -16,7 +16,7 @@
               ;; :content-type :json
               ;; :follow-redirects false
               ;; :as :json
-              ;; :accept :json})) 
+              ;; :accept :json}))
         currencies (apply merge (map #(assoc {} (lower-case (:key %)) (:id %)) (currency/all)))
         prep (map #(let [s (split (str (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response)]
     (if-not (empty? response)
