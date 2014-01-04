@@ -8,22 +8,27 @@
     [whitecity.cache :as cache]))
 
 (defn all []
-  (select category))
+  (select category (order :id :ASC)))
 
-(defn public [id]
+(defn walk-tree [list parent]
+  (if-let [curr (first list)]
+    (let [{n :name c :count p :parent id :id} curr]
+      (if (= parent p)
+        (flatten (conj [{:name n :count c :id id :children (walk-tree (next list) id)}] (walk-tree (next list) parent)))
+        (walk-tree (next list) parent)))
+    []))
+
+(defn tally-count [tree]
+  (if-let [children (:children tree)]
+    (assoc tree :count (reduce + (:count tree) (map #(:count (tally-count %)) children)) :children (map tally-count children))
+    tree))
+
+(defn public []
   (let [cats (all)]
-    (loop [output {} x cats]
-      (let [curr (first x) id (:id curr) parent (:parent curr) slug {:children [] :name (:name curr) :count (:count curr)}]
-        (if (empty? x)
-          output
-          (recur 
-            (-> output 
-              (assoc id slug)
-              (assoc parent (if-let [p (output parent)] (assoc p :children (conj (:children p) slug)))))
-            (next x)))))))
+    (tally-count (first (walk-tree cats 0)))))
 
 (defn add! [categories]
   (insert category (values categories)))
 
 (defn load-fixture []
-  (add! (jr/parse-string (slurp "resources/categories.json"))))
+  (add! (jr/parse-string (slurp "resources/categoriesTea.json"))))

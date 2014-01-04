@@ -1,6 +1,11 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-{% include "whitecity/views/templates/market/categories.html" %}
+<nav class="categories">
+  <div class="legend">Shop by <strong>Category</strong></div>
+  <ul>
+    {{categories|render-tree|safe}}
+  </ul>
+</nav>
 <div class="ls">
 {% for listing in listings %}
 {{listing}}
@@ -26,4 +31,5 @@
 </div>
 {% endfor %}
 </div>
+<div class="clear-float"></div>
 {% endblock %}

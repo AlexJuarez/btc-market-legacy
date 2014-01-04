@@ -14,6 +14,16 @@
              (fn [x]
                (:postage ((session/get :cart) x))))
 
+(defn render-tree [tree]
+  (let [children (:children tree)]
+    (if-not (empty? children)
+      (into [] (flatten (conj [] "<li><a class='category' href='/market/category/" (:id tree) "'>" (:name tree) "</a> <span class='count'>" (:count tree) "</span><ul>" (into [] (mapcat render-tree children)) "</ul></li>")))
+      (conj [] "<li><a class='category' href='/market/category/" (:id tree) "'>" (:name tree) "</a> <span class='count'>" (:count tree) "</span></li>"))))
+
+(add-filter! :render-tree
+             (fn [x]
+              (apply str (flatten (render-tree x)))))
+
 (add-filter! :get-status
              (fn [x]
                (if (= x 0) "processing"

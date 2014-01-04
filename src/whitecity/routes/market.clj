@@ -21,7 +21,7 @@
             [whitecity.util :as util]))
 
 (defn home-page []
-  (layout/render "market/index.html" (conj {:listings (listing/public)} (set-info))))
+  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public)} (set-info))))
 
 (defn about-page []
   (layout/render "about.html"))

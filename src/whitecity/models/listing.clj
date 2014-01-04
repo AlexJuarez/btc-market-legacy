@@ -69,7 +69,7 @@
           (where {:id (util/parse-int id) :user_id user-id}))))))
 
 (defn store! [listing user-id]
-  (let [category-id (:category_id listing)]
+  (let [category-id (util/parse-int (:category_id listing))]
     (util/user-clear user-id)
     (transaction 
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
