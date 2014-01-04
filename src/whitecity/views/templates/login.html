@@ -12,10 +12,10 @@
     {% endif %}
 		<form action="/" method="POST">
     {% csrf-token %}
-		<input id="handle" name="login" tabindex="1" type="text" placeholder="Username" value="{{login}}"/>
-		<input id="pass" name="pass" tabindex="2" type="password" placeholder="password" />
+		<input id="handle" name="login" type="text" placeholder="Username" value="{{login}}"/>
+		<input id="pass" name="pass" type="password" placeholder="password" />
 		<span class="submit">
-			<input type="submit" tabindex="3" class="btn" value="login" />
+			<input type="submit" class="btn" value="login" />
 		</span>
 		</form>
     <a href="/register">register</a>

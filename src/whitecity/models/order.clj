@@ -18,7 +18,7 @@
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
-    (where {:user_id id})))
+    (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))))
 
 (defn sold 
   ([id]
@@ -95,7 +95,7 @@
 (defn finalize [id user-id]
   (update orders
           (set-fields {:status 3})
-          (where {:user_id user-id :id id})))
+          (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn reject-sales [sales seller-id]
   (let [o (select orders

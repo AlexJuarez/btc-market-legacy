@@ -17,7 +17,7 @@
   {% csrf-token %}
   <p>
     <label for="subject">Subject</label>
-    <input name="subject" id="subject" tabindex="1" type="text" value="{{subject}}" />
+    <input name="subject" id="subject" type="text" value="{{subject}}" />
   </p>
   <p>
     {% if errors.content %}
@@ -26,7 +26,7 @@
     <textarea name="content">{{content}}</textarea>
   </p> 
   <span class="submit">
-    <input type="submit" tabindex="6" class="btn" value="send" />
+    <input type="submit" class="btn" value="send" />
   </span>
 </form>
 {% endblock %}

@@ -9,24 +9,24 @@
 			<table class="padded-table">
 				<tr>
 					<td><label for="login">Username</label></td>
-          <td><input id="login" name="login" tabindex="2" type="text" value="{{login}}" /></td>
+          <td><input id="login" name="login" type="text" value="{{login}}" /></td>
           {% if errors.login %}
           <td>{{errors.login|join:", "}}</td>
           {% endif %}
 				</tr>
 				<tr>
           <td><label for="pass">Password</label></td>
-					<td><input id="pass" name="pass" tabindex="3" type="password" /></td>
+					<td><input id="pass" name="pass" type="password" /></td>
           {% if errors.pass %}
             <td>{{errors.pass|join:", "}}</td>
           {% endif %}
 				</tr>
 				<tr>
           <td><label for="confirm">Confrim Password</label></td>
-					<td><input id="confirm" name="confirm" tabindex="4" type="password" /></td>
+					<td><input id="confirm" name="confirm" type="password" /></td>
 				</tr>
 			</table>
-			<input type="submit" class="btn" tabindex="6" value="Register" />
+			<input type="submit" class="btn" value="Register" />
 		</form>
 		</div>
 	</div>

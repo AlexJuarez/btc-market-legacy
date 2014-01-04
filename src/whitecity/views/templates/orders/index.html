@@ -1,7 +1,47 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1>My orders</h1>
-{% if orders %}
+{% if not pending-review|empty? %}
+<form action="/market/orders" method="POST">
+  {% csrf-token %}
+  <table>
+    <thead>
+      <th>item</th>
+      <th>seller</th>
+      <th>rating</th>
+      <th>did you receive the item?</th>
+      <th>additional comments</th>
+    </thead>
+    <tbody>
+      {% for order in pending-review %}
+      <tr>
+        <td><a href="/market/order/{{order.id}}/">{{order.title}}</a></td>
+        <td><a href="/market/user/{{order.seller_id}}">{{order.login}}</a></td>
+        <td>
+          <input type="radio" name="rating[{{order.id}}]" value="1" /> 1
+          <input type="radio" name="rating[{{order.id}}]" value="2" /> 2
+          <input type="radio" name="rating[{{order.id}}]" value="3" /> 3
+          <input type="radio" name="rating[{{order.id}}]" value="4" /> 4
+          <input type="radio" selected="selected" name="rating[{{order.id}}]" value="5" /> 5
+        </td>
+        <td>
+          <input type="radio" name="shipped[{{order.id}}]" value="true" /> yes
+          <input type="radio" name="shipped[{{order.id}}]" value="false" /> no
+        </td>
+        <td>
+          <textarea name="content[{{order.id}}]"></textarea>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <span class="submit">
+    <input type="submit" class="btn" value="submit" />
+  </span>
+</form>
+{% endif %}
+
+{% if not orders|empty? %}
 <table>
   <thead>
     <tr>
@@ -25,7 +65,7 @@
     <td><em>{{order.status|get-status}}</em></td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td><span time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span></td>
-    <td>{% if order.status = 1 %} <a href="/market/orders/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/orders/{{order.id}}/finalize">finalize<a></td>
+    <td>{% if order.status = 1 %} <a href="/market/orders/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a></td>
   </tr>
   {% endfor %}
   </tbody>

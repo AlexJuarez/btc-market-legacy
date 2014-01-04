@@ -130,8 +130,10 @@
 
 (defn orders-page []
   (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
-                         (conj % {:auto_finalize autofinalize})) (order/all (user-id)))]
-     (layout/render "orders/index.html" (merge {:errors {} :orders orders :user-id (user-id)} (set-info)))))
+                         (assoc % :auto_finalize autofinalize)) (order/all (user-id)))
+        pending-review (filter #(= (:status %) 3) orders)
+        orders (filter #(< (:status %) 3) orders)]
+     (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
 
 (defn order-finalize [id]
   (order/finalize id (user-id))

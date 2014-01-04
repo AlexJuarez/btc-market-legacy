@@ -25,11 +25,13 @@
                (varchar :wallet 34)
                (varchar :key 64)
                (integer :pin)
+               (integer :transactions (default 0))
+               (float :rating (default 5))
                (integer :fans (default 0))
                (integer :listings (default 0))
                (integer :bookmarks (default 0))
                (integer :messages (default 0))
-               (bigint :btc (default 0))
+               (float :btc (default 0))
                (timestamp :last_login)
                (refer-to :currency)
                (check :login (> (length :login) 2))
@@ -112,6 +114,7 @@
                 (boolean :hedged)
                 (boolean :reviewed (default false))
                 (varchar :title 100)
+                (integer :extension)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :currency)
@@ -138,7 +141,7 @@
            (tbl :audit
                 (refer-to :user)
                 (refer-to :order)
-                (bigint :amount))))
+                (float :amount))))
   (down [] (drop (table :audit))))
 
 (defmigration add-bookmarks-table
