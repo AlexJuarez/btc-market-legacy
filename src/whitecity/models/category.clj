@@ -15,7 +15,7 @@
     (let [{n :name c :count p :parent id :id} curr]
       (if (= parent p)
         (flatten (conj [{:name n :count c :id id :children (walk-tree (next list) id)}] (walk-tree (next list) parent)))
-        (walk-tree (next list) parent)))
+        (if-not (= id parent) (walk-tree (next list) parent))))
     []))
 
 (defn tally-count [tree]
