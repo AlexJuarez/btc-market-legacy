@@ -8,6 +8,10 @@
     [whitecity.cache :as cache]
     [whitecity.util :as util]))
 
+(defn get [id]
+  (first
+    (select category (where {:id (util/parse-int id)}))))
+
 (defn all []
   (select category (order :id :ASC)))
 

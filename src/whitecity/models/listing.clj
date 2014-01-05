@@ -6,6 +6,7 @@
         [whitecity.validator :as v]
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
+        [whitecity.models.category :as cat]
         [whitecity.util :as util]))
 
 (defn convert-post [postage]
@@ -97,12 +98,31 @@
     (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
     (with currency (fields [:name :currency_name] [:key :currency_key]))
     (where {:public true :quantity [>= 0]}))))
-  ([id]
-   (convert (select listings
+  ([cid]
+   (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
+   (convert 
+    (select listings
     (with users)
-    (fields  :title :from :to :price :id :currency_id)
+    (fields  :title :user.alias :user_id :user.login :from :to :price :id :currency_id :image_id :category_id)
     (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where {:public true :quantity [>= 0] :user_id (util/parse-int id)})))))
+    (with category)
+    (where (and 
+             (= :public true)
+             (>= :quantity 0)
+             (> :category_id gt)
+             (<= :category_id lte))))))))
+
+(defn public-for-user
+  ([user-id]
+   (convert 
+    (select listings
+    (with category)
+    (fields  :title :from :to :price :id :currency_id :image_id :category_id)
+    (with currency (fields [:name :currency_name] [:key :currency_key]))
+    (where (and 
+             (= :public true)
+             (>= :quantity 0)
+             (= :user_id (util/parse-int user-id))))))))
 
 (defn all [id]
   (select listings

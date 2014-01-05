@@ -24,7 +24,7 @@
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
 
 (defn category-page [cid]
-  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public cid)} (set-info))))
+  (layout/render "market/index.html" (conj {:listings (listing/public cid) :categories (category/public cid)} (set-info))))
 
 (defn about-page []
   (layout/render "about.html"))
@@ -89,7 +89,7 @@
 
 (defn user-view [id]
   (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings-all (listing/public id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
+    (layout/render "users/view.html" (merge {:listings-all (listing/public-for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
 
 (defn listing-view [id]
   (let [listing (listing/view id)]
