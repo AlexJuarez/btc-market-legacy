@@ -18,6 +18,7 @@
       <th>postage</th>
       <th>total</th>
       <th>hedged</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -39,6 +40,7 @@
     </td>
     <td>{{listing.total|double-format:5}}</td>
     <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
+    <td><a href="/market/cart/{{listing.lid}}/remove">remove</a></td>
   </tr>
   {% endfor %}
   </tbody>

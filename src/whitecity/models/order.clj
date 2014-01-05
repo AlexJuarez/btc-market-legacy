@@ -93,9 +93,12 @@
           (where {:seller_id seller-id :id [in sales]})))
 
 (defn reject-sales [sales seller-id]
+  (let [o (select orders
+                  (where {:seller_id seller-id :id [in sales]}))]
+  (dorun (map #(update listings (set-fields {:quantity (raw (str "quantity + " (:quantity %)))}) (where {:id (:listing_id %) :user_id seller-id})) o))
   (delete orders
-          (where {:seller_id seller-id :id [in sales]})))
-
+          (where {:seller_id seller-id :id [in sales]}))
+  (util/user-clear seller-id)))
 
 (defn count [id]
   (:cnt (first (select orders

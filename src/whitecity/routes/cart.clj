@@ -14,7 +14,15 @@
 (defn cart-add
   "add a item to the cart"
   [id]
-  (session/put! :cart (conj (session/get :cart) {(util/parse-int id) {:quantity 1 :postage nil}}))
+  (let [cart (session/get :cart) id (util/parse-int id)]
+    (session/put! :cart (conj cart {id {:quantity (if-let [item (cart id)] (inc (:quantity item)) 1)
+                                                         :postage nil}})))
+  (resp/redirect "/market/cart"))
+
+(defn cart-remove
+  [id]
+  (let [cart (session/get :cart)]
+    (session/put! :cart (dissoc cart (util/parse-int id))))
   (resp/redirect "/market/cart"))
 
 (defn cart-get
@@ -55,4 +63,5 @@
     (GET "/market/cart" [] (cart-view))
     (GET "/market/cart/empty" [] (cart-empty))
     (POST "/market/cart" {params :params} (cart-update params))
-    (GET "/market/cart/add/:id" [id] (cart-add id)))
+    (GET "/market/cart/add/:id" [id] (cart-add id))
+    (GET "/market/cart/:id/remove" [id] (cart-remove id)))

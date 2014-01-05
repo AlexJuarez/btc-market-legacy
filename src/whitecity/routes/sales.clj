@@ -48,7 +48,7 @@
    (let [sales (map util/parse-int (keys check))]
      (if (= submit "accept")
        (do (order/update-sales sales (user-id) 1) (resp/redirect "/market/sales"))
-       (do (order/reject-sales sales (user-id)))))))
+       (do (order/reject-sales sales (user-id)) (resp/redirect "/market/sales"))))))
 
 (def-restricted-routes sales-routes
     (GET "/market/sales" [] (sales-overview))

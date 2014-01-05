@@ -86,6 +86,8 @@
                 (float :price :not-null)
                 (integer :quantity (default 0))
                 (integer :bookmarks (default 0))
+                (integer :reviews (default 0))
+                (integer :views (default 0))
                 (refer-to :currency)
                 (refer-to :category)
                 (text :description))))
