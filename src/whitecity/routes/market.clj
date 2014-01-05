@@ -21,7 +21,10 @@
             [whitecity.util :as util]))
 
 (defn home-page []
-  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public)} (set-info))))
+  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
+
+(defn category-page [cid]
+  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public cid)} (set-info))))
 
 (defn about-page []
   (layout/render "about.html"))
@@ -132,6 +135,7 @@
 
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
+    (GET "/market/category/:cid" [cid] (category-page cid))
     (GET "/market/messages" [] (messages-page))
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
