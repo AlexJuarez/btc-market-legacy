@@ -119,8 +119,8 @@
   ([user-id]
    (convert 
     (select listings
-    (with category)
     (fields  :title :from :to :price :id :currency_id :image_id :category_id)
+    (with category (fields [:name :category_name]))
     (with currency (fields [:name :currency_name] [:key :currency_key]))
     (where (and 
              (= :public true)

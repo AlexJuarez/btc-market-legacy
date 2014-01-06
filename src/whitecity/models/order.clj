@@ -92,6 +92,11 @@
           (set-fields {:status status})
           (where {:seller_id seller-id :id [in sales]})))
 
+(defn finalize [id user-id]
+  (update orders
+          (set-fields {:status 3})
+          (where {:user_id user-id :id id})))
+
 (defn reject-sales [sales seller-id]
   (let [o (select orders
                   (where {:seller_id seller-id :id [in sales]}))]

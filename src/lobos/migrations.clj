@@ -110,6 +110,7 @@
                 (varchar :postage_title 100)
                 (integer :quantity)
                 (boolean :hedged)
+                (boolean :reviewed (default false))
                 (varchar :title 100)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])

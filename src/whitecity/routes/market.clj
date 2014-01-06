@@ -133,6 +133,10 @@
                          (conj % {:auto_finalize autofinalize})) (order/all (user-id)))]
      (layout/render "orders/index.html" (merge {:errors {} :orders orders :user-id (user-id)} (set-info)))))
 
+(defn order-finalize [id]
+  (order/finalize id (user-id))
+  (resp/redirect "/market/orders"))
+
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
     (GET "/market/category/:cid" [cid] (category-page cid))
@@ -140,6 +144,7 @@
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
     (GET "/market/orders" [] (orders-page))
+    (GET "/market/order/:id/finalize" [id] (order-finalize id))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
