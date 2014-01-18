@@ -128,13 +128,18 @@
   (do (session/flash-put! :success {:success "postage removed"})
     (resp/redirect "/market/listings")))))
 
-(defn orders-page []
-  (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
-                         (assoc % :auto_finalize autofinalize)) (order/all (user-id)))
-        pending-review (filter #(= (:status %) 3) orders)
-        orders (filter #(< (:status %) 3) orders)]
-     (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
-
+(defn orders-page 
+  ([]
+    (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
+                           (assoc % :auto_finalize autofinalize)) (order/all (user-id)))
+          pending-review (filter #(= (:status %) 3) orders)
+          orders (filter #(< (:status %) 3) orders)]
+       (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
+  ([{:keys [rating shipped content] :as slug}]
+   (let [prep (map #(let [id (key %) value (val %)] {:order_id id :rating value :shipped (shipped id) :content (content id)}) rating)
+         order-ids (map key rating)
+         reviews (review/add! prep order-ids)])))
+   
 (defn order-finalize [id]
   (order/finalize id (user-id))
   (resp/redirect "/market/orders"))
@@ -146,6 +151,7 @@
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
     (GET "/market/orders" [] (orders-page))
+    (POST "/market/orders" {params :params} (orders-page params))
     (GET "/market/order/:id/finalize" [id] (order-finalize id))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))

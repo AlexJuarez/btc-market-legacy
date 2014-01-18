@@ -130,6 +130,7 @@
                 (boolean :published (default false))
                 (refer-to :user)
                 (refer-to :listing)
+                (integer :order_id :unique :not-null)
                 (text :content)
                 (smallint :rating :not-null (default 5))
                 (boolean :shipped (default true))
