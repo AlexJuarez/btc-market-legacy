@@ -14,6 +14,10 @@
              (fn [x]
                (:postage ((session/get :cart) x))))
 
+(add-filter! :pagination
+             (fn [x]
+               ()))
+
 (defn render-tree [tree]
   (let [children (:children tree)]
     (if-not (empty? children)

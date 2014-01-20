@@ -10,6 +10,7 @@
             [whitecity.models.image :as image]
             [whitecity.models.report :as report]
             [whitecity.models.bookmark :as bookmark]
+            [whitecity.models.review :as review]
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
             [whitecity.models.currency :as currency]
@@ -19,6 +20,8 @@
             [noir.session :as session]
             [noir.io :as io]
             [whitecity.util :as util]))
+
+(def per-page 10)
 
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
@@ -91,9 +94,10 @@
   (let [user (user/get id)]
     (layout/render "users/view.html" (merge {:listings-all (listing/public-for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
 
-(defn listing-view [id]
-  (let [listing (listing/view id)]
-    (layout/render "listings/view.html" (merge {:reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
+(defn listing-view [id page]
+  (let [listing (listing/view id)
+        pagemax (mod (:reviews listing) per-page)]
+    (layout/render "listings/view.html" (merge {:page {:page page :max pagemax} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
 
 (defn listing-bookmark [id]
   (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
@@ -137,8 +141,9 @@
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
   ([{:keys [rating shipped content] :as slug}]
    (let [prep (map #(let [id (key %) value (val %)] {:order_id id :rating value :shipped (shipped id) :content (content id)}) rating)
-         order-ids (map key rating)
-         reviews (review/add! prep order-ids)])))
+         order-ids (map #(util/parse-int (key %)) rating)
+         reviews (review/add! prep (user-id) order-ids)]
+    (resp/redirect "/market/orders"))))
    
 (defn order-finalize [id]
   (order/finalize id (user-id))
@@ -168,7 +173,7 @@
     (GET "/market/listing/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "listing" referer))
     (GET "/market/user/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "user" referer))
     (GET "/market/user/:id" [id] (user-view id))
-    (GET "/market/listing/:id" [id] (listing-view id))
+    (GET "/market/listing/:id" {{id :id page :page} :params} (listing-view id page))
     (GET "/market/listing/:id/remove" [id] (listing-remove id))
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
     (POST "/market/listing/:id/edit" {params :params} (listing-save params))

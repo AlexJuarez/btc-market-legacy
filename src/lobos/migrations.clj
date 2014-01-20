@@ -129,6 +129,7 @@
            (tbl :review
                 (boolean :published (default false))
                 (refer-to :user)
+                (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :listing)
                 (integer :order_id :unique :not-null)
                 (text :content)

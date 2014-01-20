@@ -21,7 +21,7 @@
 
 (defn prep [{:keys [title description from to public price] :as listing}]
   (merge {:title title 
-          :description description 
+          :description description
           :from from 
           :to to 
           :public (= public "true") 
@@ -53,6 +53,7 @@
    (select listings
     (fields :id :title :bookmarks :hedged :category_id :description :image_id :user_id :currency_id :price :to :from)
     (with category (fields [:name :category_name]))
+    (with reviews)
     (with users (fields [:login :user_login] [:alias :user_alias])
           (with postage))
     (where {:id (util/parse-int id)}))))))

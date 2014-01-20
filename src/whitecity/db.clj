@@ -11,11 +11,12 @@
 
 (defdb db db-spec)
 
-(declare users orders messages listings postage images category currency exchange bookmarks fans)
+(declare users orders messages listings postage images category currency exchange bookmarks fans reviews)
 
 (defentity users
   (table :user)
   (has-many orders)
+  (has-many reviews)
   (has-many listings)
   (has-many messages)
   (has-many images)
@@ -31,6 +32,7 @@
   (table :listing)
   (belongs-to users)
   (belongs-to category)
+  (has-many reviews)
   (belongs-to currency)
   (has-one images))
 
@@ -76,3 +78,9 @@
 (defentity reports
   (table :report)
   (belongs-to users))
+
+(defentity reviews
+  (table :review)
+  (belongs-to users)
+  (belongs-to listings)
+  (belongs-to orders))

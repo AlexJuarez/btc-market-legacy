@@ -3,13 +3,14 @@
 {% if not id %}
 <p>Listing not found</p>
 {% else %}
+{{listing}}
 <div class="listing">
   {% if image_id %}
     <img src="/uploads/{{image_id}}.jpg" />
   {% endif %}
   <h1>{{title}}</h1>
   <p>
-    <span class="price">{{price}}</span>
+    <span class="price">{{price|double-format:4}}</span>
     <a href="/market/cart/add/{{id}}">add to cart</a>
   </p>
   <div class="well">
@@ -30,7 +31,7 @@
     <span>postage options: </span>
     <select id="postage">
       {% for postage in postage %}
-      <option data="{{postage}}">{{postage.title}} - {{postage.price}}</option>
+      <option data="{{postage}}">{{postage.title}} - {{postage.price|double-format:4}}</option>
       {% endfor %}
     </select>
   </p>
@@ -41,9 +42,31 @@
     <a href="/market/listing/{{id}}/report">report this listing</a>
   {% endif %}
   </p>
-  <p class="well description">
+  <div class="well description">
     {{description}}
-  </p>
+  </div>
+  {% if review %}
+    <table class="reviews">
+      <thead>
+        <tr>
+          <th>rating</th>
+          <th>review</th>
+          <th>freshness</th>
+          <th>recieved</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in review %}
+        <tr>
+          <td>{{r.rating}} of 5</td>
+          <td>{{r.content}}</td>
+          <td time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
+          <td>{% if r.shipped %}received{% else %}waiting{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}
