@@ -47,16 +47,15 @@
           (where {:id [in cart]})))))
 
 (defn view [id]
-  (first (convert (transaction
    (update listings
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
+  (first (convert 
    (select listings
-    (fields :id :title :bookmarks :hedged :category_id :description :image_id :user_id :currency_id :price :to :from)
     (with category (fields [:name :category_name]))
     (with reviews)
     (with users (fields [:login :user_login] [:alias :user_alias])
           (with postage))
-    (where {:id (util/parse-int id)}))))))
+    (where {:id (util/parse-int id)})))))
 
 (defn count [id]
   (:cnt (first (select listings
