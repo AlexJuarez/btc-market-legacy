@@ -51,9 +51,9 @@
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
   (first (convert 
    (select listings
+    (fields [:id :lid] :from :to :reviews :hedged :quantity :title :price :category_id :currency_id :description [:user.login :user_login] [:user.alias :user_alias])
     (with category (fields [:name :category_name]))
-    (with reviews)
-    (with users (fields [:login :user_login] [:alias :user_alias])
+    (with users
           (with postage))
     (where {:id (util/parse-int id)})))))
 

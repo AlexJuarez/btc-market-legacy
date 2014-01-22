@@ -1,6 +1,7 @@
 (ns whitecity.views.filters
   (:require [clojure.string :as s]
-            [noir.session :as session])
+            [noir.session :as session]
+            [whitecity.util :as util])
   (:use selmer.filters
         hiccup.core))
 
@@ -21,11 +22,11 @@
       o
       (let [pageup (+ page c)
             pagedown (- page c)]
-        (recur (inc c) (concat (when (> pagedown 0) [pagedown]) o (when (< pageup maxpage) [pageup])))))))
+        (recur (inc c) (concat (when (> pagedown 0) [pagedown]) o (when (<= pageup maxpage) [pageup])))))))
 
 (add-filter! :pagination
              (fn [x]
-               (let [page (if (nil? (:page x)) 1 (:page x))
+               (let [page (if (nil? (:page x)) 1 (util/parse-int (:page x)))
                      m (:max x)
                      pages (paginate page m)
                      url (:url x)]

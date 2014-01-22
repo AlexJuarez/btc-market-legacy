@@ -32,8 +32,8 @@
   (table :listing)
   (belongs-to users)
   (belongs-to category)
-  (has-many reviews)
   (belongs-to currency)
+  (has-many reviews)
   (has-one images))
 
 (defentity orders

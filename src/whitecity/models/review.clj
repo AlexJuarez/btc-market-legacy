@@ -6,6 +6,10 @@
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
+(defn get [listing-id page]
+  (select reviews
+          (where {:listing_id (util/parse-int listing-id)})))
+
 (defn prep [{:keys [order_id rating content shipped]} user-id order-info]
   (if-let [order-info (order-info (util/parse-int order_id))] 
     {:order_id (util/parse-int order_id)

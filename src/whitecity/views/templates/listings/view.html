@@ -3,7 +3,6 @@
 {% if not id %}
 <p>Listing not found</p>
 {% else %}
-{{listing}}
 <div class="listing">
   {% if image_id %}
     <img src="/uploads/{{image_id}}.jpg" />
@@ -45,16 +44,23 @@
   <div class="well description">
     {{description}}
   </div>
-  {% if review %}
-    <table class="reviews">
+  {% if not review|empty? %}
+    <table class="reviews table">
       <thead>
         <tr>
           <th>rating</th>
-          <th>review</th>
+          <th class="large-column">review</th>
           <th>freshness</th>
           <th>recieved</th>
         </tr>
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="4">
+            {{page|pagination|safe}}
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         {% for r in review %}
         <tr>
@@ -66,7 +72,6 @@
         {% endfor %}
       </tbody>
     </table>
-    {{page|pagination|safe}}
   {% endif %}
 </div>
 {% endif %}
