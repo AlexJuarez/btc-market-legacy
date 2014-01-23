@@ -43,8 +43,9 @@
   (let [ls (listing/get-in (keys (session/get :cart)))
         listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
                              total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
-                         (conj % {:subtotal subtotal :total total})) ls))]
-    (layout/render "users/cart.html" (merge {:errors {} :listings listings} (first option) (set-info)))))
+                         (conj % {:subtotal subtotal :total total})) ls))
+        total (reduce + (map #(:total %) listings))]
+    (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} (first option) (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
   (session/put! :cart 

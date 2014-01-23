@@ -10,6 +10,10 @@
   (select reviews
           (where {:listing_id (util/parse-int listing-id)})))
 
+(defn for-user [user-id]
+  (select reviews
+          (where {:seller_id (util/parse-int user-id)})))
+
 (defn prep [{:keys [order_id rating content shipped]} user-id order-info]
   (if-let [order-info (order-info (util/parse-int order_id))] 
     {:order_id (util/parse-int order_id)

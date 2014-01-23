@@ -1,5 +1,8 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+<div class="inbox">
+    <a href="/market/messages">inbox <strong>{{user.messages}}</strong></a> - <a href="/market/messages/sent">sent</a>
+</div>
 <div class="thread">
   {% for message in messages %}
   <div class="message">
@@ -13,20 +16,20 @@
   </div>
   {% endfor %}
 </div>
-<form action="/market/messages/{{user_id}}" method="POST">
-  {% csrf-token %}
+<form class="well" action="/market/messages/{{user_id}}" method="POST">
   <p>
-    <label for="subject">Subject</label>
-    <input name="subject" id="subject" type="text" value="{{subject}}" />
+    <label for="subject">Subject:</label>
+    <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
   </p>
   <p>
     {% if errors.content %}
     <p>{{errors.content|join:", "}}</p>
     {% endif %}
-    <textarea name="content">{{content}}</textarea>
+    <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
   </p> 
   <span class="submit">
     <input type="submit" class="btn" value="send" />
   </span>
+  {% csrf-token %}
 </form>
 {% endblock %}

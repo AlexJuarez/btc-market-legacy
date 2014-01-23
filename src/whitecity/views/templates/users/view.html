@@ -3,14 +3,14 @@
 {% if not id %}
 <p>User not found</p>
 {% else %}
-<h1>{% if alias %}{{alias}}{% else %}{{login}}{% endif %}</h1>
+<h1 class="jumbo">{% if alias %}{{alias}}{% else %}{{login}}{% endif %}</h1>
 <a href="/market/messages/{{id}}">send a message</a>
 <p class="well">
   has been a member for: <strong class="pretty-time" time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
   <br />
   was last seen: <strong class="pretty-time" time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
   <br />
-  ranked in the top % of sellers with % positive feedback from more than x tranactions
+  ranked in the top % of sellers with {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
   has {{fans}} {% ifequal fans 1 %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
 </p>
@@ -44,7 +44,7 @@
       <th>price</th>
       <th>ships to</th>
       <th>ships from</th>
-      <th><th>
+      <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -63,5 +63,30 @@
 {% else %}
 The users does not currently have active public listings
 {% endif %}
+{% if not review|empty? %}
+  <table class="reviews table">
+    <thead>
+      <tr>
+        <th>rating</th>
+        <th class="large-column">review</th>
+        <th>freshness</th>
+        <th>recieved</th>
+        <th>Item</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in review %}
+      <tr>
+        <td>{{r.rating}} of 5</td>
+        <td>{{r.content}}</td>
+        <td time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
+        <td>{% if r.shipped %}received{% else %}waiting{% endif %}</td>
+        <td><a href="/market/listing/{{r.listing_id}}">item</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+
 {% endif %}
 {% endblock %}

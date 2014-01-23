@@ -1,10 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="inbox">
-  <dl>
-    <dt><a href="/market/messages">inbox <strong>{{user.messages}}</strong></a></dt>
-    <dd><a href="/market/messages/sent">sent</a></dd>
-  </dl>
+    <a href="/market/messages">inbox <strong>{{user.messages}}</strong></a> - <a href="/market/messages/sent">sent</a>
 </div>
 <div class="messages">
   {% for message in messages %}

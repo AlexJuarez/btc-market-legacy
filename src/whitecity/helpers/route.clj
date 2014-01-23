@@ -3,6 +3,7 @@
             [whitecity.cache :as cache]
             [whitecity.util :as util]
             [whitecity.models.order :as order]
+            [whitecity.models.message :as message]
             [noir.session :as session]))
 
 (defn user-id []
@@ -18,6 +19,7 @@
                (when (:vendor user) 
                  {:sales (order/count-sales id)})
                {:errors {} 
+                :messages (message/count id)
                 :orders (order/count id)})))]
      (do (session/put! :user u) u)))
   ([user]
@@ -28,6 +30,7 @@
                (when (:vendor user) 
                  {:sales (order/count-sales id)})
                {:errors {} 
+                :messages (message/count id)
                 :orders (order/count id)}))]
           (do (session/put! :user u) u))))
 

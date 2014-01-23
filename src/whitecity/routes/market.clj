@@ -92,7 +92,7 @@
 
 (defn user-view [id]
   (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings-all (listing/public-for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
+    (layout/render "users/view.html" (merge {:listings-all (listing/public-for-user id) :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)

@@ -7,11 +7,11 @@
 <div class="ls">
 {% for listing in listings %}
 <div class="listing-row">
-  <div class="thumbnail">
   {% if listing.image_id %}
+  <div class="thumbnail">
     <img src="/uploads/{{listing.image_id}}.jpg" />
-  {% endif %}  
   </div>
+  {% endif %}  
   <div class="sale">
     <span>{{listing.price|double-format:5}}</span>
     <br />

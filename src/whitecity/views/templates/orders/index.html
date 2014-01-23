@@ -4,7 +4,7 @@
 {% if not pending-review|empty? %}
 <form action="/market/orders" method="POST">
   {% csrf-token %}
-  <table>
+  <table class="table">
     <thead>
       <th>item</th>
       <th>seller</th>
@@ -29,20 +29,22 @@
           <input type="radio" name="shipped[{{order.id}}]" value="false" /> no
         </td>
         <td>
-          <textarea name="content[{{order.id}}]"></textarea>
+          <textarea class="form-control" name="content[{{order.id}}]"></textarea>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <span class="submit">
-    <input type="submit" class="btn" value="submit" />
-  </span>
+  <p>
+    <span class="submit">
+      <input type="submit" class="btn" value="submit" />
+    </span>
+  </p>
 </form>
 {% endif %}
 
 {% if not orders|empty? %}
-<table>
+<table class="table normal">
   <thead>
     <tr>
       <th>order #</th>

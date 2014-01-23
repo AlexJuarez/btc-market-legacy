@@ -1,14 +1,11 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<h1>Shopping Cart</h1>
-<p class="well">
-  <a href="/market/cart/empty">empty cart</a>
-</p>
+<h1 class="jumbo">Shopping Cart</h1>
+<a href="/market/cart/empty">empty cart</a>
 {% if listings %}
-{{errors}}
 <form class="my-cart" action"/market/cart" method="POST">
 {% csrf-token %}
-<table>
+<table class="table">
   <thead>
     <tr>
       <th>seller</th>
@@ -24,12 +21,11 @@
   </thead>
   <tbody>
   {% for listing in listings %}
-  {{listing}}
   <tr>
     <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
     <td>{{listing.title}}</td>
     <td>{{listing.price|double-format:5}}</td>
-    <td><input type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
+    <td><input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
     <td>{{listing.subtotal|double-format:5}}</td>
     <td>
       <select name="postage[{{listing.lid}}]">
@@ -50,14 +46,19 @@
   <input type="submit" name="submit" value="Update Cart" />
 </p>
 <div class="well">
-  <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address}}</span> {% endif %}</label>
-  <textarea rows="4" class="form-control" id="address" name="address">{{address}}</textarea> 
+  <h1>Total: {{total}}</h1>
+  <p>
+    <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address}}</span> {% endif %}</label>
+    <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea> 
+  </p>
   <label for="pin">Pin: </label>
     {% if errors.pin %}
       {{errors.pin}}
     {% endif %}
-    <input type="password" name="pin" id="pin" />
-    <input type="submit" name="submit" value="Place Order" onclick="return confirm('Order?')" />
+    <input class="text-input" type="password" name="pin" id="pin" />
+    <p>
+      <input type="submit" name="submit" value="Place Order" onclick="return confirm('Order?')" />
+    </p>
 </div>
 </form>
 {% else %}
