@@ -79,7 +79,8 @@
   (let [cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         address-check (when (empty? address) {:address "You need to enter an address"})
         pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
-        errors (merge cart-check address-check pin-check)]
+        postage {:postage (or (map #(not (nil? (:postage (val %)))) cart-check))}
+        errors (merge cart-check postage address-check pin-check)]
     (if (empty? errors)
       (do 
         (session/put! :cart {}) 

@@ -5,6 +5,7 @@
   <a href="/market/cart/empty">empty cart</a>
 </p>
 {% if listings %}
+{{errors}}
 <form class="my-cart" action"/market/cart" method="POST">
 {% csrf-token %}
 <table>
@@ -15,7 +16,7 @@
       <th>price</th>
       <th>quantity</th>
       <th>sub-total</th>
-      <th>postage</th>
+      {% if errors.postage %}<th class="error">postage required</th>{% else %}<th>postage</th>{% endif %}
       <th>total</th>
       <th>hedged</th>
       <th></th>

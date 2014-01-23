@@ -54,11 +54,11 @@ You need to add postage
           {% endif %}
         </span>
         <br />
-        <span class="ships-from">ships from:{{listing.from}}</span>
+        <span class="ships-from">ships from: {{listing.from}}</span>
         <br />
-        <span class="ships-to">ships to:{{listing.to}}</span>
+        <span class="ships-to">ships to: {{listing.to}}</span>
         <br />
-        <span class="category">Category:</span>
+        <span class="category">Category: <a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
       </p>
     </div>
     <div class="cost">
