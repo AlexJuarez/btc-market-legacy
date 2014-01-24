@@ -6,6 +6,8 @@
         [whitecity.models.user :as user]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
+        [clj-time.coerce :as tc]
+        [clj-time.core :as cljtime]
         [noir.session :as session]
         [whitecity.util :as util]))
 
@@ -91,12 +93,12 @@
 
 (defn update-sales [sales seller-id status]
   (update orders
-          (set-fields {:status status})
+          (set-fields {:status status :updated_on (tc/to-sql-date (cljtime/now))})
           (where {:seller_id seller-id :id [in sales]})))
 
 (defn finalize [id user-id]
   (update orders
-          (set-fields {:status 3})
+          (set-fields {:status 3 :updated_on (tc/to-sql-date (cljtime/now))})
           (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn reject-sales [sales seller-id]

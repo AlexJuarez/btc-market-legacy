@@ -10,17 +10,30 @@
       <th>postage type</th>
       <th>quantity</th>
       <th>buyer</th>
+      <th>freshness</th>
       <th>status</th>
     </tr>
   </thead>
   <tbody>
   {% for order in sales %}
+  {{order}}
   <tr>
     <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.postage_title}}</td>
     <td>{{order.quantity}}</td>
     <td><a href="/market/user/{{order.user_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
+    <td>
+      {% if order.updated_on %}
+        <span class="pretty-time" time="{{listing.updated_on|date:fullDateTime}}">
+          {{order.updated_on|date:shortDate}}
+        </span>
+      {% else %}
+        <span class="pretty-time" time="{{listing.created_on|date:fullDateTime}}">
+          {{order.created_on|date:shortDate}}
+        </span>
+      {% endif %}
+    </td>
     <td><em>{{order.status|get-status}}</em></td>
   </tr>
   {% endfor %}

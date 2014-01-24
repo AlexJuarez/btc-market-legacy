@@ -19,7 +19,8 @@
 
 (defn sales-new 
   []
-  (let [sales (order/sold 0 (user-id))]
+  (let [orders (order/sold 0 (user-id))
+        sales (map #(assoc % :auto_reject (java.sql.Timestamp. (+ 432000000 (.getTime (:created_on %))))) orders)]
      (layout/render "sales/new.html" (merge {:sales sales} (set-info)))))
 
 (defn sales-overview 
