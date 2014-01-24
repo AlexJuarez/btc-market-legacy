@@ -3,19 +3,43 @@
 <div class="inbox">
     <a href="/market/messages">inbox <strong>{{user.messages}}</strong></a> - <a href="/market/messages/sent">sent</a>
 </div>
-<div class="thread">
-  {% for message in messages %}
-  <div class="message">
-    <div class="header">
-      <span class="subject">{{message.subject}}</span>
-      <span class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</span>
-    </div>
-    <div class="content">
-      {{message.content}}
-    </div>
-  </div>
-  {% endfor %}
-</div>
+{% if not messages|empty? %}
+<table class="table thread">
+  <thead>
+    <tr>
+      <th>from</th>
+      <th class="large-column">message</th>
+      <th>freshness</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for message in messages %}
+    <tr>
+      <td>
+        {% ifequal user.id message.sender_id %}
+          <span class="sender">{% if message.user_alias %}{{user.alias}}{% else %}{{user.login}}{% endif %}</span>
+        {% else %}
+          <a href="/market/user/{{message.sender_id}}" class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</a>
+        {% endifequal %}
+      </td>
+      <td>
+        {% if not message.subject|empty? %}
+          <div class="header">
+            <strong class="subject">Subject: {{message.subject}}</strong>
+          </div>
+        {% endif %}
+        <div class="content">
+          {{message.content}}
+        </div>
+      </td>
+      <td><span time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
+      <td><a href="/market/message/{{message.id}}/delete">delete</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 <form class="well" action="/market/messages/{{user_id}}" method="POST">
   <p>
     <label for="subject">Subject:</label>

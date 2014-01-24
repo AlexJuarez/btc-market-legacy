@@ -29,6 +29,14 @@ a:hover {
   clear: both;
 }
 
+.inbox {
+  margin-bottom: 20px;
+}
+
+.thread {
+  margin-bottom: 20px;
+}
+
 .jumbo {
   font-size: 28px;
   margin: 0;
