@@ -36,7 +36,7 @@
   (layout/render "messages/index.html" (conj (set-info) {:messages (message/all (user-id))})))
 
 (defn messages-sent []
-  (layout/render "messages/index.html" (conj (set-info) {:messages (message/sent (user-id))})))
+  (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
 
 (defn messages-thread
   ([receiver-id]

@@ -37,6 +37,14 @@ a:hover {
   margin-bottom: 20px;
 }
 
+.sales-nav {
+  margin: -4px 0 0 6px;
+}
+
+.table.sales {
+  margin: 10px 0;
+}
+
 .jumbo {
   font-size: 28px;
   margin: 0;
@@ -427,9 +435,18 @@ textarea.form-control {
     color: red;
 }
 
+.postage {
+  margin-bottom: 20px;
+}
+
+.postage > a {
+  margin-left: 5px;
+}
+
 .listings .listing-row .thumbnail-wrapper {
   overflow: hidden;
   height: 150px;
+  margin-right: 20px;
   float: left;
 }
 
@@ -440,7 +457,6 @@ textarea.form-control {
 
 .listings .listing-row .info {
   float: left;
-  margin: 0 0 0 20px;
 }
 
 .listings .listing-row .info h2 {

@@ -24,8 +24,8 @@
 
 (defn sales-overview 
   []
-  (let [sales (order/sold 0 (user-id))]
-     (layout/render "sales/new.html" (merge {:sales sales} (set-info)))))
+  (let [sales (order/sold (user-id))]
+     (layout/render "sales/overview.html" (merge {:sales sales} (set-info)))))
 
 (defn sales-shipped 
   []

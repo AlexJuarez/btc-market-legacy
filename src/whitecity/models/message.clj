@@ -11,7 +11,7 @@
 (defn count [id]
   (:cnt (first (select messages
     (aggregate (count :*) :cnt)
-    (where (and {:read false } (or {:sender_id id} {:user_id id})))))))
+    (where (and {:read false } {:user_id id}))))))
 
 (defn update! [id receiver-id]
   (update messages
@@ -48,7 +48,7 @@
    :sender_id sender_id})
 
 (defn store! [message user-id receiver-id]
-  (cache/delete (str "user_" user-id))
+  (cache/delete (str "user_" receiver-id))
   (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id})))))
 
 (defn add! [message user-id receiver-id]

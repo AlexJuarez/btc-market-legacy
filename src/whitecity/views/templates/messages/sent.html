@@ -22,13 +22,7 @@
       <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
       <td><span time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
       <td>
-        {% if message.read %}
-        <span class="subject"><a href="/market/messages/{{message.sender_id}}">read</a></span>
-        {% else %}
-        <span class="subject">
-          <strong><a href="/market/messages/{{message.sender_id}}">read</a></strong>
-        </span>
-        {% endif %}
+        <span class="subject"><a href="/market/messages/{{message.user_id}}">read</a></span>
       </td>
     </tr>
   {% endfor %}

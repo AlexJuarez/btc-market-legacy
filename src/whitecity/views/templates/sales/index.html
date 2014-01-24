@@ -1,16 +1,13 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<div class="well">
-  <h2> my sales </h2>
-  <nav>
-    <ul>
-      <li><a href="/market/sales">overview</a></li>
-      <li><a href="/market/sales/shipped">in transit</a></li>
-      <li><a href="/market/sales/resolutions">in resolution</a></li>
-      <li><a href="/market/sales/past">past</a></li>
-    </ul>
-  </nav>
-</div>
+<h1 class="jumbo"> my sales </h2>
+<nav class="sales-nav">
+  <a href="/market/sales">overview</a> - 
+  <a href="/market/sales/new">new</a> - 
+  <a href="/market/sales/shipped">in transit</a> - 
+  <a href="/market/sales/resolutions">in resolution</a> - 
+  <a href="/market/sales/past">past</a> 
+</nav>
 {% block section %}
 {% endblock %}
 {% endblock %}

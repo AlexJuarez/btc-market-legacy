@@ -17,10 +17,10 @@
     {% for message in messages %}
     <tr>
       <td>
-        {% ifequal user.id message.sender_id %}
+        {% ifequal user.id message.user_id %}
           <span class="sender">{% if message.user_alias %}{{user.alias}}{% else %}{{user.login}}{% endif %}</span>
         {% else %}
-          <a href="/market/user/{{message.sender_id}}" class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</a>
+          <a href="/market/user/{{message.user_id}}" class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</a>
         {% endifequal %}
       </td>
       <td>
