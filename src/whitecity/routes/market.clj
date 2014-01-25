@@ -38,6 +38,10 @@
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
 
+(defn message-delete [id]
+  (message/remove! id (user-id))
+  (resp/redirect "/market/messages"))
+
 (defn messages-thread
   ([receiver-id]
    (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
@@ -153,6 +157,7 @@
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
     (GET "/market/category/:cid" [cid] (category-page cid))
+    (GET "/market/message/:id/delete" [id] (message-delete id))
     (GET "/market/messages" [] (messages-page))
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))

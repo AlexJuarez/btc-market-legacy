@@ -27,7 +27,7 @@
 (defn all 
   ([id]
     (select messages
-      (fields [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
+      (fields :id [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
       (join
         users (= :user.id :sender_id)) 
       (where {:user_id id}) 
@@ -50,6 +50,9 @@
 (defn store! [message user-id receiver-id]
   (cache/delete (str "user_" receiver-id))
   (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id})))))
+
+(defn remove! [id user-id]
+  (delete messages (where {:id (util/parse-int id) :user_id user-id})))
 
 (defn add! [message user-id receiver-id]
   (let [check (v/message-validator message)]

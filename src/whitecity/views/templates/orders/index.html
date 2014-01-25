@@ -67,7 +67,7 @@
     <td><em>{{order.status|get-status}}</em></td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td>
-      {% ifequal order.status 1 %} 
+      {% if order.status = 1 %} 
         <span time="{{order.auto_reject|date:fullDateTime}}" class="pretty-time">{{order.auto_reject|date:shortDate}}</span>
       {% else %}
         <span time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span>

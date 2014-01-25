@@ -29,6 +29,7 @@
           <strong><a href="/market/messages/{{message.sender_id}}">read</a></strong>
         </span>
         {% endif %}
+         | <a href="/market/message/{{message.id}}/delete">delete</a>
       </td>
     </tr>
   {% endfor %}

@@ -20,6 +20,8 @@
 
 (defn account-page [])
 
+(defn wallet-page [])
+
 (defn user-follow [id]
   (if-let [follower (:errors (follower/add! id (user-id)))]
     (session/flash-put! :follower follower))
@@ -31,5 +33,6 @@
 
 (def-restricted-routes account-routes
   (GET "/market/account" [] (account-page))
+  (GET "/market/acount/wallet" [] (wallet-page))
   (GET "/market/user/:id/follow" [id] (user-follow id))
   (GET "/market/user/:id/unfollow" {{id :id} :params {referer "referer"} :headers} (user-unfollow id referer)))
