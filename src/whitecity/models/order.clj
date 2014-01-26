@@ -3,6 +3,7 @@
         [korma.core]
         [whitecity.db])
   (:require 
+        [whitecity.cache :as cache]
         [whitecity.models.user :as user]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
@@ -51,11 +52,17 @@
       {id errors})))
 
 (defn store! [order]
-  (transaction
-    (insert orders (values order))
-    (update listings 
-            (set-fields {:quantity (raw (str "quantity - " (:quantity order)))})
-            (where {:id (:listing_id order)}))))
+  (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
+        postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
+        cost (+ item-cost postage-cost)
+        escr {:from (:user_id order) :to (:seller_id order) :amount cost :hedged (:hedged order) :status "hold"}]
+    (transaction
+      (update users (set-fields {:btc (- :btc cost)}))
+      (insert escrow (values escr))
+      (insert orders (values order))
+      (update listings 
+              (set-fields {:quantity (raw (str "quantity - " (:quantity order)))})
+              (where {:id (:listing_id order)})))))
 
 (defn prep [item address user-id]
   (let [id (key item)
@@ -66,6 +73,7 @@
     {:price (:price listing) 
      :postage_price (:price post) 
      :postage_title (:title post)
+     :postage_currency (:currency_id post)
      :quantity quantity
      :hedged (:hedged listing)
      :title (:title listing)
@@ -92,6 +100,7 @@
       {:address address :errors errors})))
 
 (defn update-sales [sales seller-id status]
+  (if (= status 1) (cache/delete (str "user_" seller-id)))
   (update orders
           (set-fields {:status status :updated_on (tc/to-sql-date (cljtime/now))})
           (where {:seller_id seller-id :id [in sales]})))
@@ -102,6 +111,7 @@
           (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn reject-sales [sales seller-id]
+  (cache/delete (str "user_" seller-id))
   (let [o (select orders
                   (where {:seller_id seller-id :id [in sales]}))]
   (dorun (map #(update listings (set-fields {:quantity (raw (str "quantity + " (:quantity %)))}) (where {:id (:listing_id %) :user_id seller-id})) o))

@@ -2,19 +2,21 @@
 {% block content %}
 <form action="/market/postage/create" method="POST">
   {% csrf-token %}
+  {% if errors.title %}
+  <p>{{errors.title|join:", "}}</p>
+  {% endif %}
   <p>
-    {% if errors.title %}
-    <p>{{errors.title|join:", "}}</p>
-    {% endif %}
-    <label for="title">Title</label>
-    <input name="title" id="title" type="text" value="{{title}}" />
+    <label for="title">Title: </label>
+    <input name="title" id="title" class="input" type="text" value="{{title}}" />
+  </p>
+  {% if errors.price  %}
+  <p>{{errors.price|join:", "}} </p>
+  {% endif %}
+  <p>
+    <label for="price">Price: </label>
+    <input name="price" class="input" id="price" type="text" value="{{price}}" />
   </p>
   <p>
-    {% if errors.price  %}
-    <p>{{errors.price|join:", "}} </p>
-    {% endif %}
-    <label for="price">Price: </label>
-    <input name="price" id="price" type="text" value="{{price}}" />
     <label for="currency_id">Currency: </label>
     <select name="currency_id" id="currency_id">
       {% for currency in currencies %}

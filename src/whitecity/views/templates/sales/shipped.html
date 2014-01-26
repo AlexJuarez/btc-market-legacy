@@ -10,6 +10,7 @@
       <th>postage type</th>
       <th>quantity</th>
       <th>buyer</th>
+      <th>auto finalize</th>
       <th>address</th>
     </tr>
   </thead>
@@ -21,6 +22,7 @@
     <td>{{order.postage_title}}</td>
     <td>{{order.quantity}}</td>
     <td><a href="/market/user/{{order.user_id}}">{% if order.alias %}{{order.alias}}{% else %}{{order.login}}{% endif %}</a></td>
+    <td><span time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span></td>
     <td><em>{{order.address}}</em></td>
   </tr>
   {% endfor %}

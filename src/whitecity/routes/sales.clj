@@ -3,24 +3,13 @@
         noir.util.route
         whitecity.helpers.route)
   (:require [whitecity.views.layout :as layout]
-            [whitecity.models.user :as user]
-            [whitecity.models.message :as message]
-            [whitecity.models.listing :as listing]
-            [whitecity.models.image :as image]
-            [whitecity.models.postage :as postage]
             [whitecity.models.order :as order]
             [noir.response :as resp]
-            [clj-time.core :as cljtime]
-            [clj-time.coerce :as tc]
-            [clojure.string :as string]
-            [noir.session :as session]
-            [noir.io :as io]
             [whitecity.util :as util]))
 
 (defn sales-new 
   []
-  (let [orders (order/sold 0 (user-id))
-        sales (map #(assoc % :auto_reject (java.sql.Timestamp. (+ 432000000 (.getTime (:created_on %))))) orders)]
+  (let [sales (order/sold 0 (user-id))]
      (layout/render "sales/new.html" (merge {:sales sales} (set-info)))))
 
 (defn sales-overview 
@@ -30,7 +19,8 @@
 
 (defn sales-shipped 
   []
-  (let [sales (order/sold 1 (user-id))]
+  (let [orders (order/sold 1 (user-id))
+        sales (map #(assoc % :auto_finalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))) orders)]
      (layout/render "sales/shipped.html" (merge {:sales sales} (set-info)))))
 
 (defn sales-disputed 

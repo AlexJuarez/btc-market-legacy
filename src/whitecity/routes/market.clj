@@ -14,7 +14,6 @@
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
             [whitecity.models.currency :as currency]
-            [whitecity.models.order :as order]
             [noir.response :as resp]
             [clojure.string :as string]
             [noir.session :as session]
@@ -137,23 +136,6 @@
   (do (session/flash-put! :success {:success "postage removed"})
     (resp/redirect "/market/listings")))))
 
-(defn orders-page 
-  ([]
-    (let [orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))] 
-                           (assoc % :auto_finalize autofinalize)) (order/all (user-id)))
-          pending-review (filter #(= (:status %) 3) orders)
-          orders (filter #(< (:status %) 3) orders)]
-       (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
-  ([{:keys [rating shipped content] :as slug}]
-   (let [prep (map #(let [id (key %) value (val %)] {:order_id id :rating value :shipped (shipped id) :content (content id)}) rating)
-         order-ids (map #(util/parse-int (key %)) rating)
-         reviews (review/add! prep (user-id) order-ids)]
-    (resp/redirect "/market/orders"))))
-   
-(defn order-finalize [id]
-  (order/finalize id (user-id))
-  (resp/redirect "/market/orders"))
-
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
     (GET "/market/category/:cid" [cid] (category-page cid))
@@ -161,9 +143,6 @@
     (GET "/market/messages" [] (messages-page))
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
-    (GET "/market/orders" [] (orders-page))
-    (POST "/market/orders" {params :params} (orders-page params))
-    (GET "/market/order/:id/finalize" [id] (order-finalize id))
     (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))

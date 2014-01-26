@@ -46,22 +46,29 @@
   <div class="form-group public">
       <label>Public?</label>
       <div> 
-        <input type="checkbox" name="public" value="true">
+        <input type="checkbox" {% if public %}checked="checked"{% endif %}  name="public" value="true">
+        (check for yes)
+      </div>
+  </div>
+  <div class="form-group hedged">
+      <label>Hedged?</label>
+      <div> 
+        <input type="checkbox" name="hedged" {% if hedged %}checked="checked"{% endif %} value="true">
         (check for yes)
       </div>
   </div>
   <div class="form-group">
     <label for="category_id">Category: </label>
-    <div>
-      <select id="category_id" name="category_id">
-        {% for category in categories %}
-        <option value="{{category.id}}" {% ifequal category.id category_id %}selected="selected"{% endifequal %}>{{category.name}}</option>
-        {% endfor %}
-      </select>
-    </div>
+    <select id="category_id" name="category_id">
+      {% for category in categories %}
+      <option value="{{category.id}}" {% ifequal category.id category_id %}selected="selected"{% endifequal %}>{{category.name}}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="form-group {% if errors.title %}has-error{% endif %}">
     <label for="price">
+    Price: 
+    <input name="price" id="price" class="input" type="text" value="{{price}}" />
     <select title="currency" name="currency_id" id="currency_id">
       {% for currency in currencies %}
       <option value="{{currency.id}}" {% ifequal currency.id user.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
@@ -70,14 +77,10 @@
     {% if errors.currency_id %}
     {{errors.currency_id|join:", "}}
     {% endif %}
-    Price: 
     {% if errors.price  %}
     {{errors.price|join:", "}}
     {% endif %}
     </label>
-    <div>
-      <input name="price" id="price" class="form-control" type="text" value="{{price}}" />
-    </div>
   </div>
   <div class="form-group {% if errors.quantity %}has-error{% endif %}">
     <label for="quantity">Quantity:

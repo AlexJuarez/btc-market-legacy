@@ -2,14 +2,14 @@
 {% block content %}
 <div class="postage">
 <a href="/market/postage/create">add postage</a>
-{% if postages %}
+{% if not postages|empty? %}
 <table class="table normal">
   <thead>
     <tr>
       <th>title</th>
       <th>price</th>
-      <th></th>
-      <th></th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -24,7 +24,10 @@
   </tbody>
 </table>
 {% else %}
-You need to add postage
+- 
+<strong class="danger">
+  You need to add postage
+</strong>
 {% endif %}
 </div>
 <div class="listings">

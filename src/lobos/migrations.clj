@@ -34,7 +34,9 @@
                (timestamp :last_login)
                (refer-to :currency)
                (check :login (> (length :login) 2))
+               (check :btc (>= :btc 0))
                (check :alias (> (length :alias) 2)))))
+               
   (down [] (drop (table :user))))
 
 (defmigration add-messages-table
@@ -91,6 +93,7 @@
                 (integer :views (default 0))
                 (refer-to :currency)
                 (refer-to :category)
+                (check :price (>= :price 0))
                 (text :description))))
   (down [] (drop (table :listing))))
 
@@ -109,6 +112,7 @@
                 (float :price)
                 (float :postage_price)
                 (varchar :postage_title 100)
+                (integer :postage_currency [:refer :currency :id])
                 (integer :quantity)
                 (boolean :hedged)
                 (boolean :reviewed (default false))
@@ -122,6 +126,18 @@
                 (refer-to :user)
                 (smallint :status))))
   (down [] (drop (table :order))))
+
+(defmigration add-escrow-table
+  (up [] (create
+           (tbl :escrow
+                (integer :from [:refer :user :id :on-delete :set-null])
+                (integer :to [:refer :user :id :on-delete :set-null])
+                (float :amount)
+                (check :amount (>= :amount 0))
+                (boolean :hedged)
+                (refer-to :currency)
+                (varchar :status 10))))
+  (down [] (drop (table :escrow))))
 
 (defmigration add-reviews-table
   (up [] (create
