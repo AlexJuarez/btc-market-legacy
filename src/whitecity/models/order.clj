@@ -55,9 +55,9 @@
   (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
         postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
         cost (+ item-cost postage-cost)
-        escr {:from (:user_id order) :to (:seller_id order) :amount cost :hedged (:hedged order) :status "hold"}]
+        escr {:from (:user_id order) :to (:seller_id order) :currency_id 1 :amount cost :status "hold"}]
     (transaction
-      (update users (set-fields {:btc (- :btc cost)}))
+      ;;(update users (set-fields {:btc (raw (str "btc - " cost))}))
       (insert escrow (values escr))
       (insert orders (values order))
       (update listings 
@@ -106,6 +106,7 @@
           (where {:seller_id seller-id :id [in sales]})))
 
 (defn finalize [id user-id]
+  (cache/delete (str "user_" user-id))
   (update orders
           (set-fields {:status 3 :updated_on (tc/to-sql-date (cljtime/now))})
           (where {:user_id user-id :id (util/parse-int id)})))

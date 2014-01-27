@@ -10,28 +10,28 @@
 (defn sales-new 
   []
   (let [sales (order/sold 0 (user-id))]
-     (layout/render "sales/new.html" (merge {:sales sales} (set-info)))))
+     (layout/render "sales/new.html" (merge {:status 0 :sales sales} (set-info)))))
 
 (defn sales-overview 
   []
   (let [sales (order/sold (user-id))]
-     (layout/render "sales/overview.html" (merge {:sales sales} (set-info)))))
+     (layout/render "sales/overview.html" (merge {:status 1 :sales sales} (set-info)))))
 
 (defn sales-shipped 
   []
   (let [orders (order/sold 1 (user-id))
         sales (map #(assoc % :auto_finalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))) orders)]
-     (layout/render "sales/shipped.html" (merge {:sales sales} (set-info)))))
+     (layout/render "sales/shipped.html" (merge {:status 2 :sales sales} (set-info)))))
 
 (defn sales-disputed 
   []
   (let [sales (order/sold 2 (user-id))]
-     (layout/render "sales/disputed.html" (merge {:sales sales} (set-info)))))
+     (layout/render "sales/disputed.html" (merge {:status 3 :sales sales} (set-info)))))
 
 (defn sales-finailized 
   []
   (let [sales (order/sold 3 (user-id))]
-     (layout/render "sales/finailized.html" (merge {:sales sales} (set-info)))))
+     (layout/render "sales/finailized.html" (merge {:status 4 :sales sales} (set-info)))))
 
 (defn sales-page
   ([] (sales-overview))
