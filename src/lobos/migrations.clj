@@ -136,6 +136,7 @@
                 (check :amount (>= :amount 0))
                 (boolean :hedged)
                 (refer-to :currency)
+                (refer-to :order)
                 (varchar :status 10))))
   (down [] (drop (table :escrow))))
 

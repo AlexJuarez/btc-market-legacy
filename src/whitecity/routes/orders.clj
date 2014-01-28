@@ -29,8 +29,11 @@
 
 (defn order-resolve [id])
 
+(defn order-view [id])
+
 (def-restricted-routes order-routes
     (GET "/market/orders" [] (orders-page))
     (POST "/market/orders" {params :params} (orders-page params))
+    (GET "/market/order/:id" [id] (order-view id))
     (GET "/market/order/:id/resolve" [id] (order-resolve id))
     (GET "/market/order/:id/finalize" [id] (order-finalize id)))
