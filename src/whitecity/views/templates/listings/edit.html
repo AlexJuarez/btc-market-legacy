@@ -59,59 +59,47 @@
     </div>
     {% endif %}
   </div>
-  <table>
-    <tbody>
-    <tr>
-      <td><label for="category_id">Category: </label></td>
-      <td><select id="category_id" name="category_id">
-        {% for category in categories %}
-        <option value="{{category.id}}" {% ifequal category.id category_id %}selected="selected"{% endifequal %}>{{category.name}}</option>
-        {% endfor %}
-      </select></td>
-    </tr>
-    <tr class="{% if errors.title %}has-error{% endif %}">
-      <td>
-        <label for="price">
-        Price: 
-        </label>
-      </td>
-      <td>
-        <input name="price" id="price" class="input" type="text" value="{{price}}" />
-        <select title="currency" name="currency_id" id="currency_id">
-          {% for curr in currencies %}
-          <option value="{{curr.id}}" {% ifequal curr.id currency_id %}selected="selected"{% endifequal %}>{{curr.name}}</option>
-          {% endfor %}
-        </select>
-        {% if errors.currency_id %}
-        {{errors.currency_id|join:", "}}
-        {% endif %}
-        {% if errors.price  %}
-        {{errors.price|join:", "}}
-        {% endif %}
-      </td>
-    </tr>
-    <tr class="{% if errors.quantity %}has-error{% endif %}">
-      <td>
-        <label for="quantity">Quantity:
-          {% if errors.quantity %}
-            {{errors.quantity|join:", "}}
-          {% endif %}
-        </label>
-      </td>
-      <td>
-        <input class="input" name="quantity" value="{{quantity}}" id="quantity" />
-      </td>
-    </tr>
-    <tr>
-      <td><label for="ships_from">Ships from:</label></td>
-      <td><input class="input" name="from" value="{{from}}" id="ships_from" /></td>
-    </tr>
-    <tr>
-      <td><label for="ships_to">Ships to:</label></td>
-      <td><input class="input" name="to" value="{{to}}" id="ships_to" /></td>
-    </tr>
-  </tbody>
-</table>
+  <div class="form-group">
+    <label for="category_id">Category: </label>
+    <select id="category_id" name="category_id">
+      {% for category in categories %}
+      <option value="{{category.id}}" {% ifequal category.id category_id %}selected="selected"{% endifequal %}>{{category.name}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group {% if errors.title %}has-error{% endif %}">
+    <label for="price">
+    Price: 
+    <input name="price" id="price" class="input" type="text" value="{{price}}" />
+    <select title="currency" name="currency_id" id="currency_id">
+      {% for currency in currencies %}
+      <option value="{{currency.id}}" {% ifequal currency.id user.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
+      {% endfor %}
+    </select>
+    {% if errors.currency_id %}
+    {{errors.currency_id|join:", "}}
+    {% endif %}
+    {% if errors.price  %}
+    {{errors.price|join:", "}}
+    {% endif %}
+    </label>
+  </div>
+  <div class="form-group {% if errors.quantity %}has-error{% endif %}">
+    <label for="quantity">Quantity:
+      {% if errors.quantity %}
+        {{errors.quantity|join:", "}}
+      {% endif %}
+    </label>
+    <input class="form-control" name="quantity" value="{{quantity}}" id="quantity" />
+  </div>
+  <div class="form-group">
+    <label for="ships_from">Ships from:</label>
+    <input class="form-control" name="from" value="{{from}}" id="ships_from" />
+  </div>
+  <div class="form-group">
+    <label for="ships_to">Ships to:</label>
+    <input class="form-control" name="to" value="{{to}}" id="ships_to" />
+  </div>
   <div class="form-group">
     <label for="description">Description:</label>
     <textarea id="description" class="form-control" rows="4" name="description">{{description}}</textarea>
