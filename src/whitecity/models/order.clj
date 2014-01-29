@@ -55,7 +55,7 @@
   (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
         postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
         cost (+ item-cost postage-cost)
-        escr {:from (:user_id order) :to (:seller_id order) :currency_id 1 :amount cost :status "hold"}]
+        escr {:from (:user_id order) :order_id (:id order) :to (:seller_id order) :currency_id 1 :amount cost :status "hold"}]
     (transaction
       ;;(update users (set-fields {:btc (raw (str "btc - " cost))}))
       (insert escrow (values escr))
