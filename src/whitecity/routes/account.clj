@@ -22,7 +22,13 @@
 
 (defn wallet-page [])
 
-(defn images-page [])
+(defn images-page []
+  (let [images (image/get (user-id))]
+    (layout/render "images/index.html" (conj (set-info) {:images images}))))
+
+(defn image-delete []
+  (image/remove! id (user-id))
+  (resp/redirect "/market/account/images"))
 
 (defn user-follow [id]
   (if-let [follower (:errors (follower/add! id (user-id)))]
@@ -37,5 +43,6 @@
   (GET "/market/account" [] (account-page))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
+  (GET "/market/image/:id/delete" [id] (image-delete id))
   (GET "/market/user/:id/follow" [id] (user-follow id))
   (GET "/market/user/:id/unfollow" {{id :id} :params {referer "referer"} :headers} (user-unfollow id referer)))

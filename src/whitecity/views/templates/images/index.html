@@ -1,74 +1,37 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="images">
-<a href="/market/postage/create">add postage</a>
-{% if not postages|empty? %}
-<table class="table normal">
-  <thead>
-    <tr>
-      <th>title</th>
-      <th>price</th>
-      <th>&nbsp;</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for postage in postages %}
-    <tr>
-        <td>{{postage.title}}</td>
-        <td>{{postage.price}}</td>
-        <td><a href="/market/postage/{{postage.id}}/edit">edit</a></td>
-        <td><a href="/market/postage/{{postage.id}}/remove">remove</a></td>
+  <a href="/market/images/add">add an image</a> - <a href="/market/images/edit">edit</a>
+  {% if not images|empty? %}
+  <table class="table normal">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>uploaded on</th>
+        <th>&nbsp;</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-- 
-<strong class="danger">
-  You need to add postage
-</strong>
-{% endif %}
-</div>
-<div class="listings">
-<a href="/market/listings/create">Create a new listing</a>
-{% for listing in listings %}
-  <div class="listing-row">
-    {% if listing.image_id %}
-      <div class="thumbnail-wrapper">
-          <img src="/uploads/{{listing.image_id}}.jpg" width="200" class="thumbnail" />
-      </div>
-    {% endif %}
-    <div class="info">
-      <h2>{{listing.title}}
-        <sup><a href="/market/listing/{{listing.id}}/edit" class="edit">edit</a>
-        <a href="/market/listing/{{listing.id}}/remove" class="remove" oncLick="return confirm('Delete?')">delete</a></sup>
-      </h2>
-      <p>
-        <span class="age pretty-time" time="{{listing.created_on|date:fullDateTime}}">
-          {{listing.created_on|date:shortDate}}
-        </span>
-        <span class="public">
-          this listing is 
-          {% if listing.public %}
-          public
-          {% else %}
-          private
-          {% endif %}
-        </span>
-        <br />
-        <span class="ships-from">ships from: {{listing.from}}</span>
-        <br />
-        <span class="ships-to">ships to: {{listing.to}}</span>
-        <br />
-        <span class="category">Category: <a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
-      </p>
-    </div>
-    <div class="cost">
-      <h3>Price: {{listing.price}}</h3>
-      <h4>Currency: {{listing.currency_key}}</h4>
-    </div>
-  </div>
-{% endfor %}
+    </thead>
+    <tbody>
+      {% for image in images %}
+      <tr>
+        <td>{{image.id}}</td>
+        <td>{% if image.name %}{{image.name}}{% else %} --- {% endif %}</td>
+        <td>
+          <span class="pretty-time" time="{{image.created_on|date:fullDateTime}}">
+            {{image.created_on|date:shortDate}}
+          </span>
+        </td>
+        <td>
+          <a href="/market/image/{{image.id}}/delete">delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% else %}
+    You do not currently have an hosted images
+  {% endif %}
 </div>
 {% endblock %}
