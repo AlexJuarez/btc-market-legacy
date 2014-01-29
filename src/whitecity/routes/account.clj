@@ -30,6 +30,15 @@
   (image/remove! id (user-id))
   (resp/redirect "/market/account/images"))
 
+(defn images-edit 
+  ([]
+    (let [images (image/get (user-id))]
+      (layout/render "images/edit.html" (conj (set-info) {:images images}))))
+  ([slug]
+    
+   
+   ))
+
 (defn user-follow [id]
   (if-let [follower (:errors (follower/add! id (user-id)))]
     (session/flash-put! :follower follower))
@@ -43,6 +52,7 @@
   (GET "/market/account" [] (account-page))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
+  (GET "/market/account/images/edit" [] (images-edit))
   (GET "/market/image/:id/delete" [id] (image-delete id))
   (GET "/market/user/:id/follow" [id] (user-follow id))
   (GET "/market/user/:id/unfollow" {{id :id} :params {referer "referer"} :headers} (user-unfollow id referer)))

@@ -1,9 +1,11 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="images">
-  <a href="/market/account/images/add">add an image</a> - <a href="/market/account/images/edit">edit</a>
+  <a href="/market/account/images/add">add an image</a> - <strong>edit</strong>
   {% if not images|empty? %}
-  <table class="table normal">
+  <form action="/market/account/images/edit" enctype="multipart/form-data" method="POST">
+  {% csrf-token %}
+  <table class="table normal p">
     <thead>
       <tr>
         <th>id</th>
@@ -16,7 +18,7 @@
       {% for image in images %}
       <tr>
         <td>{{image.id}}</td>
-        <td>{% if image.name %}{{image.name}}{% else %} --- {% endif %}</td>
+        <td><input type="text" value="{{image.name}}" name="name[{{image.id}}]" class="input" /></td>
         <td>
           <span class="pretty-time" time="{{image.created_on|date:fullDateTime}}">
             {{image.created_on|date:shortDate}}
@@ -29,7 +31,10 @@
       {% endfor %}
     </tbody>
   </table>
-  
+  <div class="form-group">
+    <button type="submit" class="btn">submit</button>
+  </div>
+  </form>
   {% else %}
     You do not currently have an hosted images
   {% endif %}
