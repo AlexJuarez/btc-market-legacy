@@ -26,7 +26,7 @@
   (let [images (image/get (user-id))]
     (layout/render "images/index.html" (conj (set-info) {:images images}))))
 
-(defn image-delete []
+(defn image-delete [id]
   (image/remove! id (user-id))
   (resp/redirect "/market/account/images"))
 
