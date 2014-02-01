@@ -69,11 +69,11 @@
   </div>
   <div class="form-group {% if errors.title %}has-error{% endif %}">
     <label for="price">
-    Price: 
+      Price:
     <input name="price" id="price" class="input" type="text" value="{{price}}" />
     <select title="currency" name="currency_id" id="currency_id">
       {% for currency in currencies %}
-      <option value="{{currency.id}}" {% ifequal currency.id user.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
+      <option value="{{currency.id}}" {% ifequal currency.id currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
       {% endfor %}
     </select>
     {% if errors.currency_id %}

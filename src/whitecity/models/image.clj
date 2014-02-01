@@ -23,3 +23,9 @@
       (do (io/delete-file (str (resource-path) "uploads/" id ".jpg"))
         (delete images
                 (where {:user_id user-id :id id}))))))
+
+(defn update! [id data]
+  (let [id (util/parse-int id)]
+    (update images
+            (set-fields data)
+            (where {:id id}))))

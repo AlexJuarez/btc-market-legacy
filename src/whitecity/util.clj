@@ -32,7 +32,8 @@
     (let [rate (exchange/get from to)]
          (if-not (nil? rate) 
            (* price rate)
-           price))))
+           price)))
+  price)
 
 (defn convert-currency 
   ([{:keys [currency_id price]}]

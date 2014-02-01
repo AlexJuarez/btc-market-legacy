@@ -34,10 +34,9 @@
   ([]
     (let [images (image/get (user-id))]
       (layout/render "images/edit.html" (conj (set-info) {:images images}))))
-  ([slug]
-    
-   
-   ))
+  ([{:keys [name] :as slug}]
+    (dorun (map #(image/update! (key %) {:name (val %)}) name))
+    (images-edit)))
 
 (defn user-follow [id]
   (if-let [follower (:errors (follower/add! id (user-id)))]
@@ -52,6 +51,7 @@
   (GET "/market/account" [] (account-page))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
+  (POST "/market/account/images/edit" {params :params} (images-edit params))
   (GET "/market/account/images/edit" [] (images-edit))
   (GET "/market/image/:id/delete" [id] (image-delete id))
   (GET "/market/user/:id/follow" [id] (user-follow id))
