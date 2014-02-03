@@ -76,16 +76,15 @@
       (if (empty? a)
         (assoc m :alias nil)
         (dissoc m :alias))
-      m)))
+      (dissoc m :alias))))
 
 (defn clean [{:keys [alias auth pub_key description]}]
-  (-> {;;:auth (if (= auth "true") true)
-   :pub_key pub_key
-   :description description
-   :updated_on (tc/to-sql-date (cljtime/now))
-   :alias alias}
-     clean-alias
-   ))
+  (-> {:auth (= auth "true")
+       :pub_key pub_key
+       :description description
+       :updated_on (tc/to-sql-date (cljtime/now))
+       :alias alias}
+         clean-alias))
 
 ;; Operations
 
