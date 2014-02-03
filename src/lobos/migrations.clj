@@ -18,9 +18,10 @@
                (varchar :alias 64 :unique)
                (boolean :vendor (default true))
                (boolean :admin (default true))
+               (boolean :auth (default false))
                (text :description)
                (text :pub_key) 
-               (boolean :is_active)
+               (boolean :banned (default false))
                (varchar :pass 128)
                (varchar :wallet 34)
                (varchar :key 64)
@@ -36,7 +37,6 @@
                (check :login (> (length :login) 2))
                (check :btc (>= :btc 0))
                (check :alias (> (length :alias) 2)))))
-               
   (down [] (drop (table :user))))
 
 (defmigration add-messages-table
@@ -111,13 +111,14 @@
            (tbl :order
                 (float :price)
                 (float :postage_price)
+                (float :refund_rate (default 0))
                 (varchar :postage_title 100)
                 (integer :postage_currency [:refer :currency :id])
                 (integer :quantity)
                 (boolean :hedged)
                 (boolean :reviewed (default false))
                 (varchar :title 100)
-                (integer :extension)
+                (timestamp :auto_finalize)
                 (text :address)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :currency)

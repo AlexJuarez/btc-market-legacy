@@ -9,39 +9,14 @@
 (defn user-id []
   (util/user-id))
 
-(defn user-blob 
-  ([]
-   (let [id (user-id) 
-         u (cache/get-set (str "user_" id)
-            (let [user (users/get id)]
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)})))]
-     (do (session/put! :user u) u)))
-  ([user]
-    (let [id (:id user) 
-          u (cache/get-set (str "user_" id)
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)}))]
-          (do (session/put! :user u) u))))
-
 (defn set-info 
   ([]
     {:user 
       (assoc 
-          (user-blob)
+          (util/user-blob)
         :cart (count (session/get :cart)))})
   ([user]
     {:user 
       (assoc 
-        (user-blob user)
+        (util/user-blob user)
         :cart (count (session/get :cart)))}))

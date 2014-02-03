@@ -3,6 +3,7 @@
         [whitecity.db]
         [korma.core])
   (:require 
+        [whitecity.cache :as cache]
         [whitecity.validator :as v]
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
@@ -35,11 +36,31 @@
 (defn prep [{pass :pass :as user}]
   (assoc user :pass (warden/encrypt pass)))
 
-
 (defn valid-user? [{:keys [login pass confirm] :as user}]
   (v/user-validator user))
 
+(defn valid-update? [user]
+  (v/user-update-validator user))
+
+(defn clean [{:keys [alias auth pub_key description]}]
+  {:auth auth
+   :alias (if-not (empty? alias) alias)
+   :pub_key pub_key
+   :description description})
+
 ;; Operations
+
+(defn update! [id slug]
+  (let [updates (clean slug)
+        check (valid-update? updates)]
+    (if (empty? check)
+      (do 
+        (let [user-blob (merge (util/user-blob) updates)]
+          (cache/set (str "user_" id) user-blob))
+        (update users
+              (set-fields updates)
+              (where {:id id})))
+      {:errors check})))
 
 (defn store! [user]
   (insert users (values user)))

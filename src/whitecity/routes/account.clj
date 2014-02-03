@@ -18,7 +18,12 @@
             [noir.io :as io]
             [whitecity.util :as util]))
 
-(defn account-page [])
+(defn account-page []
+  (layout/render "account/index.html" (set-info)))
+
+(defn account-update [{:keys [alias auth pub_key description] :as slug}]
+  (let [user (user/update! (user-id) {:alias alias :auth auth :pub_key pub_key :description description})]
+    (layout/render "account/index.html" (conj (set-info) user))))
 
 (defn wallet-page [])
 
@@ -49,6 +54,7 @@
 
 (def-restricted-routes account-routes
   (GET "/market/account" [] (account-page))
+  (POST "/market/account" {params :params} (account-update params))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
   (POST "/market/account/images/edit" {params :params} (images-edit params))

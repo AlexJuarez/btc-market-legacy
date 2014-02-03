@@ -14,6 +14,31 @@
 (defn user-id []
   (:id (session/get :user)))
 
+(defn user-blob 
+  ([]
+   (let [id (user-id) 
+         u (cache/get-set (str "user_" id)
+            (let [user (users/get id)]
+            (merge 
+               user
+               (when (:vendor user) 
+                 {:sales (order/count-sales id)})
+               {:errors {} 
+                :messages (message/count id)
+                :orders (order/count id)})))]
+     (do (session/put! :user u) u)))
+  ([user]
+    (let [id (:id user) 
+          u (cache/get-set (str "user_" id)
+            (merge 
+               user
+               (when (:vendor user) 
+                 {:sales (order/count-sales id)})
+               {:errors {} 
+                :messages (message/count id)
+                :orders (order/count id)}))]
+          (do (session/put! :user u) u))))
+
 (defn user-clear [user-id]
   (cache/delete (str "user_" user-id)))
 
@@ -32,8 +57,8 @@
     (let [rate (exchange/get from to)]
          (if-not (nil? rate) 
            (* price rate)
-           price)))
-  price)
+           price))
+    price))
 
 (defn convert-currency 
   ([{:keys [currency_id price]}]
