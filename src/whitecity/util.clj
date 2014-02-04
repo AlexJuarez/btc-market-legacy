@@ -7,6 +7,9 @@
               [whitecity.cache :as cache]
               [noir.io :as io]
               [whitecity.models.exchange :as exchange]
+              [whitecity.models.order :as order]
+              [whitecity.models.message :as message]
+              [whitecity.models.user :as users]
               [clojure.string :as s]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
