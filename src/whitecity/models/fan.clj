@@ -5,6 +5,7 @@
   (:require 
         [whitecity.util :as util]))
 
+
 (defn get [leader-id user-id]
   (first
     (select fans
@@ -36,4 +37,6 @@
 
 (defn all [user-id]
   (select fans
+          (with users
+                (fields :login :alias :listings :rating :banned :last_login))
           (where {:user_id user-id})))

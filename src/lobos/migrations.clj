@@ -93,6 +93,7 @@
                 (refer-to :currency)
                 (refer-to :category)
                 (check :price (>= :price 0))
+                (check :quantity (>= :quantity 0))
                 (text :description))))
   (down [] (drop (table :listing))))
 
@@ -166,16 +167,16 @@
   (up [] (create
            (tbl :bookmark
                 (index :bookmark_unique_constraint [:user_id :listing_id] :unique)
-                (refer-to :user)
-                (refer-to :listing))))
+                (integer :user_id [:refer :user :id :on-delete :cascade])
+                (integer :listing_id [:refer :listing :id :on-delete :cascade]))))
   (down [] (drop (table :bookmark))))
                  
 (defmigration add-fans-table
   (up [] (create
            (tbl :fan
                 (index :fan_unique_constraint [:user_id :leader_id] :unique)
-                (refer-to :user)
-                (integer :leader_id [:refer :user :id :on-delete :set-null]))))
+                (integer :user_id [:refer :user :id :on-delete :cascade])
+                (integer :leader_id [:refer :user :id :on-delete :cascade]))))
   (down [] (drop (table :fan))))
 
 (defmigration add-reports-table

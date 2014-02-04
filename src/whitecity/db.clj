@@ -71,11 +71,12 @@
 
 (defentity bookmarks
   (table :bookmark)
+  (belongs-to listings)
   (belongs-to users))
 
 (defentity fans
   (table :fan)
-  (belongs-to users))
+  (belongs-to users {:fk :leader_id}))
 
 (defentity reports
   (table :report)

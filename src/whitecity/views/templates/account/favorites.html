@@ -1,0 +1,57 @@
+{% extends "whitecity/views/templates/account/account.html" %}
+{% block section %}
+{% if not bookmarks|empty? %}
+<h3>Bookmarks</h3>
+<table class="table normal p">
+  <thead>
+    <tr>
+      <th>item</th>
+      <th>category</th>
+      <th>remaining</th>
+      <th>seller</th>
+      <th>price</th>
+      <th>hedged</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for bookmark in bookmarks %}
+    <tr>
+      <td><a href="/market/listing/{{bookmark.listing_id}}">{{bookmark.title}}</a></td>
+      <td><a href="/market/category/{{bookmark.category_id}}">{{bookmark.category_name}}</a></td>
+      <td>{{bookmark.quantity}}</td>
+      <td><a href="/market/user/{{bookmark.user_id}}">{% if bookmark.user_alias %}{{bookmark.user_alias}}{% else %}{{bookmark.user_login}}{% endif %}</a></td>
+      <td>{{bookmark.price}}</td>
+      <td>{{bookmark.hedged}}</td>
+      <td><a href="/market/listing/{{bookmark.user_id}}/unbookmark">unbookmark</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% if not favorites|empty? %}
+<h3>Favorites</h3>
+<table class="table normal p">
+  <thead>
+    <tr>
+      <th>user</th>
+      <th>rating</th>
+      <th>listings</th>
+      <th>last seen</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for favorite in favorites %}
+    <tr>
+      <td><a href="/market/user/{{favorite.user_id}}">{% if favorite.alias %}{{favorite.alias}}{% else %}{{favorite.login}}{% endif %}</td>
+      <td>{{favorite.rating}}</td>
+      <td>{{favorite.listings}}</td>
+      <td time="{{favorite.last_login|date:fullDateTime}}" class="pretty-time">{{favorite.last_login|date:shortDate}}</td>
+      <td><a href="/market/user/{{favorite.user_id}}/unfollow">unfollow</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

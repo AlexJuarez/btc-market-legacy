@@ -4,18 +4,11 @@
         whitecity.helpers.route)
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
-            [whitecity.models.message :as message]
-            [whitecity.models.listing :as listing]
             [whitecity.models.fan :as follower]
+            [whitecity.models.bookmark :as bookmark]
             [whitecity.models.image :as image]
-            [whitecity.models.postage :as postage]
-            [whitecity.models.order :as order]
             [noir.response :as resp]
-            [clj-time.core :as cljtime]
-            [clj-time.coerce :as tc]
-            [clojure.string :as string]
             [noir.session :as session]
-            [noir.io :as io]
             [whitecity.util :as util]))
 
 (defn account-page []
@@ -23,9 +16,14 @@
 
 (defn account-update [{:keys [alias auth pub_key description] :as slug}]
   (let [user (user/update! (user-id) {:alias alias :auth auth :pub_key pub_key :description description})]
-    (layout/render "account/index.html" (conj (set-info) user))))
+    (layout/render "account/index.html" (merge (set-info) user))))
 
 (defn wallet-page [])
+
+(defn favorites-page []
+  (let [bookmarks (bookmark/all (user-id))
+        favs (follower/all (user-id))]
+    (layout/render "account/favorites.html" (merge (set-info) {:bookmarks bookmarks :favorites favs}))))
 
 (defn images-page []
   (let [images (image/get (user-id))]
@@ -57,6 +55,7 @@
   (POST "/market/account" {params :params} (account-update params))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
+  (GET "/market/account/favorites" [] (favorites-page))
   (POST "/market/account/images/edit" {params :params} (images-edit params))
   (GET "/market/account/images/edit" [] (images-edit))
   (GET "/market/image/:id/delete" [id] (image-delete id))
