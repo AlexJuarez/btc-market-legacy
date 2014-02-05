@@ -7,6 +7,7 @@
         [whitecity.validator :as v]
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
+        [clojure.string :as s]
         [whitecity.util :as util]
         [noir.session :as session]
         [whitecity.models.order :as order]
@@ -69,23 +70,13 @@
 (defn valid-update? [user]
   (v/user-update-validator user))
 
-(defn clean-alias [m]
-  (let [a (:alias m) 
-        user (user-blob)]
-    (if (= (:alias user) a)
-      (if (empty? a)
-        (assoc m :alias nil)
-        (dissoc m :alias))
-      (dissoc m :alias))))
-
 (defn clean [{:keys [alias auth currency_id pub_key description]}]
-  (-> {:auth (= auth "true")
-       :pub_key pub_key
-       :currency_id (util/parse-int currency_id)
-       :description description
-       :updated_on (tc/to-sql-date (cljtime/now))
-       :alias alias}
-         clean-alias))
+  {:auth (= auth "true")
+   :pub_key pub_key
+   :currency_id (util/parse-int currency_id)
+   :description description
+   :updated_on (tc/to-sql-date (cljtime/now))
+   :alias alias})
 
 ;; Operations
 
@@ -107,7 +98,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
+      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id]

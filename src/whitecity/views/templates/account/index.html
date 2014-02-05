@@ -12,9 +12,9 @@
   </div>
   <div class="form-group">
     <label for="currency_id">Currencies: </label>
-    <select id="currency_id" name="category_id">
+    <select id="currency_id" name="currency_id">
       {% for currency in currencies %}
-      <option value="{{currency.id}}" {% ifequal currency.id user_id.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
+      <option value="{{currency.id}}" {% ifequal currency.id user.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
       {% endfor %}
     </select>
   </div>

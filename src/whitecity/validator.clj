@@ -3,15 +3,16 @@
       [whitecity.db])
   (:require
     [metis.core :as v]
+    [whitecity.util :as util]
     [korma.core :as sql]))
 
 (defn get-by-login [login]
   (first (sql/select users
-    (sql/where {:login login}))))
+    (sql/where (or {:alias login} {:login login})))))
 
 (defn get-by-alias [alias]
   (first (sql/select users
-    (sql/where {:alias alias}))))
+    (sql/where (and (or (= :alias alias) (= :login alias)) (not (= :id (util/user-id))))))))
 
 (defn login-taken [map key _]
   (when-not (empty? (get-by-login (get map key)))
@@ -30,7 +31,7 @@
   [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
 
 (v/defvalidator user-update-validator
-  [:alias [:alias-taken]])
+  [:alias [:presence :alias-taken :in-range {:start 3 :end 64}]])
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
