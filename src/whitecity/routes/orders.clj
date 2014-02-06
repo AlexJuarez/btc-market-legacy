@@ -11,9 +11,9 @@
 (defn orders-page 
   ([]
     (let [orders (order/all (user-id))
-          orders (map #(let [autofinalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))
+          orders (map #(let [autofinalize (:auto_finalize %)
                              res (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.))))] 
-                           (assoc % :auto_finalize autofinalize :resolve res)) orders)
+                           (assoc % :resolve res)) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
