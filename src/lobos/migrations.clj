@@ -35,6 +35,7 @@
                (timestamp :last_login)
                (refer-to :currency)
                (check :login (> (length :login) 2))
+               (check :alias (> (length :alias) 2))
                (check :btc (>= :btc 0)))))
   (down [] (drop (table :user))))
 
