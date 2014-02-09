@@ -8,6 +8,8 @@
         [clj-time.core :as cljtime]
         [clj-time.coerce :as tc]
         [whitecity.util :as util]
+        [noir.session :as session]
+        [whitecity.models.order :as order]
         [whitecity.models.message :as message]
         [whitecity.models.currency :as currency]
         [noir.util.crypt :as warden]))
@@ -16,6 +18,31 @@
 (defn get [id]
   (dissoc (first (select users
            (where {:id (util/parse-int id)}))) :pass))
+
+(defn user-blob 
+  ([]
+   (let [id (util/user-id) 
+         u (cache/get-set (str "user_" id)
+            (let [user (get id)]
+            (merge 
+               user
+               (when (:vendor user) 
+                 {:sales (order/count-sales id)})
+               {:errors {} 
+                :messages (message/count id)
+                :orders (order/count id)})))]
+     (do (session/put! :user u) u)))
+  ([user]
+    (let [id (:id user) 
+          u (cache/get-set (str "user_" id)
+            (merge 
+               user
+               (when (:vendor user) 
+                 {:sales (order/count-sales id)})
+               {:errors {} 
+                :messages (message/count id)
+                :orders (order/count id)}))]
+          (do (session/put! :user u) u))))
 
 (defn get-by-login [login]
   (first (select users
@@ -42,11 +69,23 @@
 (defn valid-update? [user]
   (v/user-update-validator user))
 
+(defn clean-alias [m]
+  (let [a (:alias m) 
+        user (user-blob)]
+    (if (= (:alias user) a)
+      (if (empty? a)
+        (assoc m :alias nil)
+        (dissoc m :alias))
+      m)))
+
 (defn clean [{:keys [alias auth pub_key description]}]
-  {:auth auth
-   :alias (if-not (empty? alias) alias)
+  (-> {;;:auth (if (= auth "true") true)
    :pub_key pub_key
-   :description description})
+   :description description
+   :updated_on (tc/to-sql-date (cljtime/now))
+   :alias alias}
+     clean-alias
+   ))
 
 ;; Operations
 
@@ -55,7 +94,7 @@
         check (valid-update? updates)]
     (if (empty? check)
       (do 
-        (let [user-blob (merge (util/user-blob) updates)]
+        (let [user-blob (merge (user-blob) updates)]
           (cache/set (str "user_" id) user-blob))
         (update users
               (set-fields updates)

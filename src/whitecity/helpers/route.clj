@@ -2,8 +2,7 @@
   (:require [whitecity.models.user :as users]
             [whitecity.cache :as cache]
             [whitecity.util :as util]
-            [whitecity.models.order :as order]
-            [whitecity.models.message :as message]
+            [whitecity.models.user :as user]
             [noir.session :as session]))
 
 (defn user-id []
@@ -13,10 +12,10 @@
   ([]
     {:user 
       (assoc 
-          (util/user-blob)
+          (user/user-blob)
         :cart (count (session/get :cart)))})
   ([user]
     {:user 
       (assoc 
-        (util/user-blob user)
+        (user/user-blob user)
         :cart (count (session/get :cart)))}))

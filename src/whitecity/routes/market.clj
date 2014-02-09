@@ -94,8 +94,8 @@
       (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))
 
 (defn user-view [id]
-  (let [user (user/get id)]
-    (layout/render "users/view.html" (merge {:listings-all (listing/public-for-user id) :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) user))))
+  (let [user (user/get id) description (util/md->html (:description user))]
+    (layout/render "users/view.html" (merge user {:listings-all (listing/public-for-user id) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)

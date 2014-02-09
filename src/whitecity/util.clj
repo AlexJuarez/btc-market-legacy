@@ -7,40 +7,12 @@
               [whitecity.cache :as cache]
               [noir.io :as io]
               [whitecity.models.exchange :as exchange]
-              [whitecity.models.order :as order]
-              [whitecity.models.message :as message]
-              [whitecity.models.user :as users]
               [clojure.string :as s]
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
 (defn user-id []
   (:id (session/get :user)))
-
-(defn user-blob 
-  ([]
-   (let [id (user-id) 
-         u (cache/get-set (str "user_" id)
-            (let [user (users/get id)]
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)})))]
-     (do (session/put! :user u) u)))
-  ([user]
-    (let [id (:id user) 
-          u (cache/get-set (str "user_" id)
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)}))]
-          (do (session/put! :user u) u))))
 
 (defn user-clear [user-id]
   (cache/delete (str "user_" user-id)))
@@ -120,10 +92,10 @@
           time-str))
 
 (defn md->html
-    "reads a markdown file from public/md and returns an HTML string"
-    [filename]
+    "reads a markdown string and returns the html"
+    [string]
     (->> 
-          (io/slurp-resource filename)      
+          string     
           (md/md-to-html-string)))
 
 (defn gen-captcha-text []

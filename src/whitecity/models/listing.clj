@@ -89,11 +89,18 @@
 
 (defn update! [listing id user-id]
   (let [check (v/listing-validator listing)]
-    (if (empty? check)
-      (update listings
-        (set-fields (prep listing))
-       (where {:id (util/parse-int id) :user_id user-id}))
-      (conj {:errors check} listing))))
+      (if (empty? check)
+        (let [category_id (:category_id (first (select listings (fields :category_id) (where {:id (util/parse-int id) :user_id user-id}))))
+              listing (prep listing)
+              cat_id (:category_id listing)]
+          (transaction
+            (if-not (= category_id cat_id)
+              (do (update category (set-fields {:count (raw "count + 1")}) (where {:id cat_id}))
+              (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id}))))
+              (update listings
+                (set-fields listing)
+                (where {:id (util/parse-int id) :user_id user-id}))
+              (conj {:errors check} listing))))))
 
 (defn public
   ([] 

@@ -4,7 +4,6 @@
         [whitecity.db])
   (:require 
         [whitecity.cache :as cache]
-        [whitecity.models.user :as user]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
         [clj-time.coerce :as tc]
@@ -88,7 +87,7 @@
 (defn add! [cart address pin user-id]
   (let [cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         address-check (when (empty? address) {:address "You need to enter an address"})
-        pin-check (when (empty? (user/get-with-pin user-id pin)) {:pin "Your pin does not match"})
+        pin-check (when (empty? (first (select users (fields :login) (where {:id user-id :pin (util/parse-int pin)})))) {:pin "Your pin does not match"})
         postage (some false? (map #(not (nil? (:postage (val %)))) cart-check))
         postage-error (when postage {:postage postage})
         errors (merge cart-check postage-error address-check pin-check)]

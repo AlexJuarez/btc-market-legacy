@@ -22,17 +22,15 @@
   {% endif %}
 </p>
 {% if vendor %}
-  {% if description %}
-  <p class="well">
-    <pre>
-      {{description}}
-    </pre>
-  </p>
+  {% if not description|empty? %}
+  <div class="well p">
+    {{description|safe}}
+  </div>
   {% endif %}
-  {% if pub_key %}
-  <p class="well">
+  {% if not pub_key|empty? %}
+  <div class="well p">
     {{pub_key}}
-  </p>
+  </div>
   {% endif %}
 {% endif %}
 {% if listings %}
