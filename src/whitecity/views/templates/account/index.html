@@ -10,6 +10,14 @@
     </label>
     <input name="alias" id="title" class="input" type="text" value="{{user.alias}}" />
   </div>
+  <div class="form-group">
+    <label for="currency_id">Currencies: </label>
+    <select id="currency_id" name="category_id">
+      {% for currency in currencies %}
+      <option value="{{currency.id}}" {% ifequal currency.id user_id.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
+      {% endfor %}
+    </select>
+  </div>
   <div class="form-group top public">
       <label>2 step auth?</label>
       <div> 

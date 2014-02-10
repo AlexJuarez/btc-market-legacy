@@ -78,9 +78,10 @@
         (dissoc m :alias))
       (dissoc m :alias))))
 
-(defn clean [{:keys [alias auth pub_key description]}]
+(defn clean [{:keys [alias auth currency_id pub_key description]}]
   (-> {:auth (= auth "true")
        :pub_key pub_key
+       :currency_id (util/parse-int currency_id)
        :description description
        :updated_on (tc/to-sql-date (cljtime/now))
        :alias alias}

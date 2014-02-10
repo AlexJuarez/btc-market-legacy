@@ -5,6 +5,7 @@
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
             [whitecity.models.fan :as follower]
+            [whitecity.models.currency :as currency]
             [whitecity.models.bookmark :as bookmark]
             [whitecity.models.image :as image]
             [noir.response :as resp]
@@ -12,11 +13,11 @@
             [whitecity.util :as util]))
 
 (defn account-page []
-  (layout/render "account/index.html" (set-info)))
+  (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info))))
 
-(defn account-update [{:keys [alias auth pub_key description] :as slug}]
+(defn account-update [{:keys [alias auth pub_key description currency_id] :as slug}]
   (let [user (user/update! (user-id) {:alias alias :auth auth :pub_key pub_key :description description})]
-    (layout/render "account/index.html" (merge (set-info) user))))
+    (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info) user))))
 
 (defn wallet-page [])
 
