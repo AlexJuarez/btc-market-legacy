@@ -4,9 +4,6 @@
         [whitecity.db])
   (:require 
         [whitecity.validator :as v]
-        [whitecity.models.schema :as schema]
-        [clj-time.core :as cljtime]
-        [clj-time.coerce :as tc]
         [whitecity.util :as util]))
 
 (defn convert [postages]
@@ -36,7 +33,7 @@
   {:title title 
    :price (util/parse-int price) 
    :currency_id (util/parse-int currency_id)
-   :updated_on (tc/to-sql-date (cljtime/now))})
+   :updated_on (raw "now()")})
 
 (defn store! [post user-id]
   (insert postage (values (assoc (prep post) :user_id user-id))))

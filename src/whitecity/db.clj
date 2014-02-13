@@ -11,7 +11,7 @@
 
 (defdb db db-spec)
 
-(declare users orders messages listings postage images category currency exchange bookmarks fans reviews escrow)
+(declare users resolutions orders messages listings postage images category currency exchange bookmarks fans reviews escrow)
 
 (defentity users
   (table :user)
@@ -43,6 +43,14 @@
   (belongs-to currency)
   (belongs-to listings)
   (belongs-to postage))
+
+(defentity resolutions
+  (table :resolution)
+  (belongs-to users)
+  (belongs-to sellers {:fk :seller_id})
+  (belongs-to orders))
+
+  
 
 (defentity messages
   (table :message)

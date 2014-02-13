@@ -6,8 +6,6 @@
         [whitecity.cache :as cache]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
-        [clj-time.coerce :as tc]
-        [clj-time.core :as cljtime]
         [noir.session :as session]
         [whitecity.util :as util]))
 

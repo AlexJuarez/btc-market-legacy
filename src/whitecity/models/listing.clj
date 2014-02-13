@@ -4,8 +4,6 @@
         [whitecity.db])
   (:require 
         [whitecity.validator :as v]
-        [clj-time.core :as cljtime]
-        [clj-time.coerce :as tc]
         [whitecity.models.category :as cat]
         [whitecity.util :as util]))
 
@@ -27,7 +25,7 @@
           :public (= public "true") 
           :hedged (= hedged "true")
           :price (util/parse-float price)
-          :updated_on (tc/to-sql-date (cljtime/now))} 
+          :updated_on (raw "now()")} 
          (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id])))
 
 (defn get 

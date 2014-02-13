@@ -5,8 +5,6 @@
   (:require 
         [whitecity.cache :as cache]
         [whitecity.validator :as v]
-        [clj-time.core :as cljtime]
-        [clj-time.coerce :as tc]
         [clojure.string :as s]
         [whitecity.util :as util]
         [noir.session :as session]
