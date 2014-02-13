@@ -15,11 +15,13 @@
 (defn account-page []
   (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info))))
 
-(defn account-update [{:keys [alias auth pub_key description currency_id] :as slug}]
-  (let [user (user/update! (user-id) {:alias alias :auth auth :pub_key pub_key :description description})]
+(defn account-update [slug]
+  (let [user (user/update! (user-id) slug)]
     (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info) user))))
 
-(defn wallet-page [])
+(defn wallet-page []
+  (let []
+  (layout/render "account/wallet.html" (merge (set-info) {}))))
 
 (defn favorites-page []
   (let [bookmarks (bookmark/all (user-id))

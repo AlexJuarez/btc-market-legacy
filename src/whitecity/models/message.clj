@@ -52,6 +52,7 @@
   (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id})))))
 
 (defn remove! [id user-id]
+  (cache/delete (str "user_" user-id))
   (delete messages (where {:id (util/parse-int id) :user_id user-id})))
 
 (defn add! [message user-id receiver-id]
