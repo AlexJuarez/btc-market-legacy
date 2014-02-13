@@ -19,9 +19,8 @@
 
 (defn sales-shipped 
   []
-  (let [orders (order/sold 1 (user-id))
-        sales (map #(assoc % :auto_finalize (java.sql.Timestamp. (+ 1468800000 (.getTime (:created_on %))))) orders)]
-     (layout/render "sales/shipped.html" (merge {:status 2 :sales sales} (set-info)))))
+  (let [orders (order/sold 1 (user-id))]
+     (layout/render "sales/shipped.html" (merge {:status 2 :sales orders} (set-info)))))
 
 (defn sales-disputed 
   []

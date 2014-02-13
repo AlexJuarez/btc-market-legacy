@@ -60,7 +60,7 @@
       (insert escrow (values escr))
       (insert orders (values order))
       (update listings 
-              (set-fields {:quantity (raw (str "quantity - " (:quantity order)))})
+              (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " (:quantity order)))})
               (where {:id (:listing_id order)})))))
 
 (defn prep [item address user-id]
@@ -100,14 +100,16 @@
 
 (defn update-sales [sales seller-id status]
   (if (= status 1) (cache/delete (str "user_" seller-id)))
+  (let [values {:status status :updated_on (raw "(now())")}
+        values (if (= status 1) (assoc values :auto_finalize (raw "(now() + interval '17 days')")) values)]
   (update orders
-          (set-fields {:status status :updated_on (tc/to-sql-date (cljtime/now))})
-          (where {:seller_id seller-id :id [in sales]})))
+          (set-fields values)
+          (where {:seller_id seller-id :id [in sales]}))))
 
 (defn finalize [id user-id]
   (cache/delete (str "user_" user-id))
   (update orders
-          (set-fields {:status 3 :updated_on (tc/to-sql-date (cljtime/now))})
+          (set-fields {:status 3 :updated_on (raw "now()")})
           (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn reject-sales [sales seller-id]
