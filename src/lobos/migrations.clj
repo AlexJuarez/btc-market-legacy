@@ -161,8 +161,23 @@
            (tbl :audit
                 (refer-to :user)
                 (refer-to :order)
+                (varchar :role 10)
                 (float :amount))))
   (down [] (drop (table :audit))))
+
+(defmigration add-resolutions-table
+  (up [] (create
+           (tbl :resolution
+                (refer-to :user)
+                (integer :seller_id [:refer :user :id :on-delete :set-null])
+                (refer-to :order)
+                (boolean :accepted)
+                (integer :refund)
+                (integer :extension)
+                (text :message)
+                (check :refund (>= :refund 0))
+                (check :extension (>= :extension 0)))))
+  (down [] (drop (table :resolution))))
 
 (defmigration add-bookmarks-table
   (up [] (create

@@ -12,7 +12,7 @@
   ([]
     (let [orders (order/all (user-id))
           orders (map #(let [autofinalize (:auto_finalize %)
-                             res (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.))))] 
+                             res (< 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.))))] 
                            (assoc % :resolve res)) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
@@ -27,7 +27,9 @@
   (order/finalize id (user-id))
   (resp/redirect "/market/orders"))
 
-(defn order-resolve [id])
+(defn order-resolve [id]
+  (order/resolution id (user-id))
+  )
 
 (defn order-view [id])
 

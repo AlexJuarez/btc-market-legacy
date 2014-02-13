@@ -112,6 +112,12 @@
           (set-fields {:status 3 :updated_on (raw "now()")})
           (where {:user_id user-id :id (util/parse-int id)})))
 
+(defn resolution [id user-id]
+  (cache/delete (str "user_" user-id))
+  (update orders
+          (set-fields {:status 2 :updated_on (raw "now()")})
+          (where {:user_id user-id :id (util/parse-int id)})))
+
 (defn reject-sales [sales seller-id]
   (cache/delete (str "user_" seller-id))
   (let [o (select orders
