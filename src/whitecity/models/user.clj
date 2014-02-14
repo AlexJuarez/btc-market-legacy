@@ -73,7 +73,7 @@
    :pub_key pub_key
    :currency_id (util/parse-int currency_id)
    :description description
-   :updated_on (tc/to-sql-date (cljtime/now))
+   :updated_on (raw "now()")
    :alias alias})
 
 ;; Operations
@@ -101,7 +101,7 @@
 
 (defn last-login [id]
   (update users
-          (set-fields {:last_login (tc/to-sql-date (cljtime/now))})
+          (set-fields {:last_login (raw "now()")})
           (where {:id id})))
 
 (defn login! [{:keys [login pass] :as user}]

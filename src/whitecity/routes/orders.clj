@@ -5,6 +5,7 @@
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.order :as order]
             [whitecity.models.review :as review]
+            [whitecity.models.resolution :as resolution]
             [noir.response :as resp]
             [whitecity.util :as util]))
 
@@ -12,7 +13,7 @@
   ([]
     (let [orders (order/all (user-id))
           orders (map #(let [autofinalize (:auto_finalize %)
-                             res (< 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.))))] 
+                             res (and (not (nil? autofinalize)) (< 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))];;TODO: switch symbol back
                            (assoc % :resolve res)) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
@@ -29,7 +30,8 @@
 
 (defn order-resolve [id]
   (order/resolution id (user-id))
-  )
+  (let [resolutions (resolution/all id (user-id))]
+  ))
 
 (defn order-view [id])
 

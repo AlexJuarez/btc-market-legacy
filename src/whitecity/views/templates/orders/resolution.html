@@ -1,0 +1,57 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+{% if not resolutions|empty? %}
+<table class="table resolution fill">
+  <thead>
+    <tr>
+      <th>from</th>
+      <th class="large-column">message</th>
+      <th>action</th>
+      <th>freshness</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for message in resolutions %}
+    <tr>
+      <td>
+        {% ifequal user.id message.user_id %}
+          <span class="sender">{{user.alias}}</span>
+        {% else %}
+          <a href="/market/user/{{message.user_id}}" class="sender">{{message.user_alias}}</a>
+        {% endifequal %}
+      </td>
+      <td>
+        {% if not message.subject|empty? %}
+          <div class="header">
+            <strong class="subject">Subject: {{message.subject}}</strong>
+          </div>
+        {% endif %}
+        <div class="content">
+          {{message.content}}
+        </div>
+      </td>
+      <td><span time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
+      <td><a href="/market/message/{{message.id}}/delete">delete</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+<form class="well" action="/market/messages/{{user_id}}" method="POST">
+  <p>
+    <label for="subject">Subject:</label>
+    <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
+  </p>
+  <p>
+    {% if errors.content %}
+    <p>{{errors.content|join:", "}}</p>
+    {% endif %}
+    <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
+  </p> 
+  <span class="submit">
+    <input type="submit" class="btn" value="send" />
+  </span>
+  {% csrf-token %}
+</form>
+{% endblock %}
