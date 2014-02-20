@@ -10,7 +10,6 @@
 (defn registration-page
   ([params]
    (layout/render "register.html"))
-
   ([login pass confirm]
    (let [user (users/add! {:login login :pass pass :confirm confirm})]
      (if (nil? (:errors user))
@@ -22,7 +21,6 @@
 (defn login-page
   ([params]
     (layout/render "login.html" (session/flash-get :success)))
-
   ([login pass]
     (let [user (users/login! {:login login :pass pass})]
       (if (nil? (:error user))

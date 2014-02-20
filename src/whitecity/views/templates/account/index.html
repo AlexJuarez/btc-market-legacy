@@ -32,7 +32,7 @@
   {% if user.vendor %}
   <div class="form-group">
     <label for="description">My Description:</label>
-    <textarea id="description" class="form-control" rows="8" name="description">{{user.description}}</textarea>
+    <textarea id="description" class="form-control" rows="8" name="description">{{user.description|safe}}</textarea>
   </div>
   {% endif %}
   <div class="form-group">

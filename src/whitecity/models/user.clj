@@ -5,6 +5,7 @@
   (:require 
         [whitecity.cache :as cache]
         [whitecity.validator :as v]
+        [hiccup.util :as hc]
         [clojure.string :as s]
         [whitecity.util :as util]
         [noir.session :as session]
@@ -13,10 +14,18 @@
         [whitecity.models.currency :as currency]
         [noir.util.crypt :as warden]))
 
+(def salt-byte-size 24)
+
 ;; Gets
 (defn get [id]
   (dissoc (first (select users
            (where {:id (util/parse-int id)}))) :pass))
+
+(defn make-salt []
+  (let [b (byte-array salt-byte-size)
+        ran (java.security.SecureRandom.)]
+    (do (.nextBytes ran b) 
+      (.toString (BigInteger. 1 b) 16))))
 
 (defn user-blob 
   ([]
@@ -60,7 +69,8 @@
 ;; Mutations and Checks
 
 (defn prep [{pass :pass :as user}]
-  (assoc user :pass (warden/encrypt pass)))
+  (let [salt (make-salt)]
+    (assoc user :salt salt :pass (warden/encrypt (str pass salt)))))
 
 (defn valid-user? [{:keys [login pass confirm] :as user}]
   (v/user-validator user))
@@ -72,7 +82,7 @@
   {:auth (= auth "true")
    :pub_key pub_key
    :currency_id (util/parse-int currency_id)
-   :description description
+   :description (hc/escape-html description)
    :updated_on (raw "now()")
    :alias alias})
 
@@ -108,8 +118,8 @@
  (let [userstore (get-by-login login)]
     (if (nil? userstore)
       (assoc user :error "Username does not exist")
-    (if (and (:pass userstore) (warden/compare pass (:pass userstore)))
-        (do (last-login (:id userstore)) (dissoc userstore :pass))
+    (if (and (:pass userstore) (warden/compare (str pass (:salt userstore)) (:pass userstore)))
+        (do (last-login (:id userstore)) (dissoc userstore :salt :pass))
         (assoc user :error "Password Incorrect")))))
 
 (defn remove! [login]

@@ -30,12 +30,12 @@
                      m (:max x)
                      pages (paginate page m)
                      url (:url x)]
-                 (html 
+                 [:safe (html 
                    [:ul.pagination
                     [:li [:a {:href (str url "?page=1")} "&laquo;"]]
                     (map #(-> [:li (if (= page %) [:strong.selected %] [:a {:href (str url "?page=" %)} %])]) pages)
                     [:li [:a {:href (str url "?page=" m)} "&raquo;"]]
-                    ]))))
+                    ])])))
                     ;;[:li [:a {:href (str url "?page=")} ]]]))))
 
 (defn render-tree [tree]
@@ -49,7 +49,7 @@
 
 (add-filter! :render-tree
              (fn [x]
-               (html [:ul (render-tree x)])))
+               [:safe (html [:ul (render-tree x)])]))
 
 (add-filter! :get-status
              (fn [x]
