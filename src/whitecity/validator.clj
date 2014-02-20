@@ -45,3 +45,9 @@
 
 (v/defvalidator message-validator
   [:content [:presence]])
+
+(v/defvalidator resolution-refund-validator
+  [:refund [:presence :numericality :in-range {:start 0 :end 100}]])
+
+(v/defvalidator resolution-extension-validator
+  [:extension [:presence :numericality :in-range {:start 0 :end 90}]])

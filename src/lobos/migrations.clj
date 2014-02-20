@@ -174,7 +174,7 @@
                 (boolean :accepted)
                 (integer :refund)
                 (integer :extension)
-                (text :message)
+                (text :content)
                 (check :refund (>= :refund 0))
                 (check :extension (>= :extension 0)))))
   (down [] (drop (table :resolution))))

@@ -38,16 +38,28 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/market/messages/{{user_id}}" method="POST">
-  <p>
-    <label for="subject">Subject:</label>
-    <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
-  </p>
+<form class="well" action="/market/order/{{order_id}}/resolutions" method="POST">
+  Propose a resolution:
+  <ul>
+    <li>
+      <input type="radio" name="action" checked="checked" value="extension" />
+      <label for="extension">Extension:</label>
+      <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
+      days
+    </li>
+    <li>
+      <input type="radio" name="action" value="refund" />
+      <label for="refund">Refund:</label>
+      <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
+      %
+    </li>
+  </ul>
   <p>
     {% if errors.content %}
     <p>{{errors.content|join:", "}}</p>
     {% endif %}
-    <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
+    <label for="message">Message:</label>
+    <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
   </p> 
   <span class="submit">
     <input type="submit" class="btn" value="send" />

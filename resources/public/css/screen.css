@@ -41,6 +41,14 @@ a:hover {
   color: #d9534f;
 }
 
+.input-2 {
+  width: 3ex;
+}
+
+.input-3 {
+  width: 4ex;
+}
+
 .sales-nav {
   margin: -4px 0 0 6px;
 }

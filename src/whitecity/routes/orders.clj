@@ -28,10 +28,22 @@
   (order/finalize id (user-id))
   (resp/redirect "/market/orders"))
 
+;;(defn order-propose-resolution [slug]
+ ;; (let [resolution (resolution/add slug (user-id))]
+  ;;  ))
+
+(defn order-resolutions 
+  ([id]
+    (let [resolutions (resolution/all id (user-id))]
+      (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} (set-info)))))
+ ([slug id]
+  (let [res (resolution/add slug id (user-id))
+        resolutions (resolution/all id (user-id))]
+    (layout/render "orders/resolution.html" (merge {:errors {} res :order_id id :resolutions resolutions} (set-info))))))
+    
 (defn order-resolve [id]
   (order/resolution id (user-id))
-  (let [resolutions (resolution/all id (user-id))]
-  ))
+  (resp/redirect (str "/market/order/" id "/resolutions")))
 
 (defn order-view [id])
 
@@ -40,4 +52,6 @@
     (POST "/market/orders" {params :params} (orders-page params))
     (GET "/market/order/:id" [id] (order-view id))
     (GET "/market/order/:id/resolve" [id] (order-resolve id))
+    (GET "/market/order/:id/resolutions" [id] (order-resolutions id))
+    (POST "/market/order/:id/resolutions" {params :params id :id} (order-resolutions params id))
     (GET "/market/order/:id/finalize" [id] (order-finalize id)))
