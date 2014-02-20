@@ -4,7 +4,8 @@
         whitecity.routes.sales
         whitecity.routes.account
         whitecity.routes.cart
-        whitecity.routes.orders)
+        whitecity.routes.orders
+        whitecity.routes.listings)
   (:require [compojure.core :refer [defroutes]]            
             [whitecity.models.schema :as schema]
             [noir.util.middleware :as middleware]
@@ -62,6 +63,7 @@
             sales-routes
             cart-routes
             order-routes
+            listing-routes
             app-routes]
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]

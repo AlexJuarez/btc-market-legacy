@@ -11,7 +11,7 @@
             (where {:listing_id (util/parse-int listing-id) :user_id user-id}))))
 
 (defn bookmarked? [listing-id user-id]
-  (not (empty? (get listing-id user-id))))
+  (not (nil? (get listing-id user-id))))
 
 (defn add! [listing-id user-id]
   (let [listing-id (util/parse-int listing-id)]

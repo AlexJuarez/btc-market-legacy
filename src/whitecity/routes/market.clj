@@ -7,20 +7,15 @@
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
             [whitecity.models.category :as category]
-            [whitecity.models.image :as image]
             [whitecity.models.report :as report]
-            [whitecity.models.bookmark :as bookmark]
             [whitecity.models.review :as review]
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
             [whitecity.models.currency :as currency]
             [noir.response :as resp]
-            [clojure.string :as string]
             [noir.session :as session]
-            [noir.io :as io]
             [whitecity.util :as util]))
 
-(def per-page 10)
 
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
@@ -48,69 +43,9 @@
    (let [message (message/add! slug (user-id) (:id slug))]
      (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
 
-(defn report-add [object-id user-id table referer]
-  (report/add! object-id user-id table)
-  (resp/redirect referer))
-
-(defn report-remove [object-id user-id table referer]
-  (report/remove! object-id user-id table)
-  (resp/redirect referer))
-
-(defn listings-page []
-  (layout/render "listings/index.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
-
-;;TODO add thumbnail parsing with imagez
-(defn parse-image [image_id image]
-  (if (and (not (nil? image)) (= 0 (:size image)))
-    image_id
-    (if (and (< (:size image) 800000) (not (empty? (re-find #"jpg|jpeg" (string/lower-case (:filename image))))))
-      (let [image_id (:id (image/add! (user-id))) 
-            image_result (io/upload-file "/uploads" (assoc image :filename (str image_id ".jpg")))]
-          image_id))))
-
-(defn listing-remove [id]
-  (let [record (listing/remove! id (user-id))]
-  (if (nil? record)
-    (resp/redirect "/market/")
-  (do (session/flash-put! :success {:success "listing removed"})
-    (resp/redirect "/market/listings")))))
-
-(defn listing-edit [id]
-  (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
-
-(defn listing-save [{:keys [id image image_id] :as slug}]
-  (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
-
-(defn listing-create
-  "Listing creation page" 
-  ([]
-   (layout/render "listings/create.html" (conj {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info))))
-  ([{:keys [image image_id] :as slug}]
-   (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
-     (if (empty? (:errors listing))
-      (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
-      (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))
-
 (defn user-view [id]
   (let [user (user/get id) description (util/md->html (:description user))]
     (layout/render "users/view.html" (merge user {:listings-all (listing/public-for-user id) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
-
-(defn listing-view [id page]
-  (let [listing (listing/view id)
-        reviews (review/get id page)
-        pagemax (mod (:reviews listing) per-page)]
-    (layout/render "listings/view.html" (merge {:listing listing :review reviews :page {:page page :max pagemax :url (str "/market/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
-
-(defn listing-bookmark [id]
-  (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
-    (session/flash-put! :bookmark bookmark))
-  (resp/redirect (str "/market/listing/" id)))
-
-(defn listing-unbookmark [id referer]
-  (bookmark/remove! id (user-id))
-  (resp/redirect referer))
 
 (defn postage-create
   ([]
@@ -148,19 +83,8 @@
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
     (POST "/market/postage/:id/edit" {params :params} (postage-save params))
     (POST "/market/postage/create" {params :params} (postage-create params))
-    (GET "/market/listings" [] (listings-page))
-    (GET "/market/listings/create" [] (listing-create))
-    (GET "/market/listing/:id/bookmark" [id] (listing-bookmark id))
-    (GET "/market/listing/:id/unbookmark" {{id :id} :params {referer "referer"} :headers} (listing-unbookmark id referer))
-    (GET "/market/listing/:id/edit" [id] (listing-edit id))
-    (GET "/market/listing/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "listing" referer))
     (GET "/market/user/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "user" referer))
-    (GET "/market/listing/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "listing" referer))
     (GET "/market/user/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "user" referer))
     (GET "/market/user/:id" [id] (user-view id))
-    (GET "/market/listing/:id" {{id :id page :page} :params} (listing-view id page))
-    (GET "/market/listing/:id/remove" [id] (listing-remove id))
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
-    (POST "/market/listing/:id/edit" {params :params} (listing-save params))
-    (POST "/market/listings/create" {params :params} (listing-create params))
     (GET "/market/about" [] (about-page)))
