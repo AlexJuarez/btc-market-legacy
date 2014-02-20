@@ -36,10 +36,11 @@
   ([id]
     (let [resolutions (resolution/all id (user-id))]
       (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} (set-info)))))
- ([slug id]
-  (let [res (resolution/add slug id (user-id))
+ ([slug post]
+  (let [id (:id slug)
+        res (resolution/add! slug id (user-id))
         resolutions (resolution/all id (user-id))]
-    (layout/render "orders/resolution.html" (merge {:errors {} res :order_id id :resolutions resolutions} (set-info))))))
+    (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res (set-info))))))
     
 (defn order-resolve [id]
   (order/resolution id (user-id))
@@ -53,5 +54,5 @@
     (GET "/market/order/:id" [id] (order-view id))
     (GET "/market/order/:id/resolve" [id] (order-resolve id))
     (GET "/market/order/:id/resolutions" [id] (order-resolutions id))
-    (POST "/market/order/:id/resolutions" {params :params id :id} (order-resolutions params id))
+    (POST "/market/order/:id/resolutions" {params :params id :id} (order-resolutions params true))
     (GET "/market/order/:id/finalize" [id] (order-finalize id)))

@@ -1,5 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+{{resolutions}}
 {% if not resolutions|empty? %}
 <table class="table resolution fill">
   <thead>
@@ -46,18 +47,21 @@
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
+      {% if errors.extension %}
+      <strong class="error">{{errors.extension|join:", "}}</strong>
+      {% endif %}
     </li>
     <li>
       <input type="radio" name="action" value="refund" />
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
+      {% if errors.refund %}
+      <strong class="error">{{errors.refund|join:", "}}</strong>
+      {% endif %}
     </li>
   </ul>
   <p>
-    {% if errors.content %}
-    <p>{{errors.content|join:", "}}</p>
-    {% endif %}
     <label for="message">Message:</label>
     <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
   </p> 
