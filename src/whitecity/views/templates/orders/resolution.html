@@ -35,12 +35,16 @@
       </td>
       <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>
-        {% if resolution.seller_id = user.id and resolution.seller_accepted %}
-          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
-        {% endif %}
-        {% if resolution.user_id = user.id and resolution.user_accepted %}
-          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
-        {% endif %}
+        {% ifequal resolution.seller_id user.id %}
+          {% if not resolution.seller_accepted %}
+            <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+          {% endif %}
+        {% endifequal %}
+        {% ifequal resolution.user_id user.id %}
+          {% if not resolution.user_accepted %}
+            <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+          {% endif %}
+        {% endifequal %}
       </td>
     </tr>
     {% endfor %}

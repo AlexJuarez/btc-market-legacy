@@ -73,7 +73,7 @@
       {% endif %}
     </td>
     <td>
-      {% if order.status = 2 %}<a href="/market/order/{{order.id}}/resolutions">resolution page</a>{% else %}
+      {% if order.status = 2 %}<a href="/market/order/{{order.id}}">resolution page</a>{% else %}
         {% if order.status = 0 %}
           <a href="/market/order/{{order.id}}">cancel</a>
         {% else %}

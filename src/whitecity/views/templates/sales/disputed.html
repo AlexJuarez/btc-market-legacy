@@ -1,7 +1,7 @@
 {% extends "whitecity/views/templates/sales/index.html" %}
 {% block section %}
 {% if not sales|empty? %}
-<h1>Sales in Transit</h1>
+<h1>Sales in Resolution</h1>
 <table class="table normal">
   <thead>
     <tr>
@@ -11,6 +11,7 @@
       <th>quantity</th>
       <th>buyer</th>
       <th>address</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -22,6 +23,7 @@
     <td>{{order.quantity}}</td>
     <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
     <td><em>{{order.address}}</em></td>
+    <td><a href="/market/order/{{order.id}}">resolution page</a></td>
   </tr>
   {% endfor %}
   </tbody>
