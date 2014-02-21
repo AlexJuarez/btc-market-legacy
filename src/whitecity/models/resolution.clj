@@ -22,6 +22,8 @@
       (let [res {:content content
                    :seller_id seller-id
                    :user_id buyer-id
+                   :user_accepted (= user-id buyer-id)
+                   :seller_accepted (= user-id seller-id)
                    :order_id order-id}
             res (if (= action "refund") (assoc res :refund (util/parse-int refund)) (assoc res :extension (util/parse-int extension)))]
         res))))
