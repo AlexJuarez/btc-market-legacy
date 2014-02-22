@@ -17,7 +17,7 @@
   {% for message in messages %}
     <tr class="message">
       <td>
-        <span class="sender">{% if message.user_alias %}{{message.user_alias}}{% else %}{{message.user_login}}{% endif %}</span>
+        <span class="sender">{{message.user_alias}}</span>
       </td>
       <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
       <td><span time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>

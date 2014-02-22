@@ -22,7 +22,7 @@
   <tbody>
   {% for listing in listings %}
   <tr>
-    <td>{% if listing.alias %}{{listing.alias}}{% else %}{{listing.login}}{% endif %}</td>
+    <td>{{listing.alias}}</td>
     <td>{{listing.title}}</td>
     <td>{{listing.price|double-format:5}}</td>
     <td><input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>

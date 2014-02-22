@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-{% if not id %}
+{% if not lid %}
 <p>Listing not found</p>
 {% else %}
 <div class="listing">
@@ -10,19 +10,19 @@
   <h1>{{title}}</h1>
   <p>
     <span class="price">{{price|double-format:4}}</span>
-    <a href="/market/cart/add/{{id}}">add to cart</a>
+    <a href="/market/cart/add/{{lid}}">add to cart</a>
   </p>
   <div class="well">
     <ul>
-      <li>seller: <a href="/market/user/{{user_id}}" class="seller">{% if user_alias %}{{user_alias}}{% else %}{{user_login}}{% endif %}</a></li>
+      <li>seller: <a href="/market/user/{{user_id}}" class="seller">{{user_alias}}</a></li>
       <li>ships from: {{from}}</li>
       <li>ships to: {{to}}</li>
       <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
       <li>bookmarked {{bookmarks}} {% ifequal bookmarks 1 %}time{% else %}times{% endifequal %}
       {% if bookmarked %}
-        <a href="/market/listing/{{id}}/unbookmark">unbookmark this item</a></li>
+        <a href="/market/listing/{{lid}}/unbookmark">unbookmark this item</a></li>
       {% else %}
-        <a href="/market/listing/{{id}}/bookmark">bookmark this item</a></li>
+        <a href="/market/listing/{{lid}}/bookmark">bookmark this item</a></li>
       {% endif %}
     </ul>
   </div>
@@ -36,9 +36,9 @@
   </p>
   <p class="well">
   {% if reported %}
-    <a href="/market/listing/{{id}}/unreport">remove my report</a>
+    <a href="/market/listing/{{lid}}/unreport">remove my report</a>
   {% else %}
-    <a href="/market/listing/{{id}}/report">report this listing</a>
+    <a href="/market/listing/{{lid}}/report">report this listing</a>
   {% endif %}
   </p>
   <div class="well description">
