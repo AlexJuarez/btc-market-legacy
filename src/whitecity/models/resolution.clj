@@ -30,7 +30,7 @@
 
 (defn add! [slug order-id user-id]
   (let [resolution (prep slug order-id user-id)
-        check (if-not (nil? (:refund resolution)) 
+        check (if (= "refund" (:action slug))
                 (v/resolution-refund-validator resolution) (v/resolution-extension-validator resolution))]
         (if (empty? check)
           (store! resolution)

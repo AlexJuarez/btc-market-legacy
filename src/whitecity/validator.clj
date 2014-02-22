@@ -47,7 +47,7 @@
   [:content [:presence]])
 
 (v/defvalidator resolution-refund-validator
-  [:refund [:presence :numericality {:gte 0 :lte 100}]])
+  [:refund [:presence :numericality {:gte 0}]])
 
 (v/defvalidator resolution-extension-validator
   [:extension [:presence :numericality {:gte 0 :lte 90}]])

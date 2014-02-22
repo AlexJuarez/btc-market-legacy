@@ -2,7 +2,7 @@
 {% block content %}
 {{resolutions}}
 {% if not resolutions|empty? %}
-<table class="table resolution fill">
+<table class="table resolution fill p">
   <thead>
     <tr>
       <th>from</th>
@@ -13,27 +13,28 @@
     </tr>
   </thead>
   <tbody>
-    {% for message in resolutions %}
+    {% for resolution in resolutions %}
     <tr>
       <td>
-        {% ifequal user.id message.user_id %}
+        {% ifequal user.id resolution.user_id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
-          <a href="/market/user/{{message.user_id}}" class="sender">{{message.user_alias}}</a>
+          <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.user_alias}}</a>
         {% endifequal %}
       </td>
       <td>
-        {% if not message.subject|empty? %}
-          <div class="header">
-            <strong class="subject">Subject: {{message.subject}}</strong>
-          </div>
-        {% endif %}
-        <div class="content">
-          {{message.content}}
-        </div>
+        {{resolution.content}}
       </td>
-      <td><span time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
-      <td><a href="/market/message/{{message.id}}/delete">delete</a></td>
+      <td>
+        {% if resolution.extension %}
+        extend by {{resolution.extension}} day{% if not resolution.extension = 1 %}s{% endif %}
+        {% endif %}
+        {% if resolution.refund %}
+        refund {{resolution.refund}}%
+        {% endif %}
+      </td>
+      <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
+      <td><a href="/market/resolution/{{resolution.id}}/accept">accept</a></td>
     </tr>
     {% endfor %}
   </tbody>
@@ -43,7 +44,7 @@
   Propose a resolution:
   <ul>
     <li>
-      <input type="radio" name="action" checked="checked" value="extension" />
+    <input type="radio" name="action" {% if not action or action = "extension" %}checked="checked" value="extension" />
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
