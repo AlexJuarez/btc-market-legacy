@@ -3,7 +3,7 @@
 {% if not id %}
 <p>User not found</p>
 {% else %}
-<h1 class="jumbo">{{alias}}}</h1>
+<h1 class="jumbo">{{alias}}</h1>
 <a href="/market/messages/{{id}}">send a message</a>
 <p class="well">
   has been a member for: <strong class="pretty-time" time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>

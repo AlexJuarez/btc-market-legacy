@@ -6,7 +6,7 @@
    [lib-noir "0.7.1"]
    [compojure "1.1.5"]
    [ring-server "0.3.0"]
-   [selmer "0.4.3"]
+   [selmer "0.5.9"];;0.4.3
    [com.taoensso/timbre "2.6.2"]
    [com.postspectacular/rotor "0.1.0"]
    [clojurewerkz/spyglass "1.1.0"]

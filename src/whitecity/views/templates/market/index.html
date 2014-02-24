@@ -2,7 +2,7 @@
 {% block content %}
 <nav class="categories">
   <div class="legend">Shop by <strong>Category</strong></div>
-  {{categories|render-tree|safe}}
+  {{categories|render-tree}}
 </nav>
 <div class="ls">
 {% for listing in listings %}
