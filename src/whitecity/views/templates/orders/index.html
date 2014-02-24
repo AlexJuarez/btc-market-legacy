@@ -42,7 +42,6 @@
   </p>
 </form>
 {% endif %}
-
 {% if not orders|empty? %}
 <table class="table normal">
   <thead>
@@ -74,12 +73,15 @@
       {% endif %}
     </td>
     <td>
-      {% if order.status = 0 %} <a href="/market/order/{{order.id}}">cancel</a>{% else %}
-      {% if order.resolve %} 
-      <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
+      {% if order.status = 2 %}<a href="/market/order/{{order.id}}/resolutions">resolution page</a>{% else %}
+        {% if order.status = 0 %}
+          <a href="/market/order/{{order.id}}">cancel</a>
+        {% else %}
+          {% if order.resolve %} 
+          <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
+          {% endif %}
       {% endif %}
     </td>
-
   </tr>
   {% endfor %}
   </tbody>
