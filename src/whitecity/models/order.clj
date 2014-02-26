@@ -15,6 +15,8 @@
 ;;2 - resolution
 ;;3 - finalized
 
+(def statuses [:new :ship :resolution :finalize])
+
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
@@ -130,10 +132,15 @@
     (aggregate (count :*) :cnt)
     (where {:user_id id :status [in (list 0 1 2)]})))))
 
+;;map this into vector of status cnt's into a hash
 (defn count-sales 
   ([id]
-   (count-sales id 0))
-  ([id status]
-    (:cnt (first (select orders
-      (aggregate (count :*) :cnt)
-      (where {:seller_id id :status status}))))))
+   (let [sales
+     (into {}
+          (map #(vector (statuses (:status %)) (:cnt %))
+            (select orders
+              (fields :status)
+              (aggregate (count :*) :cnt)
+              (where {:seller_id id})
+              (group :status))))]
+     (assoc sales :total (reduce + (vals sales))))))

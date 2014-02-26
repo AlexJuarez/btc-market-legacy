@@ -2,11 +2,11 @@
 {% block content %}
 <h1 class="jumbo"> my sales </h2>
 <nav class="sales-nav">
-  <a href="/market/sales">overview</a> - 
-  {% if user.sales > 0 %}<strong><a href="/market/sales/new">new</a></strong>{% else %}<a href="/market/sales/new">new</a>{% endif %} - 
-  <a href="/market/sales/shipped">in transit</a> - 
-  <a href="/market/sales/resolutions">in resolution</a> - 
-  <a href="/market/sales/past">past</a> 
+  <a href="/market/sales">overview ({{user.sales.total|default:0}})</a> - 
+  <a href="/market/sales/new">new ({{user.sales.new|default:0}})</a> - 
+  <a href="/market/sales/shipped">in transit ({{user.sales.ship|default:0}})</a> - 
+  <a href="/market/sales/resolutions">in resolution ({{user.sales.resolution|default:0}})</a> - 
+  <a href="/market/sales/past">past ({{user.sales.finalize|default:0}})</a> 
 </nav>
 {% block section %}
 {% endblock %}
