@@ -34,7 +34,14 @@
         {% endif %}
       </td>
       <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
-      <td><a href="/market/resolution/{{resolution.id}}/accept">accept</a></td>
+      <td>
+        {% if resolution.seller_id = user.id and resolution.seller_accepted %}
+          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+        {% endif %}
+        {% if resolution.user_id = user.id and resolution.user_accepted %}
+          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
   </tbody>
@@ -44,7 +51,7 @@
   Propose a resolution:
   <ul>
     <li>
-    <input type="radio" name="action" {% if not action or action = "extension" %}checked="checked" value="extension" />
+    <input type="radio" name="action" {% if not action %}checked="checked"{% endif %} value="extension" />
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days

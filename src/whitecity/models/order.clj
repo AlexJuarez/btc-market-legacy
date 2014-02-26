@@ -130,7 +130,10 @@
     (aggregate (count :*) :cnt)
     (where {:user_id id :status [in (list 0 1 2)]})))))
 
-(defn count-sales [id]
-  (:cnt (first (select orders
-    (aggregate (count :*) :cnt)
-    (where {:seller_id id :status 0})))))
+(defn count-sales 
+  ([id]
+   (count-sales id 0))
+  ([id status]
+    (:cnt (first (select orders
+      (aggregate (count :*) :cnt)
+      (where {:seller_id id :status status}))))))
