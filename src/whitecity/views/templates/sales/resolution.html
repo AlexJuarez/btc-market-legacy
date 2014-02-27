@@ -16,7 +16,7 @@
     {% for resolution in resolutions %}
     <tr>
       <td>
-        {% if resolution.user_accepted %}
+        {% if resolution.seller_accepted %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
           <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
@@ -35,7 +35,7 @@
       </td>
       <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>
-        {% if not resolution.user_accepted %}
+        {% if not resolution.seller_accepted %}
           <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
         {% endif %}
       </td>
@@ -44,7 +44,7 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/market/order/{{order_id}}" method="POST">
+<form class="well" action="/market/sale/{{order_id}}" method="POST">
   Propose a resolution:
   <ul>
     <li>

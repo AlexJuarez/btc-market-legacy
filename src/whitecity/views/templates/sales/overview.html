@@ -17,7 +17,7 @@
   <tbody>
   {% for order in sales %}
   <tr>
-    <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
+    <td><a href="/market/sale/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.postage_title}}</td>
     <td>{{order.quantity}}</td>
@@ -33,7 +33,15 @@
         </span>
       {% endif %}
     </td>
-    <td><em>{{order.status|get-status}}</em></td>
+    <td>
+        {% ifequal order.status "2" %}
+          <a href="/market/sale/{{order.id}}">
+            {{order.status|get-status}}
+          </a>
+        {% else %}
+          <em> {{order.status|get-status}}</em>
+        {% endifequal %}
+    </td>
   </tr>
   {% endfor %}
   </tbody>

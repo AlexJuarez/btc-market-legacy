@@ -50,8 +50,6 @@
   (belongs-to sellers {:fk :seller_id})
   (belongs-to orders))
 
-  
-
 (defentity messages
   (table :message)
   (belongs-to users))

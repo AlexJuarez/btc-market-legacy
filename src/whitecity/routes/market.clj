@@ -7,6 +7,7 @@
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
             [whitecity.models.category :as category]
+            [whitecity.models.resolution :as resolution]
             [whitecity.models.report :as report]
             [whitecity.models.review :as review]
             [whitecity.models.fan :as follower]
@@ -71,8 +72,13 @@
   (do (session/flash-put! :success {:success "postage removed"})
     (resp/redirect "/market/listings")))))
 
+(defn resolution-accept [id referer]
+  (resolution/accept id (user-id))
+  (resp/redirect referer))
+
 (def-restricted-routes market-routes
     (GET "/market/" [] (home-page))
+    (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
     (GET "/market/category/:cid" [cid] (category-page cid))
     (GET "/market/message/:id/delete" [id] (message-delete id))
     (GET "/market/messages" [] (messages-page))

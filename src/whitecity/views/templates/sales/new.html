@@ -22,7 +22,7 @@
     {% for order in sales %}
     <tr>
       <td><input type="checkbox" name="check[{{order.id}}]" /></td>
-      <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
+      <td><a href="/market/sale/{{order.id}}">{{order.id}}</a></td>
       <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
       <td>{{order.postage_title}}</td>
       <td>{{order.quantity}}</td>

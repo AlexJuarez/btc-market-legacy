@@ -8,7 +8,29 @@
 
 (defn all [order-id user-id]
   (select resolutions
-          (where (and {:order_id (util/parse-int order-id)} (or {:user_id user-id} {:seller_id user-id})))))
+          (with sellers
+                (fields :alias))
+          (where {:order_id (util/parse-int order-id) :user_id user-id})
+          (order :created_on :ASC)))
+
+(defn all-sales [order-id seller-id]
+  (select resolutions
+          (with users
+                (fields :alias))
+          (where {:order_id (util/parse-int order-id) :seller_id seller-id})
+          (order :created_on :ASC)))
+
+(defn accept [id user-id]
+  (let [id (util/parse-int id)
+        res (first (select resolutions
+                    (where {:id id})))
+        values {}
+        values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
+        values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
+    (if (not (empty? values))
+      (update resolutions
+              (set-fields values)
+              (where {:id id})))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))

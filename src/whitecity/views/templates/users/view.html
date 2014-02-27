@@ -12,7 +12,7 @@
   <br />
   ranked in the top % of sellers with {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
-  has {{fans}} {% ifequal fans 1 %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
+  has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
 </p>
 <p class="well">
   {% if reported %}

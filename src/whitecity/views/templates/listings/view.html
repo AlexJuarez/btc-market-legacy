@@ -18,7 +18,7 @@
       <li>ships from: {{from}}</li>
       <li>ships to: {{to}}</li>
       <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
-      <li>bookmarked {{bookmarks}} {% ifequal bookmarks 1 %}time{% else %}times{% endifequal %}
+      <li>bookmarked {{bookmarks}} {% ifequal bookmarks "1" %}time{% else %}times{% endifequal %}
       {% if bookmarked %}
         <a href="/market/listing/{{lid}}/unbookmark">unbookmark this item</a></li>
       {% else %}

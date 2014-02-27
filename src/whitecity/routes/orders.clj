@@ -47,5 +47,5 @@
     (POST "/market/orders" {params :params} (orders-page params))
     (GET "/market/order/:id/resolve" [id] (order-resolve id))
     (GET "/market/order/:id" [id] (order-view id))
-    (POST "/market/order/:id" {params :params id :id} (order-view params true))
+    (POST "/market/order/:id" {params :params} (order-view params true))
     (GET "/market/order/:id/finalize" [id] (order-finalize id)))
