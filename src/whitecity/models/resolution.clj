@@ -25,13 +25,14 @@
         res (first (select resolutions
                     (where {:id id})))]
     (if (= (:user_accepted res) (:seller_accepted res) true)
+      {}
       (let [values {}
             values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
             values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
         (if (not (empty? values))
           (update resolutions
                   (set-fields values)
-                  (where {:id id})))))
+                  (where {:id id})))))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
