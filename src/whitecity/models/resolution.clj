@@ -44,6 +44,7 @@
       (let [res {:content content
                    :seller_id seller-id
                    :user_id buyer-id
+                   :from_user (= user-id buyer-id)
                    :user_accepted (= user-id buyer-id)
                    :seller_accepted (= user-id seller-id)
                    :order_id order-id}

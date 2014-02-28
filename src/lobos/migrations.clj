@@ -174,6 +174,7 @@
                 (refer-to :order)
                 (boolean :user_accepted (default false))
                 (boolean :seller_accepted (default false))
+                (boolean :from_user (default false))
                 (integer :refund)
                 (integer :extension)
                 (text :content)
