@@ -35,19 +35,19 @@
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
-  [:price [:presence :numericality {:gte 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
   [:currency_id [:presence]]
-  [:quantity [:presence :numericality {:gte 0}]]) 
+  [:quantity [:presence :numericality {:greater-than-or-equal-to 0}]]) 
 
 (v/defvalidator postage-validator
-  [:price [:presence :numericality {:gte 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
   [:title [:presence :in-range {:start 4 :end 100}]])
 
 (v/defvalidator message-validator
   [:content [:presence]])
 
 (v/defvalidator resolution-refund-validator
-  [:refund [:presence :numericality {:gte 0}]])
+  [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
 
 (v/defvalidator resolution-extension-validator
-  [:extension [:presence :numericality {:gte 0 :lte 90}]])
+  [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 30}]])

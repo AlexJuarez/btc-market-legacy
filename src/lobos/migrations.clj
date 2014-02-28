@@ -24,8 +24,7 @@
                (boolean :banned (default false))
                (varchar :pass 60)
                (varchar :salt 48);;The salt comes out to 48 characters
-               (varchar :wallet 34)
-               (varchar :key 64)
+               (varchar :wallet 34 :unique)
                (integer :pin)
                (integer :transactions (default 0))
                (float :rating (default 5))
@@ -39,6 +38,14 @@
                (check :alias (> (length :alias) 2))
                (check :btc (>= :btc 0)))))
   (down [] (drop (table :user))))
+
+(defmigration add-user-wallets-table
+  (up [] (create
+           (tbl :wallet
+                (varchar :wallet 34 :unique)
+                (varchar :key 64)
+                (timestamp :checked_on))))
+  (down [] (drop (table :wallet))))
 
 (defmigration add-messages-table
   (up [] (create
