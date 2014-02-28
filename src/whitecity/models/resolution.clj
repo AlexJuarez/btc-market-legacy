@@ -23,14 +23,15 @@
 (defn accept [id user-id]
   (let [id (util/parse-int id)
         res (first (select resolutions
-                    (where {:id id})))
-        values {}
-        values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
-        values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
-    (if (not (empty? values))
-      (update resolutions
-              (set-fields values)
-              (where {:id id})))))
+                    (where {:id id})))]
+    (if (= (:user_accepted res) (:seller_accepted res) true)
+      (let [values {}
+            values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
+            values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
+        (if (not (empty? values))
+          (update resolutions
+                  (set-fields values)
+                  (where {:id id})))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
@@ -42,12 +43,12 @@
         buyer-id (:user_id order)]
     (if (or (= user-id seller-id) (= user-id buyer-id))
       (let [res {:content content
-                   :seller_id seller-id
-                   :user_id buyer-id
-                   :from_user (= user-id buyer-id)
-                   :user_accepted (= user-id buyer-id)
-                   :seller_accepted (= user-id seller-id)
-                   :order_id order-id}
+                 :seller_id seller-id
+                 :user_id buyer-id
+                 :from_user (= user-id buyer-id)
+                 :user_accepted (= user-id buyer-id)
+                 :seller_accepted (= user-id seller-id)
+                 :order_id order-id}
             res (if (= action "refund") (assoc res :refund (util/parse-int refund)) (assoc res :extension (util/parse-int extension)))]
         res))))
 

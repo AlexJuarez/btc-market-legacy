@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th>from</th>
-      <th class="large-column">message</th>
+      <th class="large-column" style="width:70%">message</th>
       <th>action</th>
       <th>freshness</th>
       <th>&nbsp;</th>
@@ -16,7 +16,7 @@
     {% for resolution in resolutions %}
     <tr>
       <td>
-        {% if resolution.user_accepted %}
+        {% if resolution.from_user %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
           <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
