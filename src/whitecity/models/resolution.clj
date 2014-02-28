@@ -24,7 +24,7 @@
   (let [id (util/parse-int id)
         res (first (select resolutions
                     (where {:id id})))]
-    (if (= (:user_accepted res) (:seller_accepted res) true)
+    (if (and (:user_accepted res) (:seller_accepted res))
       (let [values {}
             values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
             values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
@@ -42,10 +42,10 @@
         seller-id (:seller_id order)
         buyer-id (:user_id order)]
     (if (or (= user-id seller-id) (= user-id buyer-id))
-      (let [res {:content content
+      (let [res {:from user-id
+                 :content content
                  :seller_id seller-id
                  :user_id buyer-id
-                 :from_user (= user-id buyer-id)
                  :user_accepted (= user-id buyer-id)
                  :seller_accepted (= user-id seller-id)
                  :order_id order-id}

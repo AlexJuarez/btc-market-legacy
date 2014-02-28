@@ -169,12 +169,12 @@
 (defmigration add-resolutions-table
   (up [] (create
            (tbl :resolution
+                (integer :from [:refer :user :id :on-delete :set-null])
                 (refer-to :user)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :order)
                 (boolean :user_accepted (default false))
                 (boolean :seller_accepted (default false))
-                (boolean :from_user (default false))
                 (integer :refund)
                 (integer :extension)
                 (text :content)
