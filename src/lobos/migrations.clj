@@ -169,17 +169,16 @@
 (defmigration add-resolutions-table
   (up [] (create
            (tbl :resolution
+                (integer :from [:refer :user :id :on-delete :set-null])
                 (refer-to :user)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :order)
                 (boolean :user_accepted (default false))
                 (boolean :seller_accepted (default false))
-                (boolean :from_user (default false))
-                (integer :refund)
-                (integer :extension)
+                (varchar :action 10);; extension or refund
+                (integer :value (default 0))
                 (text :content)
-                (check :refund (>= :refund 0))
-                (check :extension (>= :extension 0)))))
+                (check :value (>= :value 0)))))
   (down [] (drop (table :resolution))))
 
 (defmigration add-bookmarks-table

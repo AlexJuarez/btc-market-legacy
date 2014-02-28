@@ -24,7 +24,7 @@
   (let [id (util/parse-int id)
         res (first (select resolutions
                     (where {:id id})))]
-    (if (= (:user_accepted res) (:seller_accepted res) true)
+    (if (and (:user_accepted res) (:seller_accepted res))
       {}
       (let [values {}
             values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
@@ -38,24 +38,26 @@
   (insert resolutions (values resolution)))
 
 (defn prep [{:keys [action extension refund content]} order-id user-id]
+  "prepares content for the resolutions table, 
+  takes in a map with an action, extension, refund and message"
   (let [order-id (util/parse-int order-id)
         order (first (select orders (where {:id order-id})))
         seller-id (:seller_id order)
         buyer-id (:user_id order)]
-    (if (or (= user-id seller-id) (= user-id buyer-id))
-      (let [res {:content content
+      (let [res {:from user-id
+                 :content content
                  :seller_id seller-id
                  :user_id buyer-id
-                 :from_user (= user-id buyer-id)
                  :user_accepted (= user-id buyer-id)
                  :seller_accepted (= user-id seller-id)
-                 :order_id order-id}
-            res (if (= action "refund") (assoc res :refund (util/parse-int refund)) (assoc res :extension (util/parse-int extension)))]
-        res))))
+                 :action (if (= "refund" "extension" action) action)
+                 :value (if (= action "refund") (util/parse-int refund) (util/parse-int extension))
+                 :order_id order-id}]
+        (if (nil? (:value res)) (dissoc res :value) res))))
 
 (defn add! [slug order-id user-id]
   (let [resolution (prep slug order-id user-id)
-        check (if (= "refund" (:action slug))
+        check (if (= "refund" (:action resolution))
                 (v/resolution-refund-validator resolution) (v/resolution-extension-validator resolution))]
         (if (empty? check)
           (store! resolution)
