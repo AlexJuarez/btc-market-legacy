@@ -26,12 +26,12 @@
         {{resolution.content}}
       </td>
       <td>
-        {% if resolution.extension %}
-        extend by {{resolution.extension}} day{% if not resolution.extension = 1 %}s{% endif %}
-        {% endif %}
-        {% if resolution.refund %}
-        refund {{resolution.refund}}%
-        {% endif %}
+        {% ifequal resolution.action "extension" %}
+        extend by {{resolution.value}} day{% if not resolution.value = 1 %}s{% endif %}
+        {% endifequal %}
+        {% ifequal resolution.action "refund" %}
+        refund {{resolution.value}}%
+        {% endifequal %}
       </td>
       <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>

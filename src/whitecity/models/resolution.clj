@@ -6,6 +6,8 @@
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
+(def actions #{"refund" "extension"})
+
 (defn all [order-id user-id]
   (select resolutions
           (with sellers
@@ -55,7 +57,7 @@
                  :user_id buyer-id
                  :user_accepted (= user-id buyer-id)
                  :seller_accepted (= user-id seller-id)
-                 :action (if (= "refund" "extension" action) action)
+                 :action (if (contains? actions action) action)
                  :value (if (= action "refund") (util/parse-int refund) (util/parse-int extension))
                  :order_id order-id}]
         (if (nil? (:value res)) (dissoc res :value) res))))

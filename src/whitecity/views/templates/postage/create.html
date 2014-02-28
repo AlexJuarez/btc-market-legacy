@@ -9,18 +9,18 @@
     <label for="title">Title: </label>
     <input name="title" id="title" class="input" type="text" value="{{title}}" />
   </p>
-  {% if errors.price  %}
-  <p>{{errors.price|join:", "}} </p>
-  {% endif %}
-  <p>
+  <p {% if errors.price %}class="errors"{% endif %}>
     <label for="price">Price: </label>
     <input name="price" class="input" id="price" type="text" value="{{price}}" />
+    {% if errors.price %}
+      {{errors.price|join:", "}}
+    {% endif %}
   </p>
   <p>
     <label for="currency_id">Currency: </label>
     <select name="currency_id" id="currency_id">
       {% for currency in currencies %}
-      <option value="{{currency.id}}">{{currency.name}}</option>
+      <option value="{{currency.id}}" {% ifequal currency_id currency.id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
       {% endfor %}
     </select>
   </p>
