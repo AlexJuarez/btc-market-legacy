@@ -52,8 +52,8 @@
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
-      {% if errors.extension %}
-      <strong class="error">{{errors.extension|join:", "}}</strong>
+      {% if extension and errors.value %}
+      <strong class="error">{{errors.value|join:", "}}</strong>
       {% endif %}
     </li>
     <li>
@@ -61,8 +61,8 @@
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
-      {% if errors.refund %}
-      <strong class="error">{{errors.refund|join:", "}}</strong>
+      {% if refund and errors.value %}
+      <strong class="error">{{errors.value|join:", "}}</strong>
       {% endif %}
     </li>
   </ul>

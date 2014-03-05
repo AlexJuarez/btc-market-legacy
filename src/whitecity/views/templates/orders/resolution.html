@@ -48,21 +48,21 @@
   Propose a resolution:
   <ul>
     <li>
-    <input type="radio" name="action" {% if not action %}checked="checked"{% endif %} value="extension" />
+    <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
-      {% if errors.extension %}
-      <strong class="error">{{errors.extension|join:", "}}</strong>
+      {% if extension %}
+      <strong class="error">{{errors.value|join:", "}}</strong>
       {% endif %}
     </li>
     <li>
-      <input type="radio" name="action" value="refund" />
+    <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
-      {% if errors.refund %}
-      <strong class="error">{{errors.refund|join:", "}}</strong>
+      {% if refund %}
+      <strong class="error">{{errors.value|join:", "}}</strong>
       {% endif %}
     </li>
   </ul>

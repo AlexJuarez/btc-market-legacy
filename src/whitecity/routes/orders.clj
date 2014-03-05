@@ -31,12 +31,12 @@
 (defn order-view 
   ([id]
     (let [resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} (set-info)))))
+      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :order_id id :resolutions resolutions} (set-info)))))
   ([slug post]
     (let [id (:id slug)
         res (resolution/add! slug id (user-id))
         resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res (set-info))))))
+      (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res slug (set-info))))))
     
 (defn order-resolve [id]
   (order/resolution id (user-id))

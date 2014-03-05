@@ -36,12 +36,12 @@
 (defn sales-view 
   ([id]
     (let [resolutions (resolution/all-sales id (user-id))]
-      (layout/render "sales/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} (set-info)))))
+      (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :order_id id :resolutions resolutions} (set-info)))))
   ([slug post]
     (let [id (:id slug)
         res (resolution/add! slug id (user-id))
         resolutions (resolution/all-sales id (user-id))]
-      (layout/render "sales/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res (set-info))))))
+      (layout/render "sales/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res slug (set-info))))))
 
 (defn sales-page
   ([] (sales-overview))
