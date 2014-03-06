@@ -30,14 +30,10 @@
             image_result (io/upload-file "/uploads" (assoc image :filename (str image_id ".jpg")))]
           image_id))))
 
-(defn set-info 
-  ([]
-    {:user 
-      (assoc 
-          (user/user-blob)
-        :cart (count (session/get :cart)))})
-  ([user]
-    {:user 
-      (assoc 
-        (user/user-blob user)
-        :cart (count (session/get :cart)))}))
+(defn set-info []
+  {:user 
+   (merge (session/get :user)
+          {:cart (count (session/get :cart))
+           :orders (session/get :orders)
+           :messages (session/get :messages)
+           :sales (session/get :sales)})})

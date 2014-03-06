@@ -4,7 +4,6 @@
         [whitecity.db]
         [korma.core])
   (:require 
-        [whitecity.cache :as cache]
         [whitecity.validator :as v]
         [hiccup.util :as hc]
         [clojure.string :as s]
@@ -27,31 +26,6 @@
         ran (java.security.SecureRandom.)]
     (do (.nextBytes ran b) 
       (.toString (BigInteger. 1 b) 16))))
-
-(defn user-blob 
-  ([]
-   (let [id (util/user-id) 
-         u (cache/get-set (str "user_" id)
-            (let [user (get id)]
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)})))]
-     (do (session/put! :user u) u)))
-  ([user]
-    (let [id (:id user) 
-          u (cache/get-set (str "user_" id)
-            (merge 
-               user
-               (when (:vendor user) 
-                 {:sales (order/count-sales id)})
-               {:errors {} 
-                :messages (message/count id)
-                :orders (order/count id)}))]
-          (do (session/put! :user u) u))))
 
 (defn get-by-login [login]
   (first (select users
@@ -94,8 +68,7 @@
         check (valid-update? updates)]
     (if (empty? check)
       (do 
-        (let [user-blob (merge (user-blob) updates)]
-          (cache/set (str "user_" id) user-blob))
+        (session/put! :user (merge (session/get :user) updates))
         (update users
               (set-fields updates)
               (where {:id id})))

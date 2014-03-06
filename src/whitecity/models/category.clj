@@ -16,6 +16,8 @@
 (defn all []
   (select category (order :id :ASC)))
 
+;;cache the tree
+
 (defn walk-tree [list parent]
   (if-let [curr (first list)]
     (let [{n :name c :count p :parent id :id gt :gt lte :lte} curr]

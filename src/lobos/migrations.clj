@@ -19,6 +19,7 @@
                (boolean :vendor (default true))
                (boolean :admin (default true))
                (boolean :auth (default false))
+               (column :session (data-type :uuid) :unique)
                (text :description)
                (text :pub_key) 
                (boolean :banned (default false))

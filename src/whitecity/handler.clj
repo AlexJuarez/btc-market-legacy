@@ -66,7 +66,9 @@
             order-routes
             listing-routes
             app-routes]
-           :session-options {:store (cache/store)}
+           :session-options {:cookie-attrs {:max-age (* 60 20)}
+                             :cookie-name "session"
+                             :store (cache/store)}
 
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]

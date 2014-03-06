@@ -2,7 +2,10 @@
   (:use compojure.core hiccup.core hiccup.form whitecity.helpers.route)
   (:require [whitecity.util :as util] 
             [whitecity.views.layout :as layout]
+            [whitecity.models.order :as order]
+            [whitecity.models.message :as message]
             [noir.session :as session]
+            [ring.middleware.session :as sess]
             [noir.response :as resp]
             [whitecity.models.user :as users]))
 
@@ -23,17 +26,22 @@
   ([login pass]
     (let [user (users/login! {:login login :pass pass})]
       (if (nil? (:error user))
-        (do (set-info user)
+        (let [{:keys [id vendor]} user]
+          (do 
+            (when vendor (session/put! :sales (order/count-sales id)))
+            (session/put! :user user)
+            (session/put! :orders (order/count id))
+            (session/put! :messages (message/count id))  
             (session/put! :cart {})
-            (resp/redirect "/market/"))
-          (layout/render "login.html" user)))))
+            (resp/redirect "/market/")))
+        (layout/render "login.html" user)))))
    
 (defroutes auth-routes
+  (GET "/test" request (resp/edn request))
   (GET "/"         {params :params} (login-page params))
   (POST "/"        [login pass]    (login-page login pass))
   (GET "/register" {params :params} (registration-page params))
   (POST "/register"[login pass confirm] (registration-page login pass confirm))
   (GET "/logout" []
-       (util/user-clear (util/user-id))
        (session/clear!)
        (resp/redirect "/")))
