@@ -1,4 +1,5 @@
 (ns whitecity.models.postage
+  (:refer-clojure :exclude [get count])
   (:use [korma.db :only (defdb)]
         [korma.core]
         [whitecity.db])

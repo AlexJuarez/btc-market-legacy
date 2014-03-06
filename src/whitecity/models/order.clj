@@ -1,4 +1,5 @@
 (ns whitecity.models.order
+  (:refer-clojure :exclude [count])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
@@ -56,7 +57,7 @@
         cost (+ item-cost postage-cost)
         escr {:from (:user_id order) :order_id (:id order) :to (:seller_id order) :currency_id 1 :amount cost :status "hold"}]
     (transaction
-      ;;(update users (set-fields {:btc (raw (str "btc - " cost))}))
+      (update users (set-fields {:btc (raw (str "btc - " cost))}))
       (insert escrow (values escr))
       (insert orders (values order))
       (update listings 
@@ -84,13 +85,15 @@
      :user_id user-id
      :status 0}))
 
-(defn add! [cart address pin user-id]
-  (let [cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
+(defn add! [cart total address pin user-id]
+  (let [user (first (select users (fields :login :btc) (where {:id user-id :pin (util/parse-int pin)})))
+        cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         address-check (when (empty? address) {:address "You need to enter an address"})
-        pin-check (when (empty? (first (select users (fields :login) (where {:id user-id :pin (util/parse-int pin)})))) {:pin "Your pin does not match"})
+        pin-check (when (empty? user) {:pin "Your pin does not match"})
         postage (some false? (map #(not (nil? (:postage (val %)))) cart-check))
         postage-error (when postage {:postage postage})
-        errors (merge cart-check postage-error address-check pin-check)]
+        insufficient-funds (when (< (:btc user) total) {:total "insufficient funds"})
+        errors (merge cart-check postage-error address-check pin-check insufficient-funds)]
     (if (empty? errors)
       (do 
         (session/put! :cart {}) 

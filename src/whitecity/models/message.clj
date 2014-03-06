@@ -1,4 +1,5 @@
 (ns whitecity.models.message
+  (:refer-clojure :exclude [count])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])

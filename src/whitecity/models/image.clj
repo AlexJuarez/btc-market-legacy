@@ -1,4 +1,5 @@
 (ns whitecity.models.image
+  (:refer-clojure :exclude [get])
   (:use [korma.db :only (defdb)]
         [noir.io :only (resource-path)]
         [korma.core]

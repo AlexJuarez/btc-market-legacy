@@ -1,4 +1,5 @@
 (ns whitecity.models.fan
+  (:refer-clojure :exclude [get])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])

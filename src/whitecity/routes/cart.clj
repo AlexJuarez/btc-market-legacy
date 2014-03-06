@@ -39,13 +39,13 @@
   (session/put! :cart {})
   (resp/redirect "/market/cart"))
 
-(defn cart-view [& option]
+(defn cart-view []
   (let [ls (listing/get-in (keys (session/get :cart)))
         listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
                              total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
                          (conj % {:subtotal subtotal :total total})) ls))
         total (reduce + (map #(:total %) listings))]
-    (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} (first option) (set-info)))))
+    (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
   (session/put! :cart 
@@ -55,10 +55,15 @@
                           (session/get :cart)))] (select-keys cart (for [[k v] cart :when (> (:quantity v) 0)] k))))
   (if (= "Update Cart" submit)
     (cart-view)
-    (let [order (order/add! (session/get :cart) address pin (user-id))]
+    (let [ls (listing/get-in (keys (session/get :cart)))
+          listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
+                               total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
+                           (conj % {:subtotal subtotal :total total})) ls))
+          total (reduce + (map #(:total %) listings))
+          order (order/add! (session/get :cart) total address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/market/orders")
-        (cart-view order)))))
+        (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} order (set-info)))))))
 
 (def-restricted-routes cart-routes
     (GET "/market/cart" [] (cart-view))

@@ -1,4 +1,5 @@
 (ns whitecity.models.listing
+  (:refer-clojure :exclude [get get-in count])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])

@@ -1,4 +1,5 @@
 (ns whitecity.models.user
+  (:refer-clojure :exclude [get])
   (:use [korma.db :only (defdb)]
         [whitecity.db]
         [korma.core])

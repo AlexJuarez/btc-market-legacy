@@ -1,4 +1,5 @@
 (ns whitecity.models.report
+  (:refer-clojure :exclude [get])
   (:use [korma.core]
         [whitecity.db])
   (:require

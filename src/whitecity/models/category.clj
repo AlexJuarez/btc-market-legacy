@@ -1,4 +1,5 @@
 (ns whitecity.models.category
+  (:refer-clojure :exclude [get])
   (:use [cheshire.core :as jr]
         [whitecity.db]
         [korma.core]

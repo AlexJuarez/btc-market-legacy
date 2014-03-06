@@ -1,4 +1,5 @@
 (ns whitecity.models.currency
+  (:refer-clojure :exclude [get find])
   (:use [korma.db :only (defdb)]
         [korma.core]
         [whitecity.db]))
