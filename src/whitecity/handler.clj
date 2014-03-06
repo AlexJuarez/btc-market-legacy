@@ -14,6 +14,7 @@
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [compojure.route :as route]
             [taoensso.timbre :as timbre]
+            [whitecity.cache :as cache]
             [noir.session :as session]
             [com.postspectacular.rotor :as rotor]))
 
@@ -65,13 +66,14 @@
             order-routes
             listing-routes
             app-routes]
+           :session-options {:store (cache/store)}
+
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]
            ;; add access rules here
-           :access-rules [user-access]
+           :access-rules []
+           ;; I can only assume
            ;; serialize/deserialize the following data formats
            ;; available formats:
            ;; :json :json-kw :yaml :yaml-kw :edn :yaml-in-html
            :formats [:json-kw :edn]))
-
-(def war-handler (middleware/war-handler app))

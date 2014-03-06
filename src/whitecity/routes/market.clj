@@ -17,7 +17,6 @@
             [noir.session :as session]
             [whitecity.util :as util]))
 
-
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
 

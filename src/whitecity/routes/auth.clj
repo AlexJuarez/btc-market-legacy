@@ -2,7 +2,6 @@
   (:use compojure.core hiccup.core hiccup.form whitecity.helpers.route)
   (:require [whitecity.util :as util] 
             [whitecity.views.layout :as layout]
-            [noir.util.cache :as cache]
             [noir.session :as session]
             [noir.response :as resp]
             [whitecity.models.user :as users]))
@@ -37,5 +36,4 @@
   (GET "/logout" []
        (util/user-clear (util/user-id))
        (session/clear!)
-       (cache/invalidate! :home)
        (resp/redirect "/")))

@@ -5,7 +5,7 @@
   (:use whitecity.views.filters)
   (:import compojure.response.Renderable))
 
-(def template-path "whitecity/views/templates/")
+(defonce template-path "whitecity/views/templates/")
 
 (deftype RenderableTemplate [template params]
   Renderable

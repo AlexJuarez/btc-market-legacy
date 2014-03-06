@@ -1,10 +1,26 @@
 (ns whitecity.cache
   (:refer-clojure :exclude [set get])
   (:require [clojurewerkz.spyglass.client :as c]
+            [ring.middleware.session.store :as session-store]
             [noir.util.cache :as cache]
             [whitecity.models.currency :as curr]))
 
-(defonce ce (c/text-connection "127.0.0.1:11211"))
+(def address "127.0.0.1:11211")
+
+(defonce ce (c/text-connection address))
+
+(defrecord CouchBaseSessionStore [conn ttl-secs]
+  session-store/SessionStore
+  (read-session [_ key] (or (when key (c/get conn key)) {}))
+  (delete-session [_ key] (c/delete conn key))
+  (write-session [_ key data] 
+    (let [key (or key (str (java.util.UUID/randomUUID)))]
+      (c/set conn key (+ ttl-secs (rand-int ttl-secs)) data)
+      key)))
+
+(defn store
+  []
+  (->CouchBaseSessionStore ce (* 60 10)))
 
 (defn set [key value]
   (c/set ce key (+ (* 60 10) (rand-int 600)) value)) ;;Prevent stampede
