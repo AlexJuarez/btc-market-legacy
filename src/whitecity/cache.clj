@@ -1,27 +1,25 @@
 (ns whitecity.cache
+  (:refer-clojure :exclude [set get])
   (:require [clojurewerkz.spyglass.client :as c]
+            [noir.util.cache :as cache]
             [whitecity.models.currency :as curr]))
 
-(def store (atom {}))
-
-(def ce (c/text-connection "127.0.0.1:11211"))
+(defonce ce (c/text-connection "127.0.0.1:11211"))
 
 (defn set [key value]
-  (do (swap! store dissoc key)
-  (c/set ce key (+ (* 60 10) (rand-int 600)) value))) ;;Prevent stampede
-
-(defn delete [key]
-  (do (swap! store dissoc key)
-  (c/delete ce key)))
+  (c/set ce key (+ (* 60 10) (rand-int 600)) value)) ;;Prevent stampede
 
 (defn get [key]
-  (if-let [value (@store key)]
-    value
-    (if-let [v (c/get ce key)]
-      (do (swap! store assoc key v) v))))
+  (c/get ce key))
+
+(defn delete [key]
+  (cache/invalidate! key)
+  (c/delete ce key))
 
 (defmacro get-set [key & forms]
-  `(if-let [value# (get ~key)]
-     value#
-     (let [v# (do ~@forms)]
-       (set ~key v#) v#)))
+  `(cache/cache! ~key 
+                 (let [value# (get ~key)] 
+                   (if (nil? value#) 
+                     (let [v# (do ~@forms)] 
+                       (set ~key v#) v#) 
+                     value#))))
