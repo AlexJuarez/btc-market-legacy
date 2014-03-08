@@ -66,7 +66,7 @@
             order-routes
             listing-routes
             app-routes]
-           :session-options {:cookie-attrs {:max-age (* 60 20)}
+           :session-options {:cookie-attrs {:max-age (* 60 60 10)}
                              :cookie-name "session"
                              :store (cache/store)}
 

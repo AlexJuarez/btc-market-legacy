@@ -21,7 +21,7 @@
        (layout/render "register.html" (conj user {:login login} ))))))
 
 (defn login-page
-  ([params]
+  ([]
     (layout/render "login.html" (session/flash-get :success)))
   ([login pass]
     (let [user (users/login! {:login login :pass pass})]
@@ -38,7 +38,7 @@
    
 (defroutes auth-routes
   (GET "/test" request (resp/edn request))
-  (GET "/"         {params :params} (login-page params))
+  (GET "/"         [] (login-page))
   (POST "/"        [login pass]    (login-page login pass))
   (GET "/register" {params :params} (registration-page params))
   (POST "/register"[login pass confirm] (registration-page login pass confirm))

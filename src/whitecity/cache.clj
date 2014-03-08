@@ -20,7 +20,7 @@
 
 (defn store
   []
-  (->CouchBaseSessionStore ce (* 60 10)))
+  (->CouchBaseSessionStore ce (* 60 60 10)))
 
 (defn set [key value]
   (c/set ce key (+ (* 60 10) (rand-int 600)) value)) ;;Prevent stampede
