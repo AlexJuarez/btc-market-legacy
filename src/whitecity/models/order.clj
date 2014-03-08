@@ -4,7 +4,6 @@
         [korma.core]
         [whitecity.db])
   (:require 
-        [whitecity.cache :as cache]
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
         [noir.session :as session]
@@ -51,18 +50,19 @@
     (when-not (empty? errors)
       {id errors})))
 
-(defn store! [order]
+(defn store! [order user-id pin]
   (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
         postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
         cost (+ item-cost postage-cost)
-        escr {:from (:user_id order) :order_id (:id order) :to (:seller_id order) :currency_id 1 :amount cost :status "hold"}]
+        {:keys [user_id id seller_id listing_id quantity]} order
+        escr {:from user_id :order_id id :to seller_id :currency_id 1 :amount cost :status "hold"}]
     (transaction
-      (update users (set-fields {:btc (raw (str "btc - " cost))}))
+      (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
       (insert escrow (values escr))
       (insert orders (values order))
       (update listings 
-              (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " (:quantity order)))})
-              (where {:id (:listing_id order)})))))
+              (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
+              (where {:id listing_id})))))
 
 (defn prep [item address user-id]
   (let [id (key item)
@@ -86,7 +86,8 @@
      :status 0}))
 
 (defn add! [cart total address pin user-id]
-  (let [user (first (select users (fields :login :btc) (where {:id user-id :pin (util/parse-int pin)})))
+  (let [pin (util/parse-int pin)
+        user (first (select users (fields :login :btc) (where {:id user-id :pin pin})));;TODO refactor session to validate as middleware
         cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         address-check (when (empty? address) {:address "You need to enter an address"})
         pin-check (when (empty? user) {:pin "Your pin does not match"})
@@ -97,12 +98,12 @@
     (if (empty? errors)
       (do 
         (session/put! :cart {}) 
-        (util/user-clear user-id)
-        (apply #(store! (prep % address user-id)) cart))
+        (util/update-session user-id :orders :sales)
+        (apply #(store! (prep % address user-id) user-id pin) cart))
       {:address address :errors errors})))
 
 (defn update-sales [sales seller-id status]
-  (if (= status 1) (cache/delete (str "user_" seller-id)))
+  (if (= status 1) (util/update-session seller-id :sales :orders))
   (let [values {:status status :updated_on (raw "(now())")}
         values (if (= status 1) (assoc values :auto_finalize (raw "(now() + interval '17 days')")) values)]
   (update orders
@@ -110,25 +111,25 @@
           (where {:seller_id seller-id :id [in sales]}))))
 
 (defn finalize [id user-id]
-  (cache/delete (str "user_" user-id))
+  (util/update-session user-id :orders :sales)
   (update orders
           (set-fields {:status 3 :updated_on (raw "now()")})
           (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn resolution [id user-id]
-  (cache/delete (str "user_" user-id))
+  (util/update-session user-id :orders :sales)
   (update orders
           (set-fields {:status 2 :updated_on (raw "now()")})
           (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn reject-sales [sales seller-id]
-  (cache/delete (str "user_" seller-id))
+  (util/update-session seller-id :sales :orders)
   (let [o (select orders
                   (where {:seller_id seller-id :id [in sales]}))]
-  (dorun (map #(update listings (set-fields {:quantity (raw (str "quantity + " (:quantity %)))}) (where {:id (:listing_id %) :user_id seller-id})) o))
-  (delete orders
-          (where {:seller_id seller-id :id [in sales]}))
-  (util/user-clear seller-id)))
+    (dorun (map #(update listings (set-fields {:quantity (raw (str "quantity + " (:quantity %)))}) (where {:id (:listing_id %) :user_id seller-id})) o))
+    (delete orders
+            (where {:seller_id seller-id :id [in sales]}))
+    (util/update-session seller-id)))
 
 (defn count [id]
   (:cnt (first (select orders

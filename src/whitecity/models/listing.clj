@@ -66,7 +66,7 @@
 (defn remove! [id user-id]
   (if-let [listing (get id user-id)] 
     (let [category-id (:category_id listing)]
-      (util/user-clear user-id)
+      (util/update-session user-id)
       (transaction
         (update users (set-fields {:listings (raw "listings - 1")}) (where {:id user-id}))
         (update category (set-fields {:count (raw "count - 1")}) (where {:id category-id})) 
@@ -75,7 +75,7 @@
 
 (defn store! [listing user-id]
   (let [category-id (util/parse-int (:category_id listing))]
-    (util/user-clear user-id)
+    (util/update-session user-id)
     (transaction 
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})) 

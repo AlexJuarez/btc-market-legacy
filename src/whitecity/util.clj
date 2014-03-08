@@ -1,9 +1,9 @@
 (ns whitecity.util
-    (:use hiccup.form hiccup.util)
-    (:require [noir.response :as resp]
+    (:use hiccup.form hiccup.util korma.core whitecity.db)
+    (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
+              [noir.response :as resp]
               [clojure.java.io :refer [as-url]]
               [noir.session :as session]
-              [whitecity.db :as db]
               [whitecity.cache :as cache]
               [noir.io :as io]
               [whitecity.models.exchange :as exchange]
@@ -11,11 +11,16 @@
               [markdown.core :as md])
     (:import net.sf.jlue.util.Captcha))
 
+(defn create-uuid [string]
+ "creates a uuid from a string"
+ (try
+  (java.util.UUID/fromString string)
+  (catch Exception ex
+   (error ex "an error has occured while creating the uuid from string")
+   (.getMessage ex)))) 
+
 (defn user-id []
   (:id (session/get :user)))
-
-(defn user-clear [user-id]
-  (cache/delete (str "user_" user-id)))
 
 (def alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
 
@@ -74,6 +79,19 @@
         (Float. f)))
     s))
 
+(defmacro update-session 
+  [user-id & terms]
+    `(let [id# (parse-int ~user-id)
+           user-id# (session/get :user_id)]
+      (if (= id# user-id#) 
+        (doall (map session/remove! (list :user ~@terms)))
+        (let [user# (first (select (fields :session) users (where {:id id#})))
+              session# (.toString (:session user#))
+              sess# (cache/get session#)]
+          (if (not (nil? sess#))
+            (cache/set session# 
+                       (dissoc sess# :user ~@terms) (* 60 60 10)))))))
+
 ;;Probably not needed
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is
@@ -94,9 +112,8 @@
 (defn md->html
     "reads a markdown string and returns the html"
     [string]
-    (->> 
-          string     
-          (md/md-to-html-string)))
+    (->> string     
+         (md/md-to-html-string)))
 
 (defn gen-captcha-text []
     (->> #(rand-int 26) (repeatedly 6) (map (partial + 97)) (map char) (apply str)))

@@ -20,15 +20,17 @@
          (resp/redirect "/"))
        (layout/render "register.html" (conj user {:login login} ))))))
 
+;;if you change the session name change it here too
 (defn login-page
   ([]
     (layout/render "login.html" (session/flash-get :success)))
-  ([login pass]
-    (let [user (users/login! {:login login :pass pass})]
+  ([login pass cookies]
+    (let [user (users/login! {:login login :pass pass :session (:value (cookies "session"))})]
       (if (nil? (:error user))
         (let [{:keys [id vendor]} user]
           (do 
             (when vendor (session/put! :sales (order/count-sales id)))
+            (session/put! :user_id id)
             (session/put! :user user)
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))  
@@ -37,11 +39,10 @@
         (layout/render "login.html" user)))))
    
 (defroutes auth-routes
-  (GET "/test" request (resp/edn request))
-  (GET "/"         [] (login-page))
-  (POST "/"        [login pass]    (login-page login pass))
-  (GET "/register" {params :params} (registration-page params))
-  (POST "/register"[login pass confirm] (registration-page login pass confirm))
-  (GET "/logout" []
+  (GET "/"          [] (login-page))
+  (POST "/"         {{login :login pass :pass} :params cookies :cookies} (login-page login pass cookies))
+  (GET "/register"  {params :params} (registration-page params))
+  (POST "/register" [login pass confirm] (registration-page login pass confirm))
+  (GET "/logout"    []
        (session/clear!)
        (resp/redirect "/")))

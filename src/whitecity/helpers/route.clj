@@ -4,6 +4,8 @@
             [whitecity.util :as util]
             [whitecity.models.user :as user]
             [whitecity.models.report :as report]
+            [whitecity.models.order :as order]
+            [whitecity.models.message :as message]
             [noir.io :as io]
             [whitecity.models.image :as image]
             [clojure.string :as string]
@@ -30,10 +32,19 @@
             image_result (io/upload-file "/uploads" (assoc image :filename (str image_id ".jpg")))]
           image_id))))
 
+(defmacro session! [key func]
+  `(let [value# (session/get ~key)]
+    (if (nil? value#)
+      (let [value# ~func]
+        (session/put! ~key value#)
+        value#)
+      value#)))
+
 (defn set-info []
-  {:user 
-   (merge (session/get :user)
-          {:cart (count (session/get :cart))
-           :orders (session/get :orders)
-           :messages (session/get :messages)
-           :sales (session/get :sales)})})
+  (let [{:keys [id vendor] :as user} (session! :user (user/get (session/get :user_id)))]
+    {:user 
+     (merge user
+            (when vendor {:sales (session! :sales (order/count-sales id))})
+            {:cart (count (session/get :cart))
+             :orders (session! :orders (order/count id))
+             :messages (session! :messages (message/count id))})}))

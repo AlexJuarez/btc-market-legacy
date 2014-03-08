@@ -49,11 +49,11 @@
    :sender_id sender_id})
 
 (defn store! [message user-id receiver-id]
-  (cache/delete (str "user_" receiver-id))
+  (util/update-session receiver-id :messages)
   (insert messages (values (prep (merge message {:user_id receiver-id :sender_id user-id})))))
 
 (defn remove! [id user-id]
-  (cache/delete (str "user_" user-id))
+  (util/update-session user-id :messages)
   (delete messages (where {:id (util/parse-int id) :user_id user-id})))
 
 (defn add! [message user-id receiver-id]

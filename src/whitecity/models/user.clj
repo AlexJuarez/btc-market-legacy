@@ -1,7 +1,6 @@
 (ns whitecity.models.user
   (:refer-clojure :exclude [get])
-  (:use [korma.db :only (defdb)]
-        [whitecity.db]
+  (:use [whitecity.db]
         [korma.core])
   (:require 
         [whitecity.validator :as v]
@@ -19,7 +18,7 @@
 ;; Gets
 (defn get [id]
   (dissoc (first (select users
-           (where {:id (util/parse-int id)}))) :pass))
+           (where {:id (util/parse-int id)}))) :salt :pass))
 
 (defn make-salt []
   (let [b (byte-array salt-byte-size)
@@ -83,17 +82,17 @@
       (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
       {:errors check})))
 
-(defn last-login [id]
+(defn last-login [id session]
   (update users
-          (set-fields {:last_login (raw "now()")})
+          (set-fields {:last_login (raw "now()") :session (util/create-uuid session)})
           (where {:id id})))
 
-(defn login! [{:keys [login pass] :as user}]
+(defn login! [{:keys [login pass session] :as user}]
  (let [userstore (get-by-login login)]
     (if (nil? userstore)
       (assoc user :error "Username does not exist")
     (if (and (:pass userstore) (warden/compare (str pass (:salt userstore)) (:pass userstore)))
-        (do (last-login (:id userstore)) (dissoc userstore :salt :pass))
+        (do (last-login (:id userstore) session) (dissoc userstore :salt :pass))
         (assoc user :error "Password Incorrect")))))
 
 (defn remove! [login]
