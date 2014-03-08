@@ -30,8 +30,9 @@
 
 (defn order-view 
   ([id]
-    (let [resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :order_id id :resolutions resolutions} (set-info)))))
+    (let [order (order/get-order id (user-id))
+          resolutions (resolution/all id (user-id))]
+      (layout/render "orders/resolution.html" (merge order {:order order :errors {} :action "extension" :order_id id :resolutions resolutions} (set-info)))))
   ([slug post]
     (let [id (:id slug)
         res (resolution/add! slug id (user-id))

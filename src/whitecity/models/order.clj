@@ -17,6 +17,11 @@
 
 (def statuses [:new :ship :resolution :finalize])
 
+(defn get-order [id user-id]
+  (first (select orders
+                 (with sellers (fields :login :alias))
+                 (where {:id (util/parse-int id) :user_id user-id}))))
+
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
