@@ -1,6 +1,11 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+{{order}}
 {{resolutions}}
+<h1 class="jumbo">Order Information</h1>
+<span>order #<a href="/market/order/{{id}}/">{{id}}</a></span>
+{% if status = 2 %}
+
 {% if not resolutions|empty? %}
 <table class="table resolution fill p">
   <thead>
@@ -75,4 +80,5 @@
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
 {% endblock %}
