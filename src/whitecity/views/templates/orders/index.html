@@ -59,7 +59,7 @@
   <tbody>
   {% for order in orders %}
   <tr>
-    <td><a href="/market/orders/{{order.id}}">{{order.id}}</a></td>
+    <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.quantity}}</td>
     <td><a href="/market/user/{{order.seller_id}}">{{order.alias}}</a></td>
