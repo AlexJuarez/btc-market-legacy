@@ -23,7 +23,7 @@
   (route/not-found "Not Found"))
 
 (defn user-access [request]
-  (session/get :user))
+  (not (nil? (session/get :user_id))))
 
 (defn init
   "init will be called once when
@@ -73,7 +73,7 @@
            ;; add custom middleware here
            :middleware [wrap-anti-forgery]
            ;; add access rules here
-           :access-rules []
+           :access-rules [user-access]
            ;; I can only assume
            ;; serialize/deserialize the following data formats
            ;; available formats:

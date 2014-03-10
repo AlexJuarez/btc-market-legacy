@@ -85,12 +85,13 @@
            user-id# (session/get :user_id)]
       (if (= id# user-id#) 
         (doall (map session/remove! (list :user ~@terms)))
-        (let [user# (first (select (fields :session) users (where {:id id#})))
+        (let [user# (first (select users (fields :session) (where {:id id#})))
               session# (.toString (:session user#))
-              sess# (cache/get session#)]
+              sess# (cache/get session#)
+              ttl# (* 60 60 10)]
           (if (not (nil? sess#))
             (cache/set session# 
-                       (dissoc sess# :user ~@terms) (* 60 60 10)))))))
+                       (assoc sess# :noir (dissoc (:noir sess#) ~@terms :user)) ttl#))))))
 
 ;;Probably not needed
 (defn format-time

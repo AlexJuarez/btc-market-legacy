@@ -56,6 +56,7 @@
         cost (+ item-cost postage-cost)
         {:keys [user_id id seller_id listing_id quantity]} order
         escr {:from user_id :order_id id :to seller_id :currency_id 1 :amount cost :status "hold"}]
+    (util/update-session seller_id :sales)
     (transaction
       (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
       (insert escrow (values escr))
