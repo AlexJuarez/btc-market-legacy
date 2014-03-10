@@ -24,7 +24,7 @@
   (let [b (byte-array salt-byte-size)
         ran (java.security.SecureRandom.)]
     (do (.nextBytes ran b) 
-      (.toString (BigInteger. 1 b) 16))))
+      (.toString (org.apache.codec.binary.Base64/encodeBase64 b)))))
 
 (defn get-by-login [login]
   (first (select users
