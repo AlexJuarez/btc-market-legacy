@@ -12,6 +12,7 @@
    [clojurewerkz/spyglass "1.1.0"]
    [com.taoensso/tower "1.7.1"]
    [markdown-clj "0.9.33"]
+   [hashids "0.1.0"]
    [clj-time "0.6.0"]
    [clj-http "0.7.8"]
    [net.sf.jlue/jlue-core "1.3"]
