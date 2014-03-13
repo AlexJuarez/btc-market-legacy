@@ -69,7 +69,9 @@
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
       {% if extension %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
+        {% if errors.value %}
+          <strong class="error">{{errors.value|join:", "}}</strong>
+        {% endif %}
       {% endif %}
     </li>
     <li>
@@ -78,7 +80,9 @@
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
       {% if refund %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
+        {% if errors.value %}
+          <strong class="error">{{errors.value|join:", "}}</strong>
+        {% endif %}
       {% endif %}
     </li>
   </ul>
