@@ -46,10 +46,10 @@
           resolutions (resolution/all id (user-id))]
       (layout/render "orders/resolution.html" (merge {:errors {} :resolutions resolutions} slug res order (set-info))))))
     
-(defn order-resolve [id]
-  (let [id (hashids/decrypt id)]
+(defn order-resolve [hashid]
+  (let [id (hashids/decrypt hashid)]
   (order/resolution id (user-id))
-  (resp/redirect (str "/market/order/" id))))
+  (resp/redirect (str "/market/order/" hashid))))
 
 (def-restricted-routes order-routes
     (GET "/market/orders" [] (orders-page))

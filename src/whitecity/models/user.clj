@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [get])
   (:import (org.apache.commons.codec.binary Base64))
   (:use [whitecity.db]
+        [korma.db :only (transaction)]
         [korma.core])
   (:require 
         [whitecity.validator :as v]
@@ -84,9 +85,11 @@
       {:errors check})))
 
 (defn last-login [id session]
-  (update users
-          (set-fields {:last_login (raw "now()") :session (util/create-uuid session)})
-          (where {:id id})))
+  (transaction
+    (update users (set-fields {:session nil}) (where {:session (util/create-uuid session)}))
+    (update users
+            (set-fields {:last_login (raw "now()") :session (util/create-uuid session)})
+            (where {:id id}))))
 
 (defn login! [{:keys [login pass session] :as user}]
  (let [userstore (get-by-login login)]
