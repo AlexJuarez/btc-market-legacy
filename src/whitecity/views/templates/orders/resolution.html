@@ -1,11 +1,22 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-{{order}}
-{{resolutions}}
 <h1 class="jumbo">Order Information</h1>
-<span>order #<a href="/market/order/{{id}}/">{{id}}</a></span>
-{% if status = 2 %}
+<span>order #<a href="/market/order/{{id}}">{{id}}</a></span>
+<div class="well">
+  <ul>
+    <li>status: {{status|get-status}}</li>
+    <li>buyer: {{user.alias}}</li>
+    <li>seller: <a href="/market/user/{{seller_id}}">{{alias}}</a></li>
+    <li>contract: ~</li>
+    <li>item: <a href="/market/order/{{id}}">{{title}}</a></li>
+    <li>shipping: {{postage_title}}</li>
+    <li>postage: {{postage_price}}</li>
+    <li>total price: {{price}}</li>
+    <li>ordered: <span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></li>
+  </ul>
+</div>
 
+{% if status = 2 %}
 {% if not resolutions|empty? %}
 <table class="table resolution fill p">
   <thead>
@@ -49,7 +60,7 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/market/order/{{order_id}}" method="POST">
+<form class="well" action="/market/order/{{id}}" method="POST">
   Propose a resolution:
   <ul>
     <li>

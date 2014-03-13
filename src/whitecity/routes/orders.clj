@@ -5,16 +5,20 @@
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.order :as order]
             [whitecity.models.review :as review]
+            [whitecity.util.hashids :as hashids]
             [whitecity.models.resolution :as resolution]
             [noir.response :as resp]
             [whitecity.util :as util]))
+
+(defn encrypt-id [m]
+  (assoc m :id (hashids/encrypt (:id m))))
 
 (defn orders-page 
   ([]
     (let [orders (order/all (user-id))
           orders (map #(let [autofinalize (:auto_finalize %)
                              res (and (not (nil? autofinalize)) (< 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))];;TODO: switch symbol back
-                           (assoc % :resolve res)) orders)
+                           (assoc % :resolve res :id (hashids/encrypt (:id %)))) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
@@ -25,23 +29,27 @@
     (resp/redirect "/market/orders"))))
    
 (defn order-finalize [id]
-  (order/finalize id (user-id))
-  (resp/redirect "/market/orders"))
+  (let [id (hashids/decrypt id)]
+    (order/finalize id (user-id))
+    (resp/redirect "/market/orders")))
 
 (defn order-view 
   ([id]
-    (let [order (order/get-order id (user-id))
+    (let [id (hashids/decrypt id)
+          order (encrypt-id (order/get-order id (user-id)))
           resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge order {:order order :errors {} :action "extension" :order_id id :resolutions resolutions} (set-info)))))
+      (layout/render "orders/resolution.html" (merge {:order order :errors {} :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
-    (let [id (:id slug)
-        res (resolution/add! slug id (user-id))
-        resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:errors {} :order_id id :resolutions resolutions} res slug (set-info))))))
+    (let [id (hashids/decrypt (:id slug))
+          res (resolution/add! slug id (user-id))
+          order (encrypt-id (order/get-order id (user-id)))
+          resolutions (resolution/all id (user-id))]
+      (layout/render "orders/resolution.html" (merge {:errors {} :resolutions resolutions} slug res order (set-info))))))
     
 (defn order-resolve [id]
+  (let [id (hashids/decrypt id)]
   (order/resolution id (user-id))
-  (resp/redirect (str "/market/order/" id)))
+  (resp/redirect (str "/market/order/" id))))
 
 (def-restricted-routes order-routes
     (GET "/market/orders" [] (orders-page))

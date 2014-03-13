@@ -1,5 +1,6 @@
 (ns whitecity.models.user
   (:refer-clojure :exclude [get])
+  (:import (org.apache.commons.codec.binary Base64))
   (:use [whitecity.db]
         [korma.core])
   (:require 
@@ -24,7 +25,7 @@
   (let [b (byte-array salt-byte-size)
         ran (java.security.SecureRandom.)]
     (do (.nextBytes ran b) 
-      (.toString (org.apache.codec.binary.Base64/encodeBase64 b)))))
+      (.toString (Base64/encodeBase64String b)))))
 
 (defn get-by-login [login]
   (first (select users
