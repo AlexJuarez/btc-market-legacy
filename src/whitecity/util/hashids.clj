@@ -1,9 +1,9 @@
 ;;This is a thin wrapper around hashidsJava
 (ns whitecity.util.hashids)
 
-(def salt "w~nwvJxext~PYqj|R`w3m0&c6pYE+a7jkGH{mj")
-(def minlength 8)
-(def alphabet "0123456789abcdefghijklmnpqrstuvwxyz")
+(def ^:private salt "w~nwvJxext~PYqj|R`w3m0&c6pYE+a7jkGH{mj")
+(def ^:private minlength 8)
+(def ^:private alphabet "0123456789abcdefghijklmnpqrstuvwxyz")
 
 (defonce h (HashidsJava.Hashids. salt minlength alphabet))
 

@@ -15,7 +15,7 @@
         [whitecity.models.currency :as currency]
         [noir.util.crypt :as warden]))
 
-(def salt-byte-size 24)
+(def ^:private salt-byte-size 24)
 
 ;; Gets
 (defn get [id]

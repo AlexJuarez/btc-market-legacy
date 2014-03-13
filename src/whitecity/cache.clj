@@ -5,7 +5,7 @@
             [noir.util.cache :as cache]
             [whitecity.models.currency :as curr]))
 
-(def address "127.0.0.1:11211")
+(def ^:private address "127.0.0.1:11211")
 
 (defonce ce (c/text-connection address))
 
