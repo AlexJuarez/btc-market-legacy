@@ -56,7 +56,7 @@
 
 (defn clean [{:keys [alias auth currency_id pub_key description]}]
   {:auth (= auth "true")
-   :pub_key pub_key
+   :pub_key (and pub_key (clojure.string/trim pub_key))
    :currency_id (util/parse-int currency_id)
    :description (hc/escape-html description)
    :updated_on (raw "now()")

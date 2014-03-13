@@ -23,7 +23,9 @@
   (route/not-found "Not Found"))
 
 (defn user-access [request]
-  (not (nil? (session/get :user_id))))
+  (and
+    (not (nil? (session/get :user_id)))
+    (session/get :authed)))
 
 (defn init
   "init will be called once when
