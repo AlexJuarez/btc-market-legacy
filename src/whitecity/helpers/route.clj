@@ -1,5 +1,6 @@
 (ns whitecity.helpers.route
-  (:require [whitecity.models.user :as users]
+  (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
+            [whitecity.models.user :as users]
             [whitecity.cache :as cache]
             [whitecity.util :as util]
             [whitecity.models.user :as user]
@@ -28,8 +29,11 @@
   (if (and (not (nil? image)) (= 0 (:size image)))
     image_id
     (if (and (< (:size image) 800000) (not (empty? (re-find #"jpg|jpeg" (string/lower-case (:filename image))))))
-      (let [image_id (:id (image/add! (user-id))) 
-            image_result (io/upload-file "/uploads" (assoc image :filename (str image_id ".jpg")))]
+      (let [image_id (:id (image/add! (user-id)))]
+        (try
+          (io/upload-file (str (io/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
+          (catch Exception ex
+            (error ex ("File upload failed for image " image_id))))
           image_id))))
 
 (defmacro session! [key func]
