@@ -20,8 +20,8 @@
           orders (filter #(< (:status %) 3) orders)]
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
   ([{:keys [rating shipped content] :as slug}]
-   (let [prep (map #(let [id (key %) value (val %)] {:order_id id :rating value :shipped (shipped id) :content (content id)}) rating)
-         order-ids (map #(util/parse-int (key %)) rating)
+   (let [prep (map #(let [id (key %) value (val %)] {:order_id (hashids/decrypt id) :rating value :shipped (shipped id) :content (content id)}) rating)
+         order-ids (map #(util/parse-int (hashids/decrypt (key %))) rating)
          reviews (review/add! prep (user-id) order-ids)]
     (resp/redirect "/market/orders"))))
    

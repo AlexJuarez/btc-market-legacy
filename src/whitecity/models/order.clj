@@ -63,13 +63,12 @@
   (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
         postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
         cost (+ item-cost postage-cost)
-        {:keys [user_id id seller_id listing_id quantity]} order
-        escr {:from user_id :order_id id :to seller_id :currency_id 1 :amount cost :status "hold"}]
+        {:keys [user_id seller_id listing_id quantity]} order
+        escr {:from user_id :to seller_id :currency_id 1 :amount cost :status "hold"}]
     (util/update-session seller_id :sales)
     (transaction
       (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
-      (insert escrow (values escr))
-      (insert orders (values order))
+      (insert escrow (values (assoc escr :order_id (insert orders (values order)))))
       (update listings 
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
               (where {:id listing_id})))))
@@ -124,8 +123,8 @@
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id) 
-        {seller_id :seller_id} (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not 3]}))]
-    (let [{:keys [amount currency_id]} (select escrow (where {:order_id id :from user-id :status "hold"}))
+        {seller_id :seller_id} (first (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not= 3]})))]
+    (let [{amount :amount currency_id :currency_id} (first (select escrow (where {:order_id id :from user-id :status "hold"})))
           amount (util/convert-price currency_id 1 amount)]
       (transaction
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
