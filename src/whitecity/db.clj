@@ -11,7 +11,11 @@
 
 (defdb db db-spec)
 
-(declare users resolutions orders messages listings postage images category currency exchange bookmarks fans reviews escrow)
+(declare audits users resolutions orders messages listings postage images category currency exchange bookmarks fans reviews escrow)
+
+(defentity audits
+  (table :audit)
+  (has-one users))
 
 (defentity users
   (table :user)

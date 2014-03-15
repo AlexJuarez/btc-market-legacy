@@ -63,7 +63,7 @@
                                total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
                            (conj % {:subtotal subtotal :total total})) ls))
           total (reduce + (map #(:total %) listings))
-          order (order/add! (session/get :cart) total address pin (user-id))]
+          order (order/add! (session/get :cart) (util/convert-price (:currency_id (session/get :user)) 1 total) address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/market/orders")
         (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} order (set-info)))))))
