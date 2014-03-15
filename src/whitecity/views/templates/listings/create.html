@@ -44,16 +44,16 @@
     <input name="title" id="title" class="form-control" type="text" value="{{title}}" />
   </div>
   <div class="form-group public">
-      <label>Public?</label>
+      <label for="public">Public?</label>
       <div> 
-        <input type="checkbox" {% if public %}checked="checked"{% endif %}  name="public" value="true">
+        <input id="public" type="checkbox" {% if public %}checked="checked"{% endif %}  name="public" value="true">
         (check for yes)
       </div>
   </div>
   <div class="form-group hedged">
-      <label>Hedged?</label>
+      <label for="hedged">Hedged?</label>
       <div> 
-        <input type="checkbox" name="hedged" {% if hedged %}checked="checked"{% endif %} value="true">
+        <input id="hedged" type="checkbox" name="hedged" {% if hedged %}checked="checked"{% endif %} value="true">
         (check for yes)
       </div>
   </div>

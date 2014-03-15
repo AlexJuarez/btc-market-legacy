@@ -61,6 +61,7 @@
   (let [{:keys [id vendor] :as user} (session! :user (user/get (session/get :user_id)))]
     {:user 
      (merge user
+            {:btc (util/convert-currency 1 (:btc user))}
             (when vendor {:sales (session! :sales (order/count-sales id))})
             {:cart (count (session/get :cart))
              :orders (session! :orders (order/count id))

@@ -27,8 +27,8 @@
    
 (defn order-finalize [id]
   (let [id (hashids/decrypt id)]
-    (order/finalize id (user-id))
-    (resp/redirect "/market/orders")))
+    (do (order/finalize id (user-id));;do is in serial
+    (resp/redirect "/market/orders"))))
 
 (defn order-view 
   ([id]
@@ -45,8 +45,8 @@
     
 (defn order-resolve [hashid]
   (let [id (hashids/decrypt hashid)]
-  (order/resolution id (user-id))
-  (resp/redirect (str "/market/order/" hashid))))
+  (do (order/resolution id (user-id))
+    (resp/redirect (str "/market/order/" hashid)))))
 
 (def-restricted-routes order-routes
     (GET "/market/orders" [] (orders-page))

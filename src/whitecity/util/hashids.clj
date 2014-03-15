@@ -1,6 +1,7 @@
 ;;This is a thin wrapper around hashidsJava
 (ns whitecity.util.hashids)
 
+;;The salt was generated using java.secure.SecureRandom
 (def ^:private salt "w~nwvJxext~PYqj|R`w3m0&c6pYE+a7jkGH{mj")
 (def ^:private minlength 8)
 (def ^:private alphabet "0123456789abcdefghijklmnpqrstuvwxyz")
@@ -11,7 +12,7 @@
   (.encrypt h (long-array (seq nums))))
 
 (defn decrypt [s]
-  (let [nums (vec (.decrypt h s))]
+  (let [nums (vec (.decrypt h (name s)))];;handles strings and keywords
     (if (> (count nums) 1)
       nums
       (first nums))))

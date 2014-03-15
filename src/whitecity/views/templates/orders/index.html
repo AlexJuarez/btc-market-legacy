@@ -15,18 +15,18 @@
     <tbody>
       {% for order in pending-review %}
       <tr>
-        <td><a href="/market/order/{{order.id}}/">{{order.title}}</a></td>
+        <td><a href="/market/order/{{order.id}}">{{order.title}}</a></td>
         <td><a href="/market/user/{{order.seller_id}}">{{order.alias}}</a></td>
         <td>
-          <input type="radio" name="rating[{{order.id}}]" value="1" /> 1
-          <input type="radio" name="rating[{{order.id}}]" value="2" /> 2
-          <input type="radio" name="rating[{{order.id}}]" value="3" /> 3
-          <input type="radio" name="rating[{{order.id}}]" value="4" /> 4
-          <input type="radio" selected="selected" name="rating[{{order.id}}]" value="5" /> 5
+          <label><input type="radio" name="rating[{{order.id}}]" value="1" /> 1</label>
+          <label><input type="radio" name="rating[{{order.id}}]" value="2" /> 2</label>
+          <label><input type="radio" name="rating[{{order.id}}]" value="3" /> 3</label>
+          <label><input type="radio" name="rating[{{order.id}}]" value="4" /> 4</label>
+          <label><input type="radio" selected="selected" name="rating[{{order.id}}]" value="5" /> 5</label>
         </td>
         <td>
-          <input type="radio" name="shipped[{{order.id}}]" value="true" /> yes
-          <input type="radio" name="shipped[{{order.id}}]" value="false" /> no
+          <label><input type="radio" name="shipped[{{order.id}}]" value="true" /> yes</label>
+          <label><input type="radio" name="shipped[{{order.id}}]" value="false" /> no</label>
         </td>
         <td>
           <textarea class="form-control" name="content[{{order.id}}]"></textarea>
