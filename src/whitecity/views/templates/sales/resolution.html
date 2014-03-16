@@ -16,6 +16,7 @@ Sale not found
     <li>postage: {{postage_price}}</li>
     <li>total price: {{price}}</li>
     <li>ordered: <span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></li>
+    <li>auto finalize: {% if status = 0 %}N/A{% else %}<span class="pretty-time" data-time="{{auto_finalize|date:fullDateTime}}">{{auto_finalize|date:shortDate}}</span>{% endif %}</li>
   </ul>
 </div>
 {% if status = 2 %}
@@ -70,22 +71,22 @@ Sale not found
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
-      {% if extension %}
+      {% ifequal action "extension" %}
         {% if errors.value %}
           <strong class="error">{{errors.value|join:", "}}</strong>
         {% endif %}
-      {% endif %}
+      {% endifequal %}
     </li>
     <li>
       <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
-      {% if refund %}
+      {% ifequal action "refund" %}
         {% if errors.value %}
           <strong class="error">{{errors.value|join:", "}}</strong>
         {% endif %}
-      {% endif %}
+      {% endifequal %}
     </li>
   </ul>
   <p>

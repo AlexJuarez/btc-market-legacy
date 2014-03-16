@@ -11,13 +11,16 @@
             [noir.session :as session]
             [whitecity.util :as util]))
 
+(def cart-limit 100)
+
 (defn cart-add
   "add a item to the cart"
   [id]
   (let [cart (session/get :cart) id (util/parse-int id)]
-    (session/put! :cart (assoc cart id {:quantity (if-let [item (cart id)] (inc (:quantity item)) 1)
-                                                         :postage (if-let [item (cart id)] (:postage item))})))
-  (resp/redirect "/market/cart"))
+    (when (< (count cart) cart-limit) ;;limit the size of the cart... aka they should only be able to have like 100 items
+      (session/put! :cart (assoc cart id {:quantity (if-let [item (cart id)] (inc (:quantity item)) 1)
+                                                           :postage (if-let [item (cart id)] (:postage item))})))
+  (resp/redirect "/market/cart")))
 
 (defn cart-remove
   [id]

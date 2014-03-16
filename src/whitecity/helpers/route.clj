@@ -14,10 +14,14 @@
             [noir.response :as resp]
             [noir.session :as session]))
 
+(defn convert-order-price [{:keys [price postage_price postage_currency currency_id] :as order}]
+  (when order
+    (-> order (assoc :price (util/convert-currency order) 
+                     :postage_price (util/convert-currency postage_currency postage_price)))))
+
 (defn encrypt-id [m]
-  (if m
-  (assoc m :id (hashids/encrypt (:id m)))
-  m))
+  (when m
+    (assoc m :id (hashids/encrypt (:id m)))))
 
 (defn encrypt-ids [l]
   (map encrypt-id l))

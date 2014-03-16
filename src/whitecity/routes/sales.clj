@@ -38,13 +38,13 @@
 (defn sales-view 
   ([hashid]
     (let [id (hashids/decrypt hashid)
-          order (-> (order/get-sale id (user-id)) encrypt-id)
+          order (-> (order/get-sale id (user-id)) encrypt-id convert-order-price)
           resolutions (resolution/all-sales id (user-id))]
       (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))
-          order (-> (order/get-sale id (user-id)) encrypt-id)
+          order (-> (order/get-sale id (user-id)) encrypt-id convert-order-price)
           resolutions (resolution/all-sales id (user-id))]
         (layout/render "sales/resolution.html" (merge {:errors {} :resolutions resolutions} res slug order (set-info))))))
 

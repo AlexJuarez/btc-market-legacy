@@ -31,7 +31,12 @@
     price))
 
 (defn convert-currency 
+  "converts a currency_id to the users preferred currency
+   takes a currency_id and price"
   ([{:keys [currency_id price]}]
+    (let [user_currency (:currency_id (session/get :user))]
+      (convert-price currency_id user_currency price)))
+  ([currency_id price]
     (let [user_currency (:currency_id (session/get :user))]
       (convert-price currency_id user_currency price))))
 
