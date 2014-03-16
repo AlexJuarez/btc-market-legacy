@@ -35,3 +35,5 @@ Accounted Time                                                       0 0ns
     Clock Time                                                     100 63.0μs
 Accounted Time                                                       0 0ns
 
+2014-Mar-15 18:32:27 -0700 ubuntu INFO [whitecity.handler] - whitecity is shutting down...
+2014-Mar-15 18:32:55 -0700 ubuntu INFO [whitecity.handler] - whitecity started successfully

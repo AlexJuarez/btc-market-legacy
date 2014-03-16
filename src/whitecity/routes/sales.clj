@@ -3,6 +3,7 @@
         noir.util.route
         whitecity.helpers.route)
   (:require [whitecity.views.layout :as layout]
+            [whitecity.models.order :as order]
             [whitecity.util.hashids :as hashids]
             [whitecity.models.order :as order]
             [whitecity.models.resolution :as resolution]
@@ -37,13 +38,15 @@
 (defn sales-view 
   ([hashid]
     (let [id (hashids/decrypt hashid)
+          order (-> (order/get-sale id (user-id)) encrypt-id)
           resolutions (resolution/all-sales id (user-id))]
-      (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :order_id hashid :resolutions resolutions} (set-info)))))
+      (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))
+          order (-> (order/get-sale id (user-id)) encrypt-id)
           resolutions (resolution/all-sales id (user-id))]
-        (layout/render "sales/resolution.html" (merge {:errors {} :order_id (:id slug) :resolutions resolutions} res slug (set-info))))))
+        (layout/render "sales/resolution.html" (merge {:errors {} :resolutions resolutions} res slug order (set-info))))))
 
 (defn sales-page
   ([] (sales-overview))

@@ -1,5 +1,24 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+{% if not id %}
+Sale not found
+{% else %}
+<h1 class="jumbo">Order Information</h1>
+<span>Transaction #<a href="/market/sale/{{id}}">{{id}}</a></span>
+<div class="well">
+  <ul>
+    <li>status: {{status|get-status}}</li>
+    <li>buyer: <a href="/market/user/{{user_id}}">{{alias}}</a></li>
+    <li>seller: {{user.alias}}</li>
+    <li>contract: ~</li>
+    <li>item: <a href="/market/listing/{{listing_id}}">{{title}}</a></li>
+    <li>shipping: {{postage_title}}</li>
+    <li>postage: {{postage_price}}</li>
+    <li>total price: {{price}}</li>
+    <li>ordered: <span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></li>
+  </ul>
+</div>
+{% if status = 2 %}
 {% if not resolutions|empty? %}
 <table class="table resolution fill p">
   <thead>
@@ -43,25 +62,29 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/market/sale/{{order_id}}" method="POST">
+<form class="well" action="/market/sale/{{id}}" method="POST">
   Propose a resolution:
   <ul>
     <li>
-    <input type="radio" name="action" {% if not action %}checked="checked"{% endif %} value="extension" />
+    <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
       <label for="extension">Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
-      {% if extension and errors.value %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
+      {% if extension %}
+        {% if errors.value %}
+          <strong class="error">{{errors.value|join:", "}}</strong>
+        {% endif %}
       {% endif %}
     </li>
     <li>
-      <input type="radio" name="action" value="refund" />
+      <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
-      {% if refund and errors.value %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
+      {% if refund %}
+        {% if errors.value %}
+          <strong class="error">{{errors.value|join:", "}}</strong>
+        {% endif %}
       {% endif %}
     </li>
   </ul>
@@ -74,4 +97,6 @@
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
+{% endif %}
 {% endblock %}

@@ -22,6 +22,10 @@
                  (with sellers (fields :login :alias))
                  (where {:id (util/parse-int id) :user_id user-id}))))
 
+(defn get-sale [id seller-id]
+  (first (select orders
+                 (with users (fields :login :alias))
+                 (where {:id (util/parse-int id) :seller_id seller-id}))))
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))

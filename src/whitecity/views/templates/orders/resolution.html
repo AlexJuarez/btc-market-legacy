@@ -1,21 +1,23 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+{% if not id %}
+Order not found
+{% else %}
 <h1 class="jumbo">Order Information</h1>
-<span>order #<a href="/market/order/{{id}}">{{id}}</a></span>
+<span>Transaction #<a href="/market/order/{{id}}">{{id}}</a></span>
 <div class="well">
   <ul>
     <li>status: {{status|get-status}}</li>
     <li>buyer: {{user.alias}}</li>
     <li>seller: <a href="/market/user/{{seller_id}}">{{alias}}</a></li>
     <li>contract: ~</li>
-    <li>item: <a href="/market/order/{{id}}">{{title}}</a></li>
+    <li>item: <a href="/market/order/{{listing_id}}">{{title}}</a></li>
     <li>shipping: {{postage_title}}</li>
     <li>postage: {{postage_price}}</li>
     <li>total price: {{price}}</li>
     <li>ordered: <span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></li>
   </ul>
 </div>
-
 {% if status = 2 %}
 {% if not resolutions|empty? %}
 <table class="table resolution fill p">
@@ -75,7 +77,7 @@
       {% endif %}
     </li>
     <li>
-    <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
+      <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       <label for="refund">Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
@@ -95,5 +97,6 @@
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
 {% endif %}
 {% endblock %}

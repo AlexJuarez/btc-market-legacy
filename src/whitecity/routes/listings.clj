@@ -48,7 +48,7 @@
 (defn listing-view [id page]
   (let [listing (listing/view id)
         reviews (review/get id page)
-        pagemax (mod (:reviews listing) per-page)]
+        pagemax (mod (or (:reviews listing) 0) per-page)]
     (layout/render "listings/view.html" (merge {:review reviews :page {:page page :max pagemax :url (str "/market/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
 
 (defn listing-bookmark [id]

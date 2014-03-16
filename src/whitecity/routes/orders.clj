@@ -35,7 +35,7 @@
     (let [id (hashids/decrypt id)
           order (encrypt-id (order/get-order id (user-id)))
           resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:order order :errors {} :action "extension" :resolutions resolutions} order (set-info)))))
+      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))

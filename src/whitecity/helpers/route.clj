@@ -15,7 +15,9 @@
             [noir.session :as session]))
 
 (defn encrypt-id [m]
-  (assoc m :id (hashids/encrypt (:id m))))
+  (if m
+  (assoc m :id (hashids/encrypt (:id m)))
+  m))
 
 (defn encrypt-ids [l]
   (map encrypt-id l))
