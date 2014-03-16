@@ -33,7 +33,7 @@
           {{message.content}}
         </div>
       </td>
-      <td><span time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
+      <td><span data-time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
       <td><a href="/market/message/{{message.id}}/delete">delete</a></td>
     </tr>
     {% endfor %}

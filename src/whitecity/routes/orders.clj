@@ -10,9 +10,6 @@
             [noir.response :as resp]
             [whitecity.util :as util]))
 
-(defn encrypt-id [m]
-  (assoc m :id (hashids/encrypt (:id m))))
-
 (defn orders-page 
   ([]
     (let [orders (order/all (user-id))

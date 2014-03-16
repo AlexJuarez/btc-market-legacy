@@ -3,3 +3,35 @@
 2014-Mar-12 23:52:55 -0700 ubuntu INFO [whitecity.handler] - whitecity started successfully
 2014-Mar-14 01:22:02 -0700 ubuntu INFO [whitecity.handler] - whitecity is shutting down...
 2014-Mar-14 01:23:43 -0700 ubuntu INFO [whitecity.handler] - whitecity started successfully
+2014-Mar-14 01:46:52 -0700 ubuntu INFO [whitecity.handler] - whitecity is shutting down...
+2014-Mar-14 01:47:12 -0700 ubuntu INFO [whitecity.handler] - whitecity started successfully
+2014-Mar-14 01:52:58 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/listings
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 9.0ms
+Accounted Time                                                       0 0ns
+
+2014-Mar-14 01:52:58 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/listings
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 8.0ms
+Accounted Time                                                       0 0ns
+
+2014-Mar-14 01:52:58 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/set-info
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 40.0μs
+Accounted Time                                                       0 0ns
+
+2014-Mar-14 01:53:01 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/listings
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 40.0ms
+Accounted Time                                                       0 0ns
+
+2014-Mar-14 01:53:01 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/listings
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 37.0ms
+Accounted Time                                                       0 0ns
+
+2014-Mar-14 01:53:01 -0700 ubuntu INFO [whitecity.routes.market] - Profiling: :clojure.core/set-info
+            Id  Calls       Min        Max       MAD      Mean   Time% Time
+    Clock Time                                                     100 63.0μs
+Accounted Time                                                       0 0ns
+

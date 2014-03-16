@@ -24,11 +24,11 @@
     <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
     <td>
       {% if order.updated_on %}
-        <span class="pretty-time" time="{{listing.updated_on|date:fullDateTime}}">
+        <span class="pretty-time" data-time="{{listing.updated_on|date:fullDateTime}}">
           {{order.updated_on|date:shortDate}}
         </span>
       {% else %}
-        <span class="pretty-time" time="{{listing.created_on|date:fullDateTime}}">
+        <span class="pretty-time" data-time="{{listing.created_on|date:fullDateTime}}">
           {{order.created_on|date:shortDate}}
         </span>
       {% endif %}

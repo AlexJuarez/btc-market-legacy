@@ -7,11 +7,18 @@
             [whitecity.models.report :as report]
             [whitecity.models.order :as order]
             [whitecity.models.message :as message]
+            [whitecity.util.hashids :as hashids]
             [noir.io :as io]
             [whitecity.models.image :as image]
             [clojure.string :as string]
             [noir.response :as resp]
             [noir.session :as session]))
+
+(defn encrypt-id [m]
+  (assoc m :id (hashids/encrypt (:id m))))
+
+(defn encrypt-ids [l]
+  (map encrypt-id l))
 
 (defn user-id []
   (util/user-id))

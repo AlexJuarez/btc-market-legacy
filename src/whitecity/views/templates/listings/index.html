@@ -45,7 +45,7 @@
         <a href="/market/listing/{{listing.id}}/remove" class="remove" oncLick="return confirm('Delete?')">delete</a></sup>
       </h2>
       <p>
-        <span class="age pretty-time" time="{{listing.created_on|date:fullDateTime}}">
+        <span class="age pretty-time" data-time="{{listing.created_on|date:fullDateTime}}">
           {{listing.created_on|date:shortDate}}
         </span>
         <span class="public">

@@ -6,9 +6,9 @@
 <h1 class="jumbo">{{alias}}</h1>
 <a href="/market/messages/{{id}}">send a message</a>
 <p class="well">
-  has been a member for: <strong class="pretty-time" time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
+  has been a member for: <strong class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
   <br />
-  was last seen: <strong class="pretty-time" time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
+  was last seen: <strong class="pretty-time" data-time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
   <br />
   ranked in the top % of sellers with {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
@@ -77,7 +77,7 @@ The users does not currently have active public listings
       <tr>
         <td>{{r.rating}} of 5</td>
         <td>{{r.content}}</td>
-        <td time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
+        <td data-time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
         <td>{% if r.shipped %}received{% else %}waiting{% endif %}</td>
         <td><a href="/market/listing/{{r.listing_id}}">item</a></td>
       </tr>

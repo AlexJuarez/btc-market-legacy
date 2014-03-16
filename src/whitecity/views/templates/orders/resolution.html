@@ -49,7 +49,7 @@
         refund {{resolution.value}}%
         {% endifequal %}
       </td>
-      <td><span time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
+      <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>
         {% if not resolution.user_accepted %}
           <a href="/market/resolution/{{resolution.id}}/accept">accept</a>

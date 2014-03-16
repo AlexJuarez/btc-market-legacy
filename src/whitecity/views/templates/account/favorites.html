@@ -47,7 +47,7 @@
       <td><a href="/market/user/{{favorite.user_id}}">{{favorite.alias}}</td>
       <td>{{favorite.rating}}</td>
       <td>{{favorite.listings}}</td>
-      <td time="{{favorite.last_login|date:fullDateTime}}" class="pretty-time">{{favorite.last_login|date:shortDate}}</td>
+      <td data-time="{{favorite.last_login|date:fullDateTime}}" class="pretty-time">{{favorite.last_login|date:shortDate}}</td>
       <td><a href="/market/user/{{favorite.user_id}}/unfollow">unfollow</a></td>
     </tr>
     {% endfor %}
