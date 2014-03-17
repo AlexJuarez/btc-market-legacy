@@ -28,16 +28,16 @@
   ([login pass cookies]
     (let [user (users/login! {:login login :pass pass :session (:value (cookies "session"))})]
       (if (nil? (:error user))
-        (let [{:keys [id vendor auth pub-key]} user]
+        (let [{:keys [id vendor auth pub_key]} user]
           (do 
             (when vendor (session/put! :sales (order/count-sales id)))
-            (session/put! :authed (or (and auth pub-key) (not auth)))
+            (session/put! :authed (or (not (and auth (not (nil? pub_key)))) (not auth)))
             (session/put! :user_id id)
             (session/put! :user user)
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))  
             (session/put! :cart {})
-            (when auth (resp/redirect "/market/") (resp/redirect "/auth"))))
+            (if (session/get :authed) (resp/redirect "/market/") (resp/redirect "/auth"))))
         (layout/render "login.html" user)))))
 
 (defn auth-page

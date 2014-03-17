@@ -26,7 +26,11 @@
       </div>
   </div>
   <div class="form-group">
-    <label for="description">Public Key:</label>
+    <label for="description">Public Key:
+    {% if errors.pub_key %}
+      {{errors.pub_key}}
+    {% endif %}
+    </label>
     <textarea id="pub-key" class="form-control" rows="14" name="pub_key">{{user.pub_key}}</textarea>
   </div>
   {% if user.vendor %}

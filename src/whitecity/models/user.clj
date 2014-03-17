@@ -9,6 +9,7 @@
         [hiccup.util :as hc]
         [clojure.string :as s]
         [whitecity.util :as util]
+        [whitecity.util.pgp :as pgp]
         [noir.session :as session]
         [whitecity.models.order :as order]
         [whitecity.models.message :as message]
@@ -52,11 +53,12 @@
   (v/user-validator user))
 
 (defn valid-update? [user]
-  (v/user-update-validator user))
+  (merge (when (nil? (pgp/get-key-ring (:pub_key user))) {:pub_key "Invalid pgp key"})
+  (v/user-update-validator user)))
 
 (defn clean [{:keys [alias auth currency_id pub_key description]}]
   {:auth (= auth "true")
-   :pub_key (and pub_key (clojure.string/trim pub_key))
+   :pub_key (if (empty? pub_key) nil (and pub_key (clojure.string/trim pub_key)))
    :currency_id (util/parse-int currency_id)
    :description (hc/escape-html description)
    :updated_on (raw "now()")

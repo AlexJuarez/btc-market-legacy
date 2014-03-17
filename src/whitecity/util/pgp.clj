@@ -1,4 +1,5 @@
 (ns whitecity.util.pgp
+  (:require [taoensso.timbre :refer [trace debug info warn error fatal]])
   (:import 
     org.bouncycastle.jce.provider.BouncyCastleProvider
     (org.bouncycastle.bcpg ArmoredOutputStream)
@@ -6,8 +7,11 @@
 
 ;;TODO: add exception handling
 (defn get-key-ring [s]
-  (let [factory (-> (.getBytes s "UTF-8") java.io.ByteArrayInputStream. PGPUtil/getDecoderStream PGPObjectFactory.)]
-    (.nextObject factory)))
+  (try 
+    (let [factory (-> (.getBytes s "UTF-8") java.io.ByteArrayInputStream. PGPUtil/getDecoderStream PGPObjectFactory.)]
+      (.nextObject factory))
+      (catch Exception ex
+        (error "Invalid pgp public key"))))
 
 (defn get-encryption-key [key-ring]
   (when key-ring
@@ -39,7 +43,3 @@
                           (count secret)
                           (java.util.Date.))]
       (do (.write finalout secret) (.close finalout) (.close encryptedout) (.close armored-output) (.close output) output))))
-                   
-
-    
-    
