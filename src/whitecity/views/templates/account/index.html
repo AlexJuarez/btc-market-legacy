@@ -3,12 +3,12 @@
 <form action="/market/account" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
   <div class="top form-group {% if errors.alias %}has-error{% endif %}">
-    <label for="title">Alias:
+    <label for="alias">Alias:
     {% if errors.alias %}
       {{errors.alias|join:", "}}
     {% endif %}
     </label>
-    <input name="alias" id="title" class="input" type="text" value="{{user.alias}}" />
+    <input name="alias" id="alias" class="input" type="text" value="{{user.alias}}" />
   </div>
   <div class="form-group">
     <label for="currency_id">Currencies: </label>
@@ -19,9 +19,9 @@
     </select>
   </div>
   <div class="form-group top public">
-      <label>2 step auth?</label>
+      <label for="auth">2 step auth?</label>
       <div> 
-        <input type="checkbox" {% if user.auth %}checked="checked"{% endif %} name="auth" value="true">
+        <input id="auth" type="checkbox" {% if user.auth %}checked="checked"{% endif %} name="auth" value="true">
         (check for yes)
       </div>
   </div>

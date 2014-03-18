@@ -78,6 +78,7 @@
 
 ;;Probably not needed
 
+;;TODO: sanitize links out of md->core
 (defn md->html
     "reads a markdown string and returns the html"
     [string]

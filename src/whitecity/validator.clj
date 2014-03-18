@@ -30,6 +30,9 @@
   [:login [:presence :login-taken :in-range {:start 3 :end 64}]]
   [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
 
+(v/defvalidator user-update-password-validator
+  [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
+
 (v/defvalidator user-update-validator
   [:alias [:presence :alias-taken :in-range {:start 3 :end 64}]])
 

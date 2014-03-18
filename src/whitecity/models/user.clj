@@ -23,6 +23,10 @@
   (dissoc (first (select users
            (where {:id (util/parse-int id)}))) :salt :pass))
 
+(defn get-dirty [id]
+  (first (select users
+                 (where {:id (util/parse-int id)}))))
+
 (defn make-salt []
   (let [b (byte-array salt-byte-size)
         ran (java.security.SecureRandom.)]
@@ -76,6 +80,15 @@
               (set-fields updates)
               (where {:id id})))
       {:errors check})))
+
+(defn update-password! [id {:keys [pass newpass confirm]}]
+  (let [user (get-dirty id)]
+    (if (and (not (nil? user)) (and (:pass user) (warden/compare (str pass (:salt user)) (:pass user))))
+      (let [check (v/user-update-password-validator {:pass newpass :confirm confirm})]
+        (if (empty? check)
+          (update users (set-fields {:pass (warden/encrypt (str newpass (:salt user)))}) (where {:id id}))
+          {:errors check}))
+      {:errors {:pass ["Your password is incorrect."]}})))
 
 (defn store! [user]
   (insert users (values user)))

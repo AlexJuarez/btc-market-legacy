@@ -36,6 +36,13 @@
   (image/remove! id (user-id))
   (resp/redirect "/market/account/images"))
 
+(defn password-page 
+  ([]
+    (layout/render "account/password.html" (set-info)))
+  ([slug]
+   (let [errors (user/update-password! (user-id) slug)]
+    (layout/render "account/password.html" (merge (set-info) (if (nil? errors) {:message "success"})  errors)))))
+ 
 (defn images-edit 
   ([]
     (let [images (image/get (user-id))]
@@ -55,6 +62,8 @@
 
 (def-restricted-routes account-routes
   (GET "/market/account" [] (account-page))
+  (GET "/market/account/password" [] (password-page))
+  (POST "/market/account/password" {params :params} (password-page params))
   (POST "/market/account" {params :params} (account-update params))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
