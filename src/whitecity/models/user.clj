@@ -53,12 +53,12 @@
   (v/user-validator user))
 
 (defn valid-update? [user]
-  (merge (when (nil? (pgp/get-key-ring (:pub_key user))) {:pub_key "Invalid pgp key"})
+  (merge (when (and (not (empty? (:pub_key user))) (nil? (pgp/get-key-ring (:pub_key user)))) {:pub_key "Invalid pgp key"})
   (v/user-update-validator user)))
 
 (defn clean [{:keys [alias auth currency_id pub_key description]}]
   {:auth (= auth "true")
-   :pub_key (if (empty? pub_key) nil (and pub_key (clojure.string/trim pub_key)))
+   :pub_key (if (empty? pub_key) nil (clojure.string/trim pub_key))
    :currency_id (util/parse-int currency_id)
    :description (hc/escape-html description)
    :updated_on (raw "now()")

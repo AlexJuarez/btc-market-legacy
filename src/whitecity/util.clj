@@ -60,13 +60,14 @@
            user-id# (session/get :user_id)]
       (if (= id# user-id#) 
         (doall (map session/remove! (list :user ~@terms)))
-        (let [user# (first (select users (fields :session) (where {:id id#})))
-              session# (.toString (:session user#))
-              sess# (cache/get session#)
-              ttl# (* 60 60 10)]
-          (if (not (nil? sess#))
-            (cache/set session# 
-                       (assoc sess# :noir (dissoc (:noir sess#) ~@terms :user)) ttl#))))))
+        (let [user# (first (select users (fields :session) (where {:id id#})))]
+          (when (:session user#)
+            (let [session# (.toString (:session user#))
+                  sess# (cache/get session#)
+                  ttl# (* 60 60 10)]
+              (if (not (nil? sess#))
+                (cache/set session# 
+                           (assoc sess# :noir (dissoc (:noir sess#) ~@terms :user)) ttl#))))))))
 
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is

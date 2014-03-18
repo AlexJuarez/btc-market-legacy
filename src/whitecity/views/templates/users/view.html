@@ -23,14 +23,14 @@
 </p>
 {% if vendor %}
   {% if not description|empty? %}
-  <div class="well p">
+  <div class="well p markdown">
     {{description|safe}}
   </div>
   {% endif %}
   {% if not pub_key|empty? %}
-  <div class="well p">
-    {{pub_key}}
-  </div>
+<pre class="well p">
+{{pub_key}}
+</pre>
   {% endif %}
 {% endif %}
 {% if listings %}
@@ -85,6 +85,6 @@ The users does not currently have active public listings
     </tbody>
   </table>
 {% endif %}
-
 {% endif %}
+{% style "/css/markdown.css" %}
 {% endblock %}
