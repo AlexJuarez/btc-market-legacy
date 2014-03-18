@@ -26,12 +26,13 @@
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))
     (str "This needs to between " (:start options) " and " (:end options))))
 
+;;Bcypt only looks at the first 73 characters, and saves 60 of them
 (v/defvalidator user-validator
   [:login [:presence :login-taken :in-range {:start 3 :end 64}]]
-  [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
+  [:pass [:presence :in-range {:start 8 :end 73} :confirmation {:confirm :confirm}]])
 
 (v/defvalidator user-update-password-validator
-  [:pass [:presence :in-range {:start 8 :end 128} :confirmation {:confirm :confirm}]])
+  [:pass [:presence :in-range {:start 8 :end 73} :confirmation {:confirm :confirm}]])
 
 (v/defvalidator user-update-validator
   [:alias [:presence :alias-taken :in-range {:start 3 :end 64}]])

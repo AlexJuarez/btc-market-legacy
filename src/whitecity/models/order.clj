@@ -1,5 +1,5 @@
 (ns whitecity.models.order
-  (:refer-clojure :exclude [count])
+  (:refer-clojure :exclude [get count])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
@@ -120,11 +120,19 @@
           (set-fields values)
           (where {:seller_id seller-id :id [in sales]}))))
 
+;;race condition possible nooo
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
-  (update orders
-          (set-fields {:status 3 :updated_on (raw "now()")})
-          (where {:user_id user-id :id (util/parse-int id)})))
+  (let [id (util/parse-int id) 
+        {seller_id :seller_id} (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not 3]}))]
+    (let [{:keys [amount currency_id]} (select escrow (where {:order_id id :from user-id :status "hold"}))
+          amount (convert-price currency_id 1 amount)]
+      (transaction
+        (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
+        (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id}))
+        (update orders
+              (set-fields {:status 3 :updated_on (raw "now()")})
+              (where {:user_id user-id :id (util/parse-int id)}))))))
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)

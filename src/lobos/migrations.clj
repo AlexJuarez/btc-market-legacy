@@ -71,8 +71,7 @@
                 (integer :from [:refer :currency :id :on-delete :set-null])
                 (integer :to [:refer :currency :id :on-delete :set-null])
                 (float :value)
-                (timestamp :updated_on (default (now)))
-                  )))
+                (timestamp :updated_on (default (now))))))
   (down [] (drop (table :exchangerate))))
 
 (defmigration add-categories-table
@@ -169,8 +168,7 @@
   (up [] (create
            (tbl :audit
                 (refer-to :user)
-                (refer-to :order)
-                (varchar :role 10)
+                (varchar :note 10)
                 (float :amount))))
   (down [] (drop (table :audit))))
 
