@@ -126,7 +126,7 @@
   (let [id (util/parse-int id) 
         {seller_id :seller_id} (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not 3]}))]
     (let [{:keys [amount currency_id]} (select escrow (where {:order_id id :from user-id :status "hold"}))
-          amount (convert-price currency_id 1 amount)]
+          amount (util/convert-price currency_id 1 amount)]
       (transaction
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
         (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id}))
