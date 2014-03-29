@@ -66,12 +66,14 @@
         {:keys [user_id seller_id listing_id quantity]} order
         escr {:from user_id :to seller_id :currency_id 1 :amount cost :status "hold"}]
     (util/update-session seller_id :sales)
-    (transaction
+    (let [order (transaction
       (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
-      (insert escrow (values (assoc escr :order_id (insert orders (values order)))))
       (update listings 
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
-              (where {:id listing_id})))))
+              (where {:id listing_id}))
+      (insert orders (values order)))]
+      (if (not (empty? order));;TODO: what does korma return when it errors out?
+      (insert escrow (values (assoc escr :order_id (:id order))))))))
 
 (defn prep [item address user-id]
   (let [id (key item)
