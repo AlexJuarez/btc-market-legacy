@@ -45,8 +45,8 @@
     
 (defn order-resolve [hashid]
   (let [id (hashids/decrypt hashid)]
-  (do (order/resolution id (user-id))
-    (resp/redirect (str "/market/order/" hashid)))))
+    (order/resolution id (user-id))
+    (resp/redirect (str "/market/order/" hashid))))
 
 (def-restricted-routes order-routes
     (GET "/market/orders" [] (orders-page))

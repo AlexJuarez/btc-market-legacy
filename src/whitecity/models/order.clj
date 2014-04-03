@@ -65,7 +65,7 @@
         cost (+ item-cost postage-cost)
         {:keys [user_id seller_id listing_id quantity]} order
         escr {:from user_id :to seller_id :currency_id 1 :amount cost :status "hold"}
-        audit {:user_id user-id :note "purchase" :amount (* -1 cost)}]
+        audit {:user_id user-id :role "purchase" :amount (* -1 cost)}]
     (util/update-session seller_id :sales)
     (let [order (transaction
       (insert audits (values audit))
@@ -130,7 +130,7 @@
         {seller_id :seller_id} (first (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not= 3]})))]
     (let [{amount :amount currency_id :currency_id} (first (select escrow (where {:order_id id :from user-id :status "hold"})))
           amount (util/convert-price currency_id 1 amount)
-          audit {:amount amount :user_id user-id :note "sale"}]
+          audit {:amount amount :user_id user-id :role "sale"}]
       (transaction
         (insert audits (values audit))
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))

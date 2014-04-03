@@ -566,3 +566,38 @@ textarea.form-control {
 .ls .listing-row ul {
   list-style: none;
 }
+
+#modal > *:first-child {
+  margin-top: 0;
+}
+
+#modal form > * {
+  margin-bottom: 8px;
+}
+
+#modal {
+  position: absolute;
+  left: 50%;
+  margin-left: -125px;
+  top: 15%;
+  width: 280px;
+  border-radius: 6px;
+  background: #eee;
+  padding:20px 30px;
+  text-align: right;
+  border: 1px solid #cecece;
+  box-shadow: 0px 0px 3px rgba(0,0,0, .15);
+}
+
+#modal form, #modal h2 {
+  text-align:left;
+}
+
+#modal .text-input {
+  width: 100%;
+  line-height: 22px;
+}
+
+#modal label {
+  margin-bottom: 0;
+}

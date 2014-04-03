@@ -1,34 +1,22 @@
 {% extends "whitecity/views/templates/base.html" %}
 {% block content %}
-<div id="wrap">
-	<div class="container">		
-		<div class="entry-content">
-		<h2>Register</h2>
-		<form action="/register" method="POST">
-      {% csrf-token %}
-			<table class="padded-table">
-				<tr>
-					<td><label for="login">Username</label></td>
-          <td><input class="text-input" id="login" name="login" type="text" value="{{login}}" /></td>
-          {% if errors.login %}
-          <td>{{errors.login|join:", "}}</td>
-          {% endif %}
-				</tr>
-				<tr>
-          <td><label for="pass">Password</label></td>
-          <td><input class="text-input" id="pass" name="pass" type="password" /></td>
-          {% if errors.pass %}
-            <td>{{errors.pass|join:", "}}</td>
-          {% endif %}
-				</tr>
-				<tr>
-          <td><label for="confirm">Confrim Password</label></td>
-					<td><input class="text-input" id="confirm" name="confirm" type="password" /></td>
-				</tr>
-			</table>
-			<input type="submit" class="btn" value="Register" />
-		</form>
-		</div>
-	</div>
+<div id="modal">
+  <h2>Register</h2>
+  <form action="/register" method="POST">
+    {% csrf-token %}
+    <p>
+      <input placeholder="Username" class="text-input" id="login" name="login" type="text" value="{{login}}" />
+      {% if errors.login %}
+        {{errors.login|join:", "}}
+      {% endif %}
+      <input placeholder="Password" class="text-input" id="pass" name="pass" type="password" />
+      {% if errors.pass %}
+        {{errors.pass|join:", "}}
+      {% endif %}
+      <input placeholder="Confirm Password" class="text-input" id="confirm" name="confirm" type="password" />
+    </p>
+    <input type="submit" class="btn" value="Register" />
+  </form>
+  <a href="/">login</a>
 </div>
 {% endblock %}

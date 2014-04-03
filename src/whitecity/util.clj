@@ -20,7 +20,7 @@
    (.getMessage ex)))) 
 
 (defn user-id []
-  (:id (session/get :user)))
+  (session/get :user_id ))
 
 (defn convert-price [from to price]
   (if-not (= from to)
