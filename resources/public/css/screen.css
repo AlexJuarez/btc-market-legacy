@@ -377,6 +377,17 @@ ul.pagination {
   background: #f7f7f7;
 }
 
+.fact-table {
+  border: none;
+  padding: 3px;
+  border-spacing: 0;
+}
+
+.fact-table tr td:first-child {
+  text-align: right;
+  font-weight: bold;
+}
+
 .table.normal {
   width: inherit;
 }
