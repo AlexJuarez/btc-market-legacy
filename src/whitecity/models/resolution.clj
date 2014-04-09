@@ -1,5 +1,5 @@
 (ns whitecity.models.resolution
-  (:use [korma.db :only (defdb)]
+  (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
   (:require 
@@ -25,21 +25,26 @@
 (defn accept [id user-id]
   (let [id (util/parse-int id)
         res (first (select resolutions
-                    (where {:id id})))]
-    (let [values {}
-          values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
-          values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
-      (if (or (and (:user_accepted res) (:seller_accepted values))
-              (and (:seller_acceptd res) (:user_accepted values)))
-          (do 
-            (if (= (:action res) "extension")
-              (update orders 
-                      (set-fields {:auto_finalize (raw (str "(auto_finalize + interval '" (:value res)  " days')"))})
-                      (where {:id (:order_id res)}))
-              )
-            (update resolutions
-                  (set-fields values)
-                  (where {:id id})))))))
+                    (fields :seller_id :user_id)
+                    (where {:id id})))] ;;added a flag to see if the resolution was used
+    (if-not (:applied res)
+      (let [values {}
+            values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
+            values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)
+            res (transction ;;update and select the new updated row
+                  (update resolutions
+                        (set-fields values)
+                        (where {:id id}))
+                  (select resolutions (where {:id id})))]
+        (if (and (:user_accepted res) (:seller_accepted res)) ;;check to see if everyone wants this resolution
+          (if (= (:action res) "extension")
+            (update orders 
+                    (set-fields {:auto_finalize (raw (str "(auto_finalize + interval '" (:value res)  " days')"))})
+                    (where {:id (:order_id res)}))
+            (transaction
+              
+
+              )))))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
@@ -52,6 +57,7 @@
         seller-id (:seller_id order)
         buyer-id (:user_id order)]
       (let [res {:from user-id
+                 :applied false
                  :content content
                  :seller_id seller-id
                  :user_id buyer-id

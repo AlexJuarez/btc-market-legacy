@@ -179,6 +179,7 @@
                 (refer-to :user)
                 (integer :seller_id [:refer :user :id :on-delete :set-null])
                 (refer-to :order)
+                (boolean :applied)
                 (boolean :user_accepted (default false))
                 (boolean :seller_accepted (default false))
                 (varchar :action 10);; extension or refund
