@@ -28,23 +28,38 @@
                     (fields :seller_id :user_id)
                     (where {:id id})))] ;;added a flag to see if the resolution was used
     (if-not (:applied res)
-      (let [values {}
+      (let [values {:applied true}
             values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
-            values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)
-            res (transction ;;update and select the new updated row
-                  (update resolutions
+            values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
+        (if (or 
+              (and (:user_accepted values) (:seller_accepted res))
+              (and (:user_accepted res) (:seller_accepted values))) ;;check to see if everyone wants this resolution
+          (if (= (:action res) "extension")
+            (transaction
+              (update resolutions
+                      (set-fields values)
+                      (where {:id id}))
+              (update orders 
+                      (set-fields {:auto_finalize (raw (str "(auto_finalize + interval '" (:value res)  " days')"))})
+                      (where {:id (:order_id res)})))
+            (let [user_id (:user_id res)
+                  seller_id (:seller_id res)
+                  {amount :amount currency_id :currency_id} (first (select escrow (where {:order_id id :from user_id :status "hold"})))
+                  user-amount (* (util/convert-price currency_id 1 amount) (/ (:value res) 100))
+                  seller-amount (- amount user-amount) 
+                  user-audit {:amount amount :user user_id :role "refund"}
+                  seller-audit {:amount amount :user seller_id :role "refund"}]
+              (trasaction
+                (update resolutions
                         (set-fields values)
                         (where {:id id}))
-                  (select resolutions (where {:id id})))]
-        (if (and (:user_accepted res) (:seller_accepted res)) ;;check to see if everyone wants this resolution
-          (if (= (:action res) "extension")
-            (update orders 
-                    (set-fields {:auto_finalize (raw (str "(auto_finalize + interval '" (:value res)  " days')"))})
-                    (where {:id (:order_id res)}))
-            (transaction
-              
-
-              )))))))
+                (insert audits (values user-audit))
+                (insert audits (values seller-audit))
+                (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
+                (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
+                (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id (:order_id res)}))
+                (update orders (set-fields {:status 3 :updated_on (raw "now()")})
+                        (where {:user_id user-id :id (util/parse-int id)}))))))))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
