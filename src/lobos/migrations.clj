@@ -168,7 +168,7 @@
   (up [] (create
            (tbl :audit
                 (refer-to :user)
-                (varchar :note 10)
+                (varchar :role 10)
                 (float :amount))))
   (down [] (drop (table :audit))))
 
