@@ -5,11 +5,20 @@
               [clojure.java.io :refer [as-url]]
               [noir.session :as session]
               [whitecity.cache :as cache]
-              [noir.io :as io]
+              [clojure.java.io :as io]
+              [noir.io :as noirio]
               [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
               [markdown.core :as md])
-    (:import net.sf.jlue.util.Captcha))
+    (:import net.sf.jlue.util.Captcha
+             (org.apache.commons.io IOUtils)
+             (org.apache.commons.codec.binary Base64)))
+
+
+(defn read-image [id]
+  (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]
+    (with-open [in (io/input-stream (io/file path))]
+      (.toString (Base64/encodeBase64String (IOUtils/toByteArray in))))))
 
 (defn create-uuid [string]
  "creates a uuid from a string"
