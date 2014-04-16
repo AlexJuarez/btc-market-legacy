@@ -35,11 +35,11 @@ Sale not found
     {% for resolution in resolutions %}
     <tr>
       <td>
-        {% if resolution.from_user %}
-          <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
-        {% else %}
+        {% ifequal resolution.from user.id %}
           <span class="sender">{{user.alias}}</span>
-        {% endif %}
+        {% else %}
+          <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
+        {% endifequal %}
       </td>
       <td>
         {{resolution.content}}

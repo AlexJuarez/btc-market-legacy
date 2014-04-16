@@ -12,15 +12,28 @@
             [selmer.parser :refer [add-tag!]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+            [clojure.java.io :as io]
+            [noir.io :as noirio]
             [compojure.route :as route]
             [taoensso.timbre :as timbre]
             [whitecity.cache :as cache]
             [noir.session :as session]
-            [com.postspectacular.rotor :as rotor]))
+            [com.postspectacular.rotor :as rotor])
+  (:import 
+    (org.apache.commons.io IOUtils)
+    (org.apache.commons.codec.binary Base64)))
+
+(defn read-image [id]
+  (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]
+    (with-open [in (io/input-stream (io/file path))]
+      (.toString (Base64/encodeBase64String (IOUtils/toByteArray in))))))
 
 (defroutes app-routes
   (route/resources "/")
   (route/not-found "Not Found"))
+
+(defn parse-args [args]
+  (into [] (map keyword (.split args "\\."))))
 
 (defn user-access [request]
   (and
@@ -49,6 +62,8 @@
     (do (schema/actualize) (schema/load-fixtures)))
 
   (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
+
+  (add-tag! :image (fn [args context-map] (str "data:image/jpeg;base64," (read-image (get-in context-map (parse-args (first args)))))))
 
   (timbre/info "whitecity started successfully"))
 

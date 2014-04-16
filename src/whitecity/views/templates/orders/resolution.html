@@ -69,11 +69,11 @@ Order not found
     {% for resolution in resolutions %}
     <tr>
       <td>
-        {% if resolution.from_user %}
+        {% ifequal resolution.from user.id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
-          <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
-        {% endif %}
+          <a href="/market/user/{{resolution.seller_id}}" class="sender">{{resolution.alias}}</a>
+        {% endifequal %}
       </td>
       <td>
         {{resolution.content}}
@@ -98,7 +98,9 @@ Order not found
 </table>
 {% endif %}
 <form class="well" action="/market/order/{{id}}" method="POST">
-  Propose a resolution:
+  <p>
+    Propose a resolution:
+  </p>
   <ul>
     <li>
     <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
