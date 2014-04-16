@@ -33,7 +33,7 @@
 </pre>
   {% endif %}
 {% endif %}
-{% if listings %}
+{% if not listings-all|empty? %}
 <table class="user-listings">
   <thead>
     <tr>
@@ -59,7 +59,9 @@
   </tbody>
 <table>
 {% else %}
-The users does not currently have active public listings
+<div class="well">
+  The user does not currently have active public listings
+</div>
 {% endif %}
 {% if not review|empty? %}
   <table class="reviews table">
