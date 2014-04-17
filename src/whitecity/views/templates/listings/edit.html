@@ -6,7 +6,9 @@
   {% if image_id %}
     {% image image_id %}
   {% else %}
-    300<em>px</em> x <em>400px</em>
+    <div class="placeholder">
+      300<em>px</em> x 400<em>px</em>
+    </div>
   {% endif %}
   </div>
   <div class="top form-group {% if errors.title %}has-error{% endif %}">

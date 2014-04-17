@@ -8,6 +8,8 @@
             [whitecity.models.order :as order]
             [whitecity.models.message :as message]
             [whitecity.util.hashids :as hashids]
+            [image-resizer.core :as resizer]
+            [image-resizer.format :as format]
             [noir.io :as io]
             [whitecity.models.image :as image]
             [clojure.string :as string]
@@ -44,7 +46,11 @@
     (if (and (< (:size image) 800000) (not (empty? (re-find #"jpg|jpeg" (string/lower-case (:filename image))))))
       (let [image_id (:id (image/add! (user-id)))]
         (try
-          (io/upload-file (str (io/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
+          (do
+            (io/upload-file (str (io/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
+            (format/as-file (resizer/resize-and-crop (clojure.java.io/file (str (io/resource-path) "/uploads/" image_id ".jpg")) 190 130) (str (io/resource-path) "/uploads/" image_id "_thumb.jpg"))
+            (format/as-file (resizer/resize-and-crop (clojure.java.io/file (str (io/resource-path) "/uploads/" image_id ".jpg")) 190 130) (str (io/resource-path) "/uploads/" image_id "_thumb.jpg"))
+            )
           (catch Exception ex
             (error ex ("File upload failed for image " image_id))))
           image_id))))

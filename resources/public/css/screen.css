@@ -186,6 +186,8 @@ form .image {
   margin-bottom: 20px;
   height: 300px;
   width: 400px;
+  padding: 10px;
+  border: 1px solid #e3e3e3;
   margin-right: 25px;
   border-radius: 8px;
   -webkit-border-radius: 8px;
@@ -194,6 +196,14 @@ form .image {
   float: left;
   vertical-align: middle;
   text-align: center;
+}
+
+form .image .placeholder {
+  height: 100%;
+  line-height: 300px;
+  background: #f5f5f5;
+  color: #999;
+  font-weight: bold;
 }
 
 form .top {

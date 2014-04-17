@@ -2,11 +2,15 @@
 {% block content %}
 <form action="/market/listings/create" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
-  {% if image_id %}
   <div class="image">
+  {% if image_id %}
     {% image image_id %}
-  </div>
+  {% else %}
+    <div class="placeholder">
+      300<em>px</em> x 400<em>px</em>
+    </div>
   {% endif %}
+  </div>
   <div class="well top">
     <div class="form-group">
       <label>Upload a Image (.jpg):</label>
