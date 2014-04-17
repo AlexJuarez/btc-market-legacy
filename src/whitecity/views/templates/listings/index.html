@@ -36,7 +36,7 @@
   <div class="listing-row">
     {% if listing.image_id %}
       <div class="thumbnail-wrapper">
-          <img src="/uploads/{{listing.image_id}}.jpg" width="200" class="thumbnail" />
+        {% image listing.image_id %}
       </div>
     {% endif %}
     <div class="info">

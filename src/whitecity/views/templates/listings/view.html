@@ -5,7 +5,7 @@
 {% else %}
 <div class="listing">
   {% if image_id %}
-    <img src="/uploads/{{image_id}}.jpg" />
+    {% image image_id %}
   {% endif %}
   <h1>{{title}}</h1>
   <p>

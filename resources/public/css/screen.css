@@ -483,6 +483,10 @@ textarea.form-control {
   float: left;
 }
 
+.listings .listing-row .thumbnail-wrapper img {
+  width: 200px;
+}
+
 .listings .listing-row {
   overflow: hidden;
   padding-bottom: 20px;

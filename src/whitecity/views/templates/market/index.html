@@ -9,7 +9,7 @@
 <div class="listing-row">
   {% if listing.image_id %}
   <div class="thumbnail">
-    <img src="{% image listing.image_id %}" />
+    {% image listing.image_id %}
   </div>
   {% endif %}  
   <div class="sale">

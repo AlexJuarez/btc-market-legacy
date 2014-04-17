@@ -4,7 +4,7 @@
   {% csrf-token %}
   <div class="image">
   {% if image_id %}
-    <img src="/uploads/{{image_id}}.jpg" />
+    {% image image_id %}
   {% else %}
     300<em>px</em> x <em>400px</em>
   {% endif %}
