@@ -17,6 +17,8 @@
             [noir.session :as session]
             [whitecity.util :as util]))
 
+(def user-per-page 10)
+
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
 
@@ -43,9 +45,11 @@
    (let [message (message/add! slug (user-id) (:id slug))]
      (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
 
-(defn user-view [id]
-  (let [user (user/get id) description (util/md->html (:description user))]
-    (layout/render "users/view.html" (merge user {:listings-all (listing/public-for-user id) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
+(defn user-view [id page]
+  (let [user (user/get id) 
+        description (util/md->html (:description user))
+        pagemax (mod (or (:review user) 0) user-per-page)]
+    (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
 
 (defn postage-create
   ([]
@@ -90,6 +94,6 @@
     (POST "/market/postage/create" {params :params} (postage-create params))
     (GET "/market/user/:id/report" {{id :id} :params {referer "referer"} :headers} (report-add id (user-id) "user" referer))
     (GET "/market/user/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "user" referer))
-    (GET "/market/user/:id" [id] (user-view id))
+    (GET "/market/user/:id" {{id :id page :page} :params} (user-view id page))
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
     (GET "/market/about" [] (about-page)))

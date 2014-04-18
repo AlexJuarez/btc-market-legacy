@@ -5,14 +5,23 @@
 {% else %}
 <div class="listing">
   {% if image_id %}
-    {% image image_id %}
+    <div class="image">
+      {% image image_id %}
+    </div>
   {% endif %}
   <h1>{{title}}</h1>
   <p>
     <span class="price">{{price|double-format:4}}</span>
     <a href="/market/cart/add/{{lid}}">add to cart</a>
   </p>
-  <div class="well">
+  <p>
+    {% if reported %}
+    <a href="/market/listing/{{lid}}/unreport">remove my report</a>
+    {% else %}
+    <a href="/market/listing/{{lid}}/report">report this listing</a>
+    {% endif %}
+  </p>
+  <div class="well info">
     <ul>
       <li>seller: <a href="/market/user/{{user_id}}" class="seller">{{user_alias}}</a></li>
       <li>ships from: {{from}}</li>
@@ -34,16 +43,11 @@
       {% endfor %}
     </select>
   </p>
-  <p class="well">
-  {% if reported %}
-    <a href="/market/listing/{{lid}}/unreport">remove my report</a>
-  {% else %}
-    <a href="/market/listing/{{lid}}/report">report this listing</a>
+  {% if not description|empty? %}
+    <div class="well description">
+      {{description}}
+    </div>
   {% endif %}
-  </p>
-  <div class="well description">
-    {{description}}
-  </div>
   {% if not review|empty? %}
     <table class="reviews table">
       <thead>

@@ -13,6 +13,8 @@
 
 (defn for-user [user-id]
   (select reviews
+          (with listings
+                (fields :title))
           (where {:seller_id (util/parse-int user-id)})))
 
 (defn prep [{:keys [order_id rating content shipped]} user-id order-info]

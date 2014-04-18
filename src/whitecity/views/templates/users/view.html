@@ -28,9 +28,9 @@
   </div>
   {% endif %}
   {% if not pub_key|empty? %}
-<pre class="well p">
-{{pub_key}}
-</pre>
+    <pre class="well p">
+      {{pub_key}}
+    </pre>
   {% endif %}
 {% endif %}
 {% if not listings-all|empty? %}
@@ -57,7 +57,7 @@
   </tr>
 {% endfor %}
   </tbody>
-<table>
+</table>
 {% else %}
 <div class="well">
   The user does not currently have active public listings
@@ -68,20 +68,27 @@
     <thead>
       <tr>
         <th>rating</th>
+        <th>Item</th>
         <th class="large-column">review</th>
         <th>freshness</th>
         <th>recieved</th>
-        <th>Item</th>
       </tr>
     </thead>
+    <tfoot>
+    <tr>
+      <td colspan="5">
+        {{page|pagination}}
+      </td>
+    </tr>
+    </tfoot>
     <tbody>
       {% for r in review %}
       <tr>
         <td>{{r.rating}} of 5</td>
+        <td class="item-title"><a href="/market/listing/{{r.listing_id}}">{{r.title}}</a></td>
         <td>{{r.content}}</td>
         <td data-time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
-        <td>{% if r.shipped %}received{% else %}waiting{% endif %}</td>
-        <td><a href="/market/listing/{{r.listing_id}}">item</a></td>
+        <td>{% if r.shipped %}received{% else %}no{% endif %}</td>
       </tr>
       {% endfor %}
     </tbody>
