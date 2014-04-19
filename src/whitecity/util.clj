@@ -15,6 +15,9 @@
              (org.apache.commons.codec.binary Base64)))
 
 
+(defn page-max [items per-page]
+  (+ (if (> (mod items per-page) 0) 1 0) (int (/ items per-page))))
+
 (defn read-image [id]
   (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]
     (with-open [in (io/input-stream (io/file path))]

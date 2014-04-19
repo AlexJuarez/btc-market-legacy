@@ -50,7 +50,7 @@
         page (or (util/parse-int page) 1)
         reviews (review/get id page per-page)
         revs (:reviews listing)
-        pagemax (if (> revs per-page) (mod per-page revs) 1)]
+        pagemax (util/page-max revs per-page)]
     (layout/render "listings/view.html" (merge {:review reviews :page {:page page :max pagemax :url (str "/market/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
 
 (defn listing-bookmark [id]

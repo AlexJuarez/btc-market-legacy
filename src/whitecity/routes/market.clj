@@ -35,7 +35,7 @@
         page (or (util/parse-int page) 1)
         description (util/md->html (:description user))
         listings (:listings user)
-        pagemax (if (> listings user-listings-per-page) (mod user-listings-per-page listings) 1)]
+        pagemax (util/page-max listings user-listings-per-page)]
     (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id page user-listings-per-page) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
 
 (defn postage-create
