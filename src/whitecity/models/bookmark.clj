@@ -43,7 +43,7 @@
 
 (defn all [user-id]
   (select bookmarks
-          (fields [:id :bid])
+          (fields [:id :bid] :listing_id)
           (with listings
             (fields :user_id [:category.name :category_name] :category_id :quantity :title :id :price [:user.alias :user_alias] [:user.login :user_login] :hedged)
             (with users)

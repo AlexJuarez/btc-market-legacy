@@ -20,8 +20,9 @@
 
 ;; Gets
 (defn get [id]
-  (dissoc (first (select users
-           (where {:id (util/parse-int id)}))) :salt :pass))
+  (-> (select users
+              (where {:id (util/parse-int id)}))
+    first (dissoc :salt :pass)))
 
 (defn get-dirty [id]
   (first (select users

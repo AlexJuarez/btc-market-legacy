@@ -7,15 +7,19 @@
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
-(defn get [listing-id page]
+(defn get [listing-id page per-page]
   (select reviews
-          (where {:listing_id (util/parse-int listing-id)})))
+          (where {:listing_id (util/parse-int listing-id)})
+          (order :created_on :asc)
+          (offset (* (- page 1) per-page))
+          (limit per-page)))
 
 (defn for-user [user-id]
   (select reviews
           (with listings
                 (fields :title))
-          (where {:seller_id (util/parse-int user-id)})))
+          (where {:seller_id (util/parse-int user-id)})
+          (limit 20)))
 
 (defn prep [{:keys [order_id rating content shipped]} user-id order-info]
   (if-let [order-info (order-info (util/parse-int order_id))] 

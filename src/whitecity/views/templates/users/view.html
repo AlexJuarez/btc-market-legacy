@@ -45,6 +45,13 @@
       <th>&nbsp;</th>
     </tr>
   </thead>
+  <tfoot>
+  <tr>
+    <td colspan="6">
+      {{page|pagination}}
+    </td>
+  </tr>
+  </tfoot>
   <tbody>
 {% for listing in listings-all %}
   <tr>
@@ -74,13 +81,6 @@
         <th>recieved</th>
       </tr>
     </thead>
-    <tfoot>
-    <tr>
-      <td colspan="5">
-        {{page|pagination}}
-      </td>
-    </tr>
-    </tfoot>
     <tbody>
       {% for r in review %}
       <tr>

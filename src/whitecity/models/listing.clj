@@ -124,7 +124,7 @@
              (<= :category_id lte))))))))
 
 (defn public-for-user
-  ([user-id]
+  ([user-id page per-page]
    (convert 
     (select listings
     (fields  :title :from :to :price :id :currency_id :image_id :category_id)
@@ -133,7 +133,10 @@
     (where (and 
              (= :public true)
              (>= :quantity 0)
-             (= :user_id (util/parse-int user-id))))))))
+             (= :user_id (util/parse-int user-id))))
+    (order :title :asc)
+    (offset (* (- page 1) per-page))
+    (limit per-page)))))
 
 (defn all [id]
   (select listings

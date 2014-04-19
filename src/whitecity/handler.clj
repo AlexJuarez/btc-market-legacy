@@ -1,5 +1,6 @@
 (ns whitecity.handler  
   (:use whitecity.routes.market
+        whitecity.routes.message
         whitecity.routes.auth
         whitecity.routes.sales
         whitecity.routes.account
@@ -66,6 +67,7 @@
             cart-routes
             order-routes
             listing-routes
+            message-routes
             app-routes]
            :session-options {:cookie-attrs {:http-only true
                                             :max-age (* 60 60 10)}

@@ -19,6 +19,8 @@
 
 (def user-per-page 10)
 
+(def user-listings-per-page 10)
+
 (defn home-page []
   (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
 
@@ -28,28 +30,13 @@
 (defn about-page []
   (layout/render "about.html"))
 
-(defn messages-page []
-  (layout/render "messages/index.html" (conj (set-info) {:messages (message/all (user-id))})))
-
-(defn messages-sent []
-  (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
-
-(defn message-delete [id]
-  (message/remove! id (user-id))
-  (resp/redirect "/market/messages"))
-
-(defn messages-thread
-  ([receiver-id]
-   (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
-  ([slug & options]
-   (let [message (message/add! slug (user-id) (:id slug))]
-     (layout/render "messages/thread.html" (merge (set-info) {:messages (message/all (user-id) (:id slug))} message)))))
-
 (defn user-view [id page]
   (let [user (user/get id) 
+        page (or (util/parse-int page) 1)
         description (util/md->html (:description user))
-        pagemax (mod (or (:review user) 0) user-per-page)]
-    (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
+        listings (:listings user)
+        pagemax (if (> listings user-listings-per-page) (mod user-listings-per-page listings) 1)]
+    (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id page user-listings-per-page) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
 
 (defn postage-create
   ([]
@@ -83,11 +70,6 @@
     (GET "/market/" [] (home-page))
     (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
     (GET "/market/category/:cid" [cid] (category-page cid))
-    (GET "/market/message/:id/delete" [id] (message-delete id))
-    (GET "/market/messages" [] (messages-page))
-    (GET "/market/messages/sent" [] (messages-sent))
-    (GET "/market/messages/:id" [id] (messages-thread id))
-    (POST "/market/messages/:id" {params :params} (messages-thread params true))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
     (POST "/market/postage/:id/edit" {params :params} (postage-save params))
