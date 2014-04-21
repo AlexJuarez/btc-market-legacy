@@ -21,12 +21,19 @@
 
 (def user-listings-per-page 10)
 
+(def listings-per-page 20)
+
 (defn home-page [page]
-  (let [page (or (util/parse-int page) 1)]
-  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info)))))
+  (let [page (or (util/parse-int page) 1)
+        categories (category/public 1)
+        pagemax (util/page-max (:count categories) listings-per-page)]
+    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url "/market/"} :listings (listing/public page listings-per-page) :categories categories} (set-info)))))
 
 (defn category-page [cid page]
-  (layout/render "market/index.html" (conj {:listings (listing/public cid) :categories (category/public cid)} (set-info))))
+  (let [page (or (util/parse-int page) 1)
+        categories (category/public cid)
+        pagemax (util/page-max (:count categories) listings-per-page)]
+  (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url (str "/market/category/" cid)} :listings (listing/public cid page listings-per-page) :categories categories} (set-info)))))
 
 (defn about-page []
   (layout/render "about.html"))

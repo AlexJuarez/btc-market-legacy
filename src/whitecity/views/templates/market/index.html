@@ -5,6 +5,11 @@
   {{categories|render-tree}}
 </nav>
 <div class="ls">
+<select>
+  <option>bestselling</option>
+  <option>lowest price</option>
+  <option>highest price</option>
+</select>
 {% for listing in listings %}
 <div class="listing-row">
   {% if listing.image_id %}
@@ -29,5 +34,5 @@
 {% endfor %}
 </div>
 <div class="clear-float"></div>
-<div class="pagination">{{page|pagination}}</div>
+<div class="market">{{page|pagination}}</div>
 {% endblock %}

@@ -103,13 +103,15 @@
               (conj {:errors check} listing))))))
 
 (defn public
-  ([] 
+  ([page per-page] 
    (convert (select listings
     (with users)
     (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
     (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where {:public true :quantity [>= 0]}))))
-  ([cid]
+    (where {:public true :quantity [>= 0]})
+    (offset (* (- page 1) per-page))
+    (limit per-page))))
+  ([cid page per-page]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
    (convert 
     (select listings
@@ -121,7 +123,9 @@
              (= :public true)
              (>= :quantity 0)
              (> :category_id gt)
-             (<= :category_id lte))))))))
+             (<= :category_id lte)))
+    (offset (* (- page 1) per-page))
+    (limit per-page))))))
 
 (defn public-for-user
   ([user-id page per-page]
