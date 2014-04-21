@@ -2,7 +2,7 @@
 {% block section %}
 <form action="/market/account" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
-  <div class="top form-group {% if errors.alias %}has-error{% endif %}">
+  <div class="form-group {% if errors.alias %}has-error{% endif %}">
     <label for="alias">Alias:
     {% if errors.alias %}
       {{errors.alias|join:", "}}
@@ -18,7 +18,7 @@
       {% endfor %}
     </select>
   </div>
-  <div class="form-group top public">
+  <div class="form-group public">
       <strong>2 step auth?</strong>
       <br>
       <label>

@@ -2,7 +2,10 @@
 @import "markdown";
 @import "catagories";
 @import "header";
+@import "button";
 @import "listing";
+@import "market";
+@import "footer";
 
 .clear-float {
   clear: both;
@@ -123,37 +126,8 @@ textarea {
   margin: 0;
 }
 
-.btn {
-  background: #fff;
-  display: inline-block;
-  padding: 6px 12px;
-  margin-bottom: 0;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.428;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  color: #333;
-  border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
 .right {
   float: right;
-}
-
-.btn:hover {
-  background: #ccc;
-}
-
-.container {
-  padding: 0 20px 10px 20px;
 }
 
 ul.pagination {
@@ -187,10 +161,25 @@ ul.pagination {
   max-width: 1080px;
   min-width: 640px;
   min-height: 100%;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,79,79,0.7);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102, 79, 79, 0.7);
+  height: 100%;
   margin: 0 auto;
-  background: #fff;
+  > .table {
+    width: 100%;
+    height: 100%;
+    display: table;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,79,79,0.7);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102, 79, 79, 0.7);
+    background: #fff;
+    > .row {
+      display: table-row;
+      > .cell {
+        display: table-cell;
+      }
+      > .max {
+        height: 100%;
+      }
+    }
+  }
 }
 
 .form-control, .input {
@@ -276,47 +265,49 @@ ul.pagination {
   font-weight: bold;
 }
 
-.table.normal {
-  width: inherit;
-}
+.container {
+  padding: 0 20px 10px 20px;
+  .table.normal {
+    width: inherit;
+  }
 
-.table.normal tbody td, .table.normal thead th {
-  padding: 2px 12px;
-}
+  .table.normal tbody td, .table.normal thead th {
+    padding: 2px 12px;
+  }
 
-.table {
-  border: 1px solid #e2e2e2;
-  padding: 3px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  width: 100%;
-  border-spacing: 0;
-}
+  .table {
+    border: 1px solid #e2e2e2;
+    padding: 3px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    width: 100%;
+    border-spacing: 0;
+  }
 
-.table thead th {
-  text-align: left;
-}
+  .table thead th {
+    text-align: left;
+  }
 
-.table tbody td, .table thead th {
-  padding: 2px 4px;
-}
+  .table tbody td, .table thead th {
+    padding: 2px 4px;
+  }
 
-.table .large-column {
-  width: 80%;
-  text-align: center;
-}
+  .table .large-column {
+    width: 80%;
+    text-align: center;
+  }
 
-.table tfoot td {
-  padding-top: 5px;
-}
+  .table tfoot td {
+    padding-top: 5px;
+  }
 
-.table thead tr, .table tbody tr:nth-child(even) {
-  background: #f7f7f7;
+  .table thead tr, .table tbody tr:nth-child(even) {
+    background: #f7f7f7;
+  }
 }
 
 .form-group {
-  display: table;
   content: " ";
   margin-bottom: 15px;
   width: 100%;
@@ -394,72 +385,12 @@ textarea.form-control {
   text-align: center;
 }
 
-/* ls is the main pages listings **/
-
-.ls {
-  width: 890px;
-  float: right;
-}
-
-.ls .listing-row {
-  color: #2d2d2d;
-  overflow: hidden;
-  margin-bottom: 10px;
-  background: #f7f7f7;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-}
-
 .well > *:first-child {
   margin-top: 0;
 }
 
 .well > *:last-child {
   margin-bottom: 0;
-}
-
-
-.ls .listing-row .thumbnail {
-  height: 130px;
-  width: 190px;
-  overflow: hidden;
-  float: left;
-  margin-right: 20px;
-}
-
-.ls .listing-row .thumbnail img {
-  width: 190px;
-}
-
-.ls .listing-row h1 {
-  margin: 10px 0 10px 20px;
-}
-
-.ls .listing-row ul {
-  margin-left: 20px;
-  padding: 0;
-}
-
-.ls .listing-row .sale {
-  float: right;
-  width: 190px;
-  padding-top: 46px;
-  height: 130px;
-  box-sizing:border-box;
-  text-align: center;
-  background: #eee;
-}
-
-.ls .listing-row .sale span {
-  margin-top: 30px;
-  color: #771105;
-  font-weight: bold;
-}
-
-.ls .listing-row ul {
-  list-style: none;
 }
 
 #modal > *:first-child {

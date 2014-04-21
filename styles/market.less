@@ -1,0 +1,93 @@
+/* ls is the main pages listings **/
+
+#market {
+  display: table;
+  height: 100%;
+  width: 100%;
+  .options {
+    .btn {
+      padding: 7px 16px;
+      margin-top: 0;
+      vertical-align: top;
+    }
+  }
+
+  .well {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    label {
+      input {
+        vertical-align: text-top;
+      }
+
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+  }
+
+  .categories {
+    white-space: nowrap;
+    padding-right: 30px;
+  }
+
+  .row {
+    display: table-row;
+  }
+
+  .cell {
+    display: table-cell;
+  }
+}
+
+.ls {
+  width: 100%;
+
+  .listing-row {
+    color: #2d2d2d;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+
+    .thumbnail {
+      height: 130px;
+      width: 190px;
+      overflow: hidden;
+      float: left;
+      margin-right: 20px;
+      img {
+        width: 190px;
+      }
+    }
+
+    h1 {
+      margin: 10px 0 10px 20px;
+    }
+
+    ul {
+      margin-left: 20px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .sale {
+      float: right;
+      width: 190px;
+      padding-top: 46px;
+      height: 130px;
+      box-sizing:border-box;
+      text-align: center;
+      background: #eee;
+
+      span {
+        margin-top: 30px;
+        color: #771105;
+        font-weight: bold;
+      }
+    }
+  }
+}
