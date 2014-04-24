@@ -18,6 +18,13 @@
         <th>address</th>
       </tr>
     </thead>
+    <tfoot>
+    <tr>
+      <td colspan="7">
+        {{page|pagination}}
+      </td>
+    </tr>
+    </tfoot>
     <tbody>
     {% for order in sales %}
     <tr>

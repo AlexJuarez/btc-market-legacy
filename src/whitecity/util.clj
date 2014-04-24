@@ -16,7 +16,8 @@
 
 
 (defn page-max [items per-page]
-  (+ (if (> (mod items per-page) 0) 1 0) (int (/ items per-page))))
+  (let [items (or items 0)]
+    (+ (if (> (mod items per-page) 0) 1 0) (int (/ items per-page)))))
 
 (defn read-image [id]
   (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]

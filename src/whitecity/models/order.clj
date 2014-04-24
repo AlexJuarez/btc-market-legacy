@@ -32,16 +32,20 @@
     (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))))
 
 (defn sold 
-  ([id]
+  ([id page per-page]
    (select orders
     (with users (fields :login :alias))
     (with postage (fields [:title :postage_title]))
-    (where {:seller_id id})))
- ([status id]
+    (where {:seller_id id})
+    (offset (* (- page 1) per-page))
+    (limit per-page)))
+ ([status id page per-page]
   (select orders
     (with users (fields :login :alias))
     (with postage (fields [:title :postage_title]))
-    (where {:seller_id id :status status}))))
+    (where {:seller_id id :status status})
+    (offset (* (- page 1) per-page))
+    (limit per-page))))
 
 (defn check-item [item]
   (let [id (key item)

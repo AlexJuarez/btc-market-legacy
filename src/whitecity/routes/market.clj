@@ -21,10 +21,11 @@
 
 (def user-listings-per-page 10)
 
-(defn home-page []
-  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info))))
+(defn home-page [page]
+  (let [page (or (util/parse-int page) 1)]
+  (layout/render "market/index.html" (conj {:listings (listing/public) :categories (category/public 1)} (set-info)))))
 
-(defn category-page [cid]
+(defn category-page [cid page]
   (layout/render "market/index.html" (conj {:listings (listing/public cid) :categories (category/public cid)} (set-info))))
 
 (defn about-page []
@@ -67,9 +68,9 @@
   (resp/redirect referer))
 
 (def-restricted-routes market-routes
-    (GET "/market/" [] (home-page))
+    (GET "/market/" {{page :page} :params} (home-page page))
     (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
-    (GET "/market/category/:cid" [cid] (category-page cid))
+    (GET "/market/category/:cid" {{page :page cid :cid} :params} (category-page cid page))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
     (POST "/market/postage/:id/edit" {params :params} (postage-save params))

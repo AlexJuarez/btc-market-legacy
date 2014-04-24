@@ -10,30 +10,40 @@
             [noir.response :as resp]
             [whitecity.util :as util]))
 
-(defn sales-new 
-  []
-  (let [sales (encrypt-ids (order/sold 0 (user-id)))]
-     (layout/render "sales/new.html" (merge {:status 0 :sales sales} (set-info)))))
+(def sales-per-page 50)
 
-(defn sales-overview 
-  []
-  (let [sales (encrypt-ids (order/sold (user-id)))]
-     (layout/render "sales/overview.html" (merge {:status 1 :sales sales} (set-info)))))
+(defn get-sales [k]
+  ((session! :sales (order/count-sales (user-id))) k))
+
+(defn sales [template url status page]
+  (let [page (or (util/parse-int page) 1)
+        state ([:new :ship :resolution :finalize] status) 
+        pagemax (util/page-max (get-sales state) sales-per-page)
+        sales (encrypt-ids (order/sold status (user-id) page sales-per-page))]
+     (layout/render template (merge {:sales sales :page {:page page :max pagemax :url url}} (set-info)))))
+
+(defn sales-new 
+  [page]
+  (sales "sales/new.html" "/market/sales/new" 0 page))
 
 (defn sales-shipped 
-  []
-  (let [orders (encrypt-ids (order/sold 1 (user-id)))]
-     (layout/render "sales/shipped.html" (merge {:status 2 :sales orders} (set-info)))))
+  [page]
+  (sales "sales/shipped.html" "/market/sales/shipped" 1 page))
 
 (defn sales-disputed 
-  []
-  (let [sales (encrypt-ids (order/sold 2 (user-id)))]
-     (layout/render "sales/disputed.html" (merge {:status 3 :sales sales} (set-info)))))
+  [page]
+  (sales "sales/disputed.html" "/market/sales/resolutions" 2 page))
 
 (defn sales-finailized 
-  []
-  (let [sales (encrypt-ids (order/sold 3 (user-id)))]
-     (layout/render "sales/finailized.html" (merge {:status 4 :sales sales} (set-info)))))
+  [page]
+  (sales "sales/finailized.html" "/market/sales/past" 3 page))
+
+(defn sales-overview 
+  [page]
+  (let [page (or (util/parse-int page) 1)
+        pagemax (util/page-max (get-sales :total) sales-per-page)
+        sales (encrypt-ids (order/sold (user-id) page sales-per-page))]
+     (layout/render "sales/overview.html" (merge {:sales sales :page {:page page :max pagemax :url "/market/sales"}} (set-info)))))
 
 (defn sales-view 
   ([hashid]
@@ -49,7 +59,7 @@
         (layout/render "sales/resolution.html" (merge {:errors {} :resolutions resolutions} res slug order (set-info))))))
 
 (defn sales-page
-  ([] (sales-overview))
+  ([] (sales-overview 1))
   ([{:keys [submit check] :as slug}]
    (let [sales (map #(-> % name hashids/decrypt util/parse-int) (keys check))]
      (if (= submit "accept")
@@ -57,11 +67,11 @@
        (do (order/reject-sales sales (user-id)) (resp/redirect "/market/sales"))))))
 
 (def-restricted-routes sales-routes
-    (GET "/market/sales" [] (sales-overview))
+    (GET "/market/sales" {{page :page} :params} (sales-overview page))
+    (GET "/market/sales/new" {{page :page} :params} (sales-new page))
+    (GET "/market/sales/shipped" {{page :page} :params} (sales-shipped page))
+    (GET "/market/sales/resolutions" {{page :page} :params} (sales-disputed page))
+    (GET "/market/sales/past" {{page :page} :params} (sales-finailized page))
+    (POST "/market/sales/new" {params :params} (sales-page params))
     (GET "/market/sale/:id" [id] (sales-view id))
-    (POST "/market/sale/:id" {params :params} (sales-view params true))
-    (GET "/market/sales/new" [] (sales-new))
-    (GET "/market/sales/shipped" [] (sales-shipped))
-    (GET "/market/sales/resolutions" [] (sales-disputed))
-    (GET "/market/sales/past" [] (sales-finailized))
-    (POST "/market/sales/new" {params :params} (sales-page params)))
+    (POST "/market/sale/:id" {params :params} (sales-view params true)))
