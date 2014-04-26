@@ -2,7 +2,7 @@
   whitecity
   "0.1.0-SNAPSHOT"
   :dependencies
-  [[org.clojure/clojure "1.5.1"]
+  [[org.clojure/clojure "1.6.0"]
    [lib-noir "0.8.1"];;for io and session utils
    [compojure "1.1.5"]
    [ring-server "0.3.0"]
