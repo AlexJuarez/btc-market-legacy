@@ -7,9 +7,17 @@
     {% image image_id %}
   {% else %}
     <div class="placeholder">
-      300<em>px</em> x 400<em>px</em>
+      400<em>px</em> x 300<em>px</em>
     </div>
   {% endif %}
+  </div>
+  <div class="top form-group {% if errors.title %}has-error{% endif %}">
+    <label for="title">Title:
+      {% if errors.title %}
+      {{errors.title|join:", "}}
+      {% endif %}
+    </label>
+    <input name="title" id="title" class="form-control" type="text" value="{{title}}" />
   </div>
   <div class="well top">
     <div class="form-group">
@@ -39,14 +47,7 @@
     </div>
     {% endif %}
   </div>
-  <div class="form-group {% if errors.title %}has-error{% endif %}">
-    <label for="title">Title:
-    {% if errors.title %}
-      {{errors.title|join:", "}}
-    {% endif %}
-    </label>
-    <input name="title" id="title" class="form-control" type="text" value="{{title}}" />
-  </div>
+  <div class="clear-float"></div>
   <div class="form-group public">
       <label for="public">Public?</label>
       <div> 
@@ -69,7 +70,7 @@
       {% endfor %}
     </select>
   </div>
-  <div class="form-group {% if errors.title %}has-error{% endif %}">
+  <div class="form-group{% if errors.title %} has-error{% endif %}">
     <label for="price">
     Price: 
     <input name="price" id="price" class="input" type="text" value="{{price}}" />
@@ -86,7 +87,7 @@
     {% endif %}
     </label>
   </div>
-  <div class="form-group {% if errors.quantity %}has-error{% endif %}">
+  <div class="form-group{% if errors.quantity %} has-error{% endif %}">
     <label for="quantity">Quantity:
       {% if errors.quantity %}
         {{errors.quantity|join:", "}}

@@ -7,7 +7,7 @@
     {% image image_id %}
   {% else %}
     <div class="placeholder">
-      300<em>px</em> x 400<em>px</em>
+      400<em>px</em> x 300<em>px</em>
     </div>
   {% endif %}
   </div>
@@ -18,20 +18,6 @@
     {% endif %}
     </label>
     <input name="title" id="title" class="form-control" type="text" value="{{title}}" />
-  </div>
-  <div class="form-group top public">
-      <label>Public?</label>
-      <div> 
-        <input type="checkbox" {% if public %}checked="checked"{% endif %} name="public" value="true">
-        (check for yes)
-      </div>
-  </div>
-  <div class="form-group top hedged">
-      <label>Hedged?</label>
-      <div> 
-        <input type="checkbox" name="hedged" {% if hedged %}checked="checked"{% endif %} value="true">
-        (check for yes)
-      </div>
   </div>
   <div class="top well">
     <div class="form-group">
@@ -60,6 +46,21 @@
       </div>
     </div>
     {% endif %}
+  </div>
+  <div class="clear-float"></div>
+  <div class="form-group public">
+    <label>Public?</label>
+    <div>
+      <input type="checkbox" {% if public %}checked="checked"{% endif %} name="public" value="true">
+      (check for yes)
+    </div>
+  </div>
+  <div class="form-group hedged">
+    <label>Hedged?</label>
+    <div>
+      <input type="checkbox" name="hedged" {% if hedged %}checked="checked"{% endif %} value="true">
+      (check for yes)
+    </div>
   </div>
   <div class="form-group">
     <label for="category_id">Category: </label>

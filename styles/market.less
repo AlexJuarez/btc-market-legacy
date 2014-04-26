@@ -54,13 +54,13 @@
     -moz-border-radius: 8px;
 
     .thumbnail {
-      height: 130px;
-      width: 190px;
+      height: 135px;
+      width: 180px;
       overflow: hidden;
       float: left;
       margin-right: 20px;
       img {
-        width: 190px;
+        width: 180px;
       }
     }
 
@@ -76,17 +76,21 @@
 
     .sale {
       float: right;
-      width: 190px;
-      padding-top: 46px;
-      height: 130px;
+      width: 180px;
+      display: table;
+      height: 135px;
       box-sizing:border-box;
       text-align: center;
       background: #eee;
 
+      .text {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
       span {
-        margin-top: 30px;
-        color: #771105;
-        font-weight: bold;
+        font-size: 20px;
+        color: @price;
       }
     }
   }

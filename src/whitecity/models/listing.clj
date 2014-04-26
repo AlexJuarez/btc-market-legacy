@@ -111,21 +111,30 @@
     (where {:public true :quantity [>= 0]})
     (offset (* (- page 1) per-page))
     (limit per-page))))
-  ([cid page per-page]
+  ([cid page per-page {:keys [sort_by ship_to ship_from] :as options}]
+    (println (type sort_by))
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
    (convert 
-    (select listings
-    (with users)
-    (fields  :title :user.alias :user_id :user.login :from :to :price :id :currency_id :image_id :category_id)
-    (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (with category)
-    (where (and 
-             (= :public true)
-             (>= :quantity 0)
-             (> :category_id gt)
-             (<= :category_id lte)))
-    (offset (* (- page 1) per-page))
-    (limit per-page))))))
+    (->
+      (select* listings)
+      (with users)
+      (fields :title :user.alias :user_id :user.login :from :to :price :id :currency_id :image_id :category_id)
+      (with currency (fields [:name :currency_name] [:key :currency_key]))
+      (with category)
+      (where (and 
+               (= :public true)
+               (>= :quantity 0)
+               (> :category_id gt)
+               (<= :category_id lte)))
+      (offset (* (- page 1) per-page))
+      ;;(cond
+        ;;(= sort_by "bestselling") (order :sold :desc)
+        ;;(= sort_by "lowest") (order :price :asc)
+        ;;(= sort_by "highest") (order :price :desc)
+        ;;(= sort_by "title") (order :title :asc)
+        ;;(= sort_by "newest") (order :created_on :desc))
+      (limit per-page)
+      (select))))))
 
 (defn public-for-user
   ([user-id page per-page]

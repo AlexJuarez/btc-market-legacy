@@ -1,6 +1,5 @@
 (ns whitecity.helpers.route
   (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
-            [whitecity.models.user :as users]
             [whitecity.cache :as cache]
             [whitecity.util :as util]
             [whitecity.models.user :as user]
@@ -10,11 +9,16 @@
             [whitecity.util.hashids :as hashids]
             [image-resizer.core :as resizer]
             [image-resizer.format :as format]
-            [noir.io :as io]
+            [image-resizer.fs :as fs]
+            [noir.io :as noirio]
+            [clojure.java.io :as io]
             [whitecity.models.image :as image]
             [clojure.string :as string]
             [noir.response :as resp]
-            [noir.session :as session]))
+            [noir.session :as session])
+  (:import 
+    [java.io File]
+    [javax.imageio ImageIO]))
 
 (defn convert-order-price [{:keys [price postage_price postage_currency currency_id] :as order}]
   (when order
@@ -39,7 +43,10 @@
   (report/remove! object-id user-id table)
   (resp/redirect referer))
 
-;;TODO add thumbnail parsing with imagez
+(defn save-file [buffered-file path]
+  (ImageIO/write buffered-file (fs/extension path) (File. path)))
+
+;;TODO: refactor this into the image model
 (defn parse-image [image_id image]
   (if (and (not (nil? image)) (= 0 (:size image)))
     image_id
@@ -47,10 +54,10 @@
       (let [image_id (:id (image/add! (user-id)))]
         (try
           (do
-            (io/upload-file (str (io/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
-            (format/as-file (resizer/resize-and-crop (clojure.java.io/file (str (io/resource-path) "/uploads/" image_id ".jpg")) 190 130) (str (io/resource-path) "/uploads/" image_id "_thumb.jpg"))
-            (format/as-file (resizer/resize-and-crop (clojure.java.io/file (str (io/resource-path) "/uploads/" image_id ".jpg")) 190 130) (str (io/resource-path) "/uploads/" image_id "_thumb.jpg"))
-            )
+            (noirio/upload-file (str (noirio/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
+            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "/uploads/" image_id ".jpg")) 400 300) (str (noirio/resource-path) "/uploads/" image_id "_max.jpg"))
+            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "/uploads/" image_id ".jpg")) 180 135) (str (noirio/resource-path) "/uploads/" image_id "_thumb.jpg"))
+            (io/delete-file (str (noirio/resource-path) "uploads/" image_id ".jpg")))
           (catch Exception ex
             (error ex ("File upload failed for image " image_id))))
           image_id))))
@@ -67,6 +74,7 @@
   (let [{:keys [id vendor] :as user} (session! :user (user/get (session/get :user_id)))]
     {:user 
      (merge user
+            {:conversion (util/convert-currency 1 1)}
             {:btc (util/convert-currency 1 (:btc user))}
             (when vendor {:sales (session! :sales (order/count-sales id))})
             {:cart (count (session/get :cart))

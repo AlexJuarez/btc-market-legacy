@@ -8,38 +8,42 @@
     </nav>
     <div class="ls cell">
       <div class="options">
-        <form method="post" class="well">
-          <label>
-            sort by:
-            <select name="sort">
-              <option value="bestselling">bestselling</option>
-              <option value="lowest">lowest price</option>
-              <option value="highest">highest price</option>
-              <option value="title">title</option>
-              <option value="title">highest price</option>
-            </select>
-          </label>
-          <label>
-            <input type="checkbox" name="ships-to"> ships to my region
-          </label>
-          <label>
-            <input type="checkbox" name="ships-from"> ships from my region
-          </label>
-
+        <form method="get">
+          <span class="well">
+            <label>
+              sort by:
+              <select name="sort_by">
+                <option value="bestselling">bestselling</option>
+                <option value="lowest">lowest price</option>
+                <option value="highest">highest price</option>
+                <option value="title">title</option>
+                <option value="newest">newest</option>
+              </select>
+            </label>
+            <label>
+              <input type="checkbox" name="ships_to" value="true"> ships to my region
+            </label>
+            <label>
+              <input type="checkbox" name="ships_from" value="true"> ships from my region
+            </label>
+          </span>
+          <button type="submit" class="btn">update</button>
         </form>
-        <button type="submit" class="btn">update</button>
+
       </div>
       {% for listing in listings %}
       <div class="listing-row">
         {% if listing.image_id %}
         <div class="thumbnail">
-          {% image listing.image_id %}
+          {% image-thumbnail listing.image_id %}
         </div>
         {% endif %}
         <div class="sale">
-          <span>{{listing.price|double-format:5}}</span>
-          <br />
-          <a href="/market/cart/add/{{listing.id}}">add to cart</a>
+          <div class="text">
+            <span>{{listing.price|double-format:5}}</span>
+            <br />
+            <a href="/market/cart/add/{{listing.id}}">add to cart</a>
+          </div>
         </div>
         <h1><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></h1>
         <ul>
@@ -56,5 +60,4 @@
     </div>
   </div>
 </div>
-
 {% endblock %}

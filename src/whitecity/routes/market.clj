@@ -29,11 +29,16 @@
         pagemax (util/page-max (:count categories) listings-per-page)]
     (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url "/market/"} :listings (listing/public page listings-per-page) :categories categories} (set-info)))))
 
-(defn category-page [cid page]
+(defn category-page [{:keys [cid page sort_by ship_to ship_from]}]
   (let [page (or (util/parse-int page) 1)
+        sort_options ["bestselling" "lowest" "highest" "title" "newest"]
+        sort_by (or (some #{sort_by} sort_options) "bestselling")
+        ship_to (= "true" ship_to)
+        ship_from (= "true" ship_from)
         categories (category/public cid)
+        listings (listing/public cid page listings-per-page {:sort_by sort_by :ship_to ship_to :ship_from ship_from})
         pagemax (util/page-max (:count categories) listings-per-page)]
-  (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url (str "/market/category/" cid)} :listings (listing/public cid page listings-per-page) :categories categories} (set-info)))))
+    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url (str "/market/category/" cid)} :listings listings :categories categories} (set-info)))))
 
 (defn about-page []
   (layout/render "about.html"))
@@ -77,7 +82,7 @@
 (def-restricted-routes market-routes
     (GET "/market/" {{page :page} :params} (home-page page))
     (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
-    (GET "/market/category/:cid" {{page :page cid :cid} :params} (category-page cid page))
+    (GET "/market/category/:cid" {params :params} (category-page params))
     (GET "/market/postage/create" [] (postage-create))
     (GET "/market/postage/:id/edit" [id] (postage-edit id))
     (POST "/market/postage/:id/edit" {params :params} (postage-save params))

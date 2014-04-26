@@ -25,10 +25,19 @@
 
 (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
 
+;;TODO: refactor this
 (add-tag! :image (fn [args context-map] 
                    (let [id (first (computed-args args context-map))]
                    (if img-data
-                     (let [data (str "data:image/jpeg;base64," (read-image id))]
+                     (let [data (str "data:image/jpeg;base64," (read-image (str id "_max")))]
                        (html [:img {:src data}]))
-                     (let [url (str "/uploads/" id ".jpg")]
+                     (let [url (str "/uploads/" id "_max.jpg")]
+                       (html [:img {:src url}]))))))
+
+(add-tag! :image-thumbnail (fn [args context-map] 
+                   (let [id (first (computed-args args context-map))]
+                   (if img-data
+                     (let [data (str "data:image/jpeg;base64," (read-image (str id "_thumb")))]
+                       (html [:img {:src data}]))
+                     (let [url (str "/uploads/" id "_thumb.jpg")]
                        (html [:img {:src url}]))))))

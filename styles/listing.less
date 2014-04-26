@@ -2,14 +2,23 @@
 /* listing view page */
 
 .listing {
+  .price {
+    color: @price;
+  }
+
   .image {
+    img {
+      height: 300px;
+    }
     overflow: hidden;
     width: 420px;
     height: 320px;
     padding: 10px;
     border: 1px solid #e3e3e3;
     border-radius: 8px;
-    float: right;
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
     text-align: center;
     vertical-align: middle;
   }
@@ -18,7 +27,8 @@
     margin-left: 0;
     padding-left: 0;
   }
-  .well {
+  .info {
     display: inline-block;
+    margin-bottom: 0;
   }
 }

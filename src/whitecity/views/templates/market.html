@@ -22,8 +22,8 @@
                   | <a href="/market/listings">listings <strong>{{user.listings}}</strong></a>
                   {% endif %}
                 </nav>
-                <form action="/market/search" method="POST" class="search">
-                  <input class="form-control" type="search" name="query" placeholder="Search" />
+                <form action="/market/search" method="GET" class="search">
+                  <input class="form-control" type="search" name="q" placeholder="Search" />
                   <button type="submit">GO</button>
                 </form>
               </div>
@@ -52,7 +52,7 @@
         <div class="row">
           <div class="cell">
             <footer id="footer">
-              1 BTC ~= $483.00 |
+              &#3647;1 BTC ~= {{user.conversion|double-format:4}} | <a href="/market/support">support</a> | <a href="/market/feedback">feedback</a> | <a href="/market/about">about</a>
             </footer>
           </div>
         </div>
