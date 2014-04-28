@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<form action="/market/postage/create" method="POST">
+<form method="post">
   {% csrf-token %}
   {% if errors.title %}
   <p>{{errors.title|join:", "}}</p>

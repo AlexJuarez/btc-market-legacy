@@ -21,8 +21,8 @@
 (defn prep [{:keys [title description from to public price hedged] :as listing}]
   (merge {:title title 
           :description description
-          :from from 
-          :to to 
+          :from (util/parse-int from)
+          :to (util/parse-int to) 
           :public (= public "true") 
           :hedged (= hedged "true")
           :price (util/parse-float price)

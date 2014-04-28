@@ -8,16 +8,17 @@
             [whitecity.models.currency :as currency]
             [whitecity.models.bookmark :as bookmark]
             [whitecity.models.image :as image]
+            [whitecity.models.region :as region]
             [noir.response :as resp]
             [noir.session :as session]
             [whitecity.util :as util]))
 
 (defn account-page []
-  (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info))))
+  (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info))))
 
 (defn account-update [slug]
   (let [user (user/update! (user-id) slug)]
-    (layout/render "account/index.html" (merge {:currencies (currency/all)} (set-info) user))))
+    (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
 (defn wallet-page []
   (let []

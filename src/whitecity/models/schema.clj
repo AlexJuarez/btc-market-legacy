@@ -6,11 +6,15 @@
             [whitecity.models.currency :as c]
             [whitecity.models.category :as cat]
             [whitecity.models.exchange :as e]
+            [whitecity.models.region :as region]
             [whitecity.db :as db]
             [lobos.migration :as lm]))
 
 (defcommand pending-migrations []
               (lm/pending-migrations db/db-spec sname))
+
+(defn load-regions []
+  (region/add! (jr/parse-string (slurp "resources/regions.json"))))
 
 (defn load-currencies []
   (c/add! (distinct 
@@ -20,6 +24,7 @@
 
 
 (defn load-fixtures []
+  (load-regions)
   (load-currencies)
   (e/update-from-remote)
   (cat/load-fixture))

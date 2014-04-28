@@ -11,6 +11,12 @@
                 (varchar :symbol 2))))
   (down [] (drop (table :currency))))
 
+(defmigration add-regions-table
+  (up [] (create
+           (tbl :region
+                (varchar :name 64))))
+  (down [] (drop (table :region))))
+
 (defmigration add-users-table
   (up [] (create
           (tbl :user
@@ -35,6 +41,9 @@
                (float :btc (default 0))
                (timestamp :last_login)
                (refer-to :currency)
+               (integer :region_id [:refer :region :id :on-delete :set-null] (default 1))
+               (check :login (< (length :login) 64))
+               (check :alias (< (length :alias) 64))
                (check :login (> (length :login) 2))
                (check :alias (> (length :alias) 2))
                (check :btc (>= :btc 0)))))
@@ -90,8 +99,8 @@
                 (boolean :public (default false))
                 (boolean :hedged (default false))
                 (varchar :title 100)
-                (varchar :to 100)
-                (varchar :from 100)
+                (integer :to [:refer :region :id])
+                (integer :from [:refer :region :id])
                 (refer-to :user)
                 (refer-to :image)
                 (float :price :not-null)

@@ -9,6 +9,7 @@
             [whitecity.models.category :as category]
             [whitecity.models.bookmark :as bookmark]
             [whitecity.models.review :as review]
+            [whitecity.models.region :as region]
             [whitecity.models.report :as report]
             [whitecity.models.image :as image]
             [whitecity.models.postage :as postage]
@@ -18,7 +19,7 @@
 (def per-page 10)
 
 (defn listings-page []
-  (layout/render "listings/index.html" (merge (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
+  (layout/render "listings/index.html" (conj (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
 
 (defn listing-remove [id]
   (let [record (listing/remove! id (user-id))]
@@ -29,21 +30,21 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/edit.html" (merge {:images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/edit.html" (merge {:id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
 
 (defn listing-create
   "Listing creation page" 
   ([]
-   (layout/render "listings/create.html" (conj {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info))))
+   (layout/render "listings/create.html" (conj {:regions (region/all) :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info))))
   ([{:keys [image image_id] :as slug}]
    (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
      (if (empty? (:errors listing))
       (resp/redirect (str "/market/listing/" (:id listing) "/edit"))
-      (layout/render "listings/create.html" (merge {:images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))
+      (layout/render "listings/create.html" (merge {:regions (region/all) :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)

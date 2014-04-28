@@ -62,11 +62,11 @@
 
 (defn postage-edit [id]
   (let [postage (postage/get id (user-id))]
-    (layout/render "postage/edit.html" (merge {:currencies (currency/all)} (set-info) postage))))
+    (layout/render "postage/create.html" (merge {:currencies (currency/all)} (set-info) postage))))
 
 (defn postage-save [{:keys [id] :as slug}]
   (let [post (postage/update! slug id (user-id))]
-    (layout/render "postage/edit.html" (merge {:currencies (currency/all) :id id} post (set-info)))))
+    (layout/render "postage/create.html" (merge {:currencies (currency/all) :id id} post (set-info)))))
 
 (defn postage-remove [id]
   (let [record (postage/remove! id (user-id))]

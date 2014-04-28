@@ -61,10 +61,11 @@
   (merge (when (and (not (empty? (:pub_key user))) (nil? (pgp/get-key-ring (:pub_key user)))) {:pub_key "Invalid pgp key"})
   (v/user-update-validator user)))
 
-(defn clean [{:keys [alias auth currency_id pub_key description]}]
+(defn clean [{:keys [alias region_id auth currency_id pub_key description]}]
   {:auth (= auth "true")
    :pub_key (if (empty? pub_key) nil (clojure.string/trim pub_key))
    :currency_id (util/parse-int currency_id)
+   :region_id (util/parse-int region_id)
    :description (hc/escape-html description)
    :updated_on (raw "now()")
    :alias alias})

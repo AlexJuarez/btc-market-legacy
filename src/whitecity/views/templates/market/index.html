@@ -48,10 +48,8 @@
         <h1><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></h1>
         <ul>
           <li>seller: <a href="/market/user/{{listing.user_id}}">{{listing.alias}}</a></li>
-          <li>ships from: {{listing.from|default-if-empty:"Undeclared"}}</li>
-          {% if not listing.to|empty? %}
+          <li>ships from: {{listing.from}}</li>
           <li>ships to: {{listing.to}}</li>
-          {% endif %}
         </ul>
       </div>
       {% endfor %}

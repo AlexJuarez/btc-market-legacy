@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<form action="/market/listings/create" enctype="multipart/form-data" method="POST">
+<form enctype="multipart/form-data" method="post">
   {% csrf-token %}
   <div class="image">
   {% if image_id %}
@@ -73,7 +73,7 @@
   <div class="form-group{% if errors.title %} has-error{% endif %}">
     <label for="price">
     Price: 
-    <input name="price" id="price" class="input" type="text" value="{{price}}" />
+    <input type="number" name="price" id="price" class="input" type="text" value="{{price}}" />
     <select title="currency" name="currency_id" id="currency_id">
       {% for currency in currencies %}
       <option value="{{currency.id}}" {% ifequal currency.id user.currency_id %}selected="selected"{% endifequal %}>{{currency.name}}</option>
@@ -93,15 +93,23 @@
         {{errors.quantity|join:", "}}
       {% endif %}
     </label>
-    <input class="form-control" name="quantity" value="{{quantity}}" id="quantity" />
+    <input type="number" class="form-control" name="quantity" value="{{quantity}}" id="quantity" />
   </div>
   <div class="form-group">
     <label for="ships_from">Ships from:</label>
-    <input class="form-control" name="from" value="{{from}}" id="ships_from" />
+    <select id="ships_from" name="from">
+      {% for region in regions %}
+      <option value="{{region.id}}" {% ifequal region.id from %}selected="selected"{% endifequal %}>{{region.name}}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="form-group">
     <label for="ships_to">Ships to:</label>
-    <input class="form-control" name="to" value="{{to}}" id="ships_to" />
+    <select id="ships_to" name="to">
+      {% for region in regions %}
+      <option value="{{region.id}}" {% ifequal region.id to %}selected="selected"{% endifequal %}>{{region.name}}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="form-group">
     <label for="description">Description:</label>
