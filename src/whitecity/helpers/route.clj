@@ -62,16 +62,11 @@
             (error ex ("File upload failed for image " image_id))))
           image_id))))
 
-(defmacro session! [key func]
-  `(let [value# (session/get ~key)]
-    (if (nil? value#)
-      (let [value# ~func]
-        (session/put! ~key value#)
-        value#)
-      value#)))
+(defn session! [key func]
+  (util/session! key func))
 
 (defn set-info []
-  (let [{:keys [id vendor] :as user} (session! :user (user/get (session/get :user_id)))]
+  (let [{:keys [id vendor] :as user} (util/current-user)]
     {:user 
      (merge user
             {:conversion (util/convert-currency 1 1)}

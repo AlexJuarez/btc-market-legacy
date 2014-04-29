@@ -43,10 +43,10 @@
     <td>
         {% ifequal order.status "2" %}
           <a href="/market/sale/{{order.id}}">
-            {{order.status|get-status}}
+            {{order.status|status}}
           </a>
         {% else %}
-          <em> {{order.status|get-status}}</em>
+          <em> {{order.status|status}}</em>
         {% endifequal %}
     </td>
   </tr>

@@ -31,8 +31,19 @@
    (error ex "an error has occured while creating the uuid from string")
    (.getMessage ex)))) 
 
+(defmacro session! [key func]
+  `(let [value# (session/get ~key)]
+    (if (nil? value#)
+      (let [value# ~func]
+        (session/put! ~key value#)
+        value#)
+      value#)))
+
 (defn user-id []
   (session/get :user_id ))
+
+(defn current-user []
+  (session! :user (-> (select users (where {:id (session/get :user_id)})) first (dissoc :salt :pass))))
 
 (defn convert-price [from to price]
   (if-not (= from to)

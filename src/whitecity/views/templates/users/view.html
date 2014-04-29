@@ -58,8 +58,8 @@
     <td><a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
     <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
     <td>{{listing.price|double-format:5}}</td>
-    <td>{{listing.to}}</td>
-    <td>{{listing.from}}</td>
+    <td>{{listing.to|region}}</td>
+    <td>{{listing.from|region}}</td>
     <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
   </tr>
 {% endfor %}

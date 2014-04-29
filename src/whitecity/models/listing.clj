@@ -103,17 +103,37 @@
               (conj {:errors check} listing))))))
 
 ;;TODO refactor this area
+
+(defn sortby [query page per-page {:keys [sort_by ship_to ship_from]}]
+  (let [query (-> query
+                  (offset (* (- page 1) per-page))
+                  (limit per-page))
+        query 
+        (cond 
+          (= sort_by "highest") (-> query (order :price :desc))
+          (= sort_by "lowest") (-> query (order :price :asc))
+          (= sort_by "title") (-> query (order :title :asc))
+          (= sort_by "newest") (-> query (order :created_on :desc))
+          (= sort_by "bestselling") (-> query (order :sold :desc)))
+          query (if ship_to (-> query (where {:to (:region_id (util/current-user))})) query)
+          query (if ship_from (-> query (where {:from (:region_id (util/current-user))})) query)]
+    (println (-> query as-sql))
+    (println ship_to)
+    (println ship_from)
+    query))
+    
+
 (defn public
-  ([page per-page] 
-   (convert (select listings
-    (with users)
-    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
-    (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where {:public true :quantity [>= 0]})
-    (offset (* (- page 1) per-page))
-    (limit per-page))))
-  ([cid page per-page {:keys [sort_by ship_to ship_from] :as options}]
-    (println (type sort_by))
+  ([page per-page options] 
+   (convert 
+     (let [query (-> 
+       (select* listings)
+       (with users)
+       (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
+       (with currency (fields [:name :currency_name] [:key :currency_key]))
+       (where {:public true :quantity [>= 0]}))]
+       (-> (sortby query page per-page options) select))))
+  ([cid page per-page options]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
    (convert 
     (let [query (->
@@ -126,18 +146,8 @@
                (= :public true)
                (>= :quantity 0)
                (> :category_id gt)
-               (<= :category_id lte)))
-      (offset (* (- page 1) per-page))
-      (limit per-page))
-        query 
-        (cond 
-          (= sort_by "highest") (-> query (order :price :desc))
-          (= sort_by "lowest") (-> query (order :price :asc))
-          (= sort_by "title") (-> query (order :title :asc))
-          (= sort_by "newest") (-> query (order :created_on :desc))
-          (= sort_by "bestselling") (-> query (order :sold :desc)))]
-      (-> query (select))
-      )))))
+               (<= :category_id lte))))]
+      (-> (sortby query page per-page options) select))))))
 
 (defn public-for-user
   ([user-id page per-page]

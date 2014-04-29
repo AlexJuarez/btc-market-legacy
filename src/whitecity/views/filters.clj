@@ -1,6 +1,8 @@
 (ns whitecity.views.filters
   (:require [clojure.string :as s]
             [noir.session :as session]
+            [whitecity.cache :as cache]
+            [whitecity.models.region :as regions]
             [whitecity.util :as util])
   (:use selmer.filters
         hiccup.core))
@@ -51,7 +53,12 @@
              (fn [x]
                [:safe (html [:ul (render-tree x)])]))
 
-(add-filter! :get-status
+(add-filter! :status
              (fn [x]
                (let [status ["processing" "shipping" "in resolution" "finailized"]]
                  (status x))))
+
+(add-filter! :region
+             (fn [x]
+               (let [regions (cache/cache! "regions_map" (into {} (map #(vector (:id %) (:name %)) (regions/all))))]
+                 (regions x))))

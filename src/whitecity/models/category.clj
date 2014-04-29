@@ -1,11 +1,12 @@
 (ns whitecity.models.category
   (:refer-clojure :exclude [get])
-  (:use [cheshire.core :as jr]
-        [whitecity.db]
-        [korma.core]
-        [korma.db :only (transaction)]
-        [clojure.string :only (split lower-case)])
+  (:use 
+    [whitecity.db :only [category]]
+    [korma.core]
+    [korma.db :only (transaction)]
+    [clojure.string :only (split lower-case)])
   (:require
+    [cheshire.core :as jr]
     [whitecity.cache :as cache]
     [whitecity.util :as util]))
 
@@ -13,8 +14,12 @@
   (first
     (select category (where {:id (util/parse-int id)}))))
 
-(defn all []
-  (select category (order :id :ASC)))
+(defn all 
+  ([]
+    (cache/cache! "categories"
+      (select category (order :id :ASC))))
+  ([cache?]
+    (select category (order :id :ASC))))
 
 ;;cache the tree
 
@@ -39,7 +44,7 @@
     tree))
 
 (defn public [cid]
-  (let [cats (all)]
+  (let [cats (all false)]
     (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid))))
 
 (defn add! [categories]

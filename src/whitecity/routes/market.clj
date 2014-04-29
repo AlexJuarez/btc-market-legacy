@@ -23,18 +23,23 @@
 
 (def listings-per-page 20)
 
-(defn home-page [page]
-  (let [page (or (util/parse-int page) 1)
-        categories (category/public 1)
-        pagemax (util/page-max (:count categories) listings-per-page)]
-    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url "/market/"} :listings (listing/public page listings-per-page) :categories categories} (set-info)))))
-
-(defn category-page [{:keys [cid page sort_by ship_to ship_from]}]
+(defn home-page [{:keys [cid page sort_by ships_to ships_from]}]
   (let [page (or (util/parse-int page) 1)
         sort_options ["bestselling" "lowest" "highest" "title" "newest"]
         sort_by (or (some #{sort_by} sort_options) "bestselling")
-        ship_to (= "true" ship_to)
-        ship_from (= "true" ship_from)
+        ship_to (= "true" ships_to)
+        ship_from (= "true" ships_from)
+        categories (category/public 1)
+        listings (listing/public page listings-per-page {:sort_by sort_by :ship_to ship_to :ship_from ship_from})
+        pagemax (util/page-max (:count categories) listings-per-page)]
+    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url "/market/"} :listings listings :categories categories} (set-info)))))
+
+(defn category-page [{:keys [cid page sort_by ships_to ships_from]}]
+  (let [page (or (util/parse-int page) 1)
+        sort_options ["bestselling" "lowest" "highest" "title" "newest"]
+        sort_by (or (some #{sort_by} sort_options) "bestselling")
+        ship_to (= "true" ships_to)
+        ship_from (= "true" ships_from)
         categories (category/public cid)
         listings (listing/public cid page listings-per-page {:sort_by sort_by :ship_to ship_to :ship_from ship_from})
         pagemax (util/page-max (:count categories) listings-per-page)]
@@ -80,7 +85,7 @@
   (resp/redirect referer))
 
 (def-restricted-routes market-routes
-    (GET "/market/" {{page :page} :params} (home-page page))
+    (GET "/market/" {params :params} (home-page params))
     (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
     (GET "/market/category/:cid" {params :params} (category-page params))
     (GET "/market/postage/create" [] (postage-create))
