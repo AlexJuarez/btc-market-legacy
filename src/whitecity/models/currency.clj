@@ -1,9 +1,10 @@
 (ns whitecity.models.currency
   (:refer-clojure :exclude [get find])
-  (:use [korma.db :only (defdb)]
-        [korma.core]
+  (:require 
         [whitecity.cache :as cache]
-        [whitecity.db]))
+        [korma.core :refer [where values select insert]]
+        [korma.db :refer [defdb]])
+  (:use [whitecity.db :only [currency]]))
 
 (defn get [id]
   (first

@@ -1,11 +1,12 @@
 (ns whitecity.models.exchange
   (:refer-clojure :exclude [get])
-  (:use [cheshire.core :as jr]
+  (:use 
         [whitecity.db]
         [korma.core]
         [korma.db :only (transaction)]
         [clojure.string :only (split lower-case)])
   (:require
+    [cheshire.core :as jr]
     [whitecity.cache :as cache]
     [whitecity.models.currency :as currency]
     [clj-http.client :as client]))

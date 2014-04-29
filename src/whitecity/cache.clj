@@ -36,5 +36,6 @@
                  (let [value# (get ~key)] 
                    (if (nil? value#) 
                      (let [v# (do ~@forms)] 
-                       (set ~key v#) v#) 
+                       (set ~key v#)
+                       v#) 
                      value#))))
