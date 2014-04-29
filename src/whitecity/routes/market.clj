@@ -59,6 +59,14 @@
         pagemax (util/page-max listings user-listings-per-page)]
     (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id page user-listings-per-page) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-user id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
 
+
+;;todo filters and stuff
+(defn search-page [query]
+  (let [users (user/search query)
+        listings (listing/search query)
+        categories (category/search query)]
+    (layout/render "market/search.html" (conj {:users users :listings listings :categories categories} (set-info)))))
+
 (defn postage-create
   ([]
    (layout/render "postage/create.html" (merge {:currencies (currency/all)} (set-info))))
@@ -89,6 +97,7 @@
 
 (def-restricted-routes market-routes
     (GET "/market/" {params :params} (home-page params))
+    (GET "/market/search" {{q :q} :params} (search-page q))
     (GET "/market/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (resolution-accept id referer))
     (GET "/market/category/:cid" {params :params} (category-page params))
     (GET "/market/postage/create" [] (postage-create))

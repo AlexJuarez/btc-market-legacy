@@ -28,14 +28,14 @@
 
 ;;Bcypt only looks at the first 73 characters, and saves 60 of them
 (v/defvalidator user-validator
-  [:login [:presence :login-taken :in-range {:start 3 :end 64}]]
+  [:login [:presence :login-taken :formatted {:pattern #"[A-Za-z0-9]+" :message "Only alphanumeric characters are valid"} :in-range {:start 3 :end 64}]]
   [:pass [:presence :in-range {:start 8 :end 73} :confirmation {:confirm :confirm}]])
 
 (v/defvalidator user-update-password-validator
   [:pass [:presence :in-range {:start 8 :end 73} :confirmation {:confirm :confirm}]])
 
 (v/defvalidator user-update-validator
-  [:alias [:presence :alias-taken :in-range {:start 3 :end 64}]])
+  [:alias [:presence :formatted {:pattern #"[A-Za-z0-9]+" :message "Only alphanumeric characters are valid"} :alias-taken :in-range {:start 3 :end 64}]])
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]

@@ -14,6 +14,11 @@
   (first
     (select category (where {:id (util/parse-int id)}))))
 
+(defn search [query]
+  (select category 
+          (where {:name [like query]})
+          (limit 10)))
+
 (defn all 
   ([]
     (cache/cache! "categories"

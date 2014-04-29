@@ -1,0 +1,48 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+{% if not users|empty? %}
+<table class="table normal">
+  <thead>
+  <tr>
+    <th>user</th>
+    <th>rating</th>
+    <th>last seen</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for user in users %}
+  <tr>
+    <td><a href="/market/user/{{user.id}}">{{user.alias}}</a></td>
+    <td>{{user.rating}}</td>
+    <td><span data-time="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% if not users|empty? %}
+<table class="table normal">
+  <thead>
+  <tr>
+    <th>user</th>
+    <th>rating</th>
+    <th>last seen</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for user in users %}
+  <tr>
+    <td><a href="/market/user/{{user.id}}">{{user.alias}}</a></td>
+    <td>{{user.rating}}</td>
+    <td><span data-time="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+  {{listings}}
+  <br>
+  {{categories}}
+{% endblock %}

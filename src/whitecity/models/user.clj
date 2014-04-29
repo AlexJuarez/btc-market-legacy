@@ -24,6 +24,12 @@
               (where {:id (util/parse-int id)}))
     first (dissoc :salt :pass)))
 
+(defn search [query]
+  (select users
+          (fields :alias :fans :last_login :rating :listings :id :vendor)
+          (where {:alias [like query]})
+          (limit 50)))
+
 (defn get-dirty [id]
   (first (select users
                  (where {:id (util/parse-int id)}))))

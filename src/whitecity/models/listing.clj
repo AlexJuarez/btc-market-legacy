@@ -37,6 +37,11 @@
     (first (select listings
       (where {:id (util/parse-int id) :user_id user-id})))))
 
+(defn search [query]
+  (select listings
+          (where {:public true :quantity [> 0] :title [like query]})
+          (limit 50)))
+
 (defn get-in [cart]
   (if-not (nil? cart)
   (convert (select listings
@@ -127,7 +132,7 @@
        (with users)
        (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
        (with currency (fields [:name :currency_name] [:key :currency_key]))
-       (where {:public true :quantity [>= 0]}))]
+       (where {:public true :quantity [> 0]}))]
        (-> (sortby query page per-page options) select))))
   ([cid page per-page options]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
@@ -140,7 +145,7 @@
       (with category)
       (where (and 
                (= :public true)
-               (>= :quantity 0)
+               (> :quantity 0)
                (> :category_id gt)
                (<= :category_id lte))))]
       (-> (sortby query page per-page options) select))))))
@@ -154,7 +159,7 @@
     (with currency (fields [:name :currency_name] [:key :currency_key]))
     (where (and 
              (= :public true)
-             (>= :quantity 0)
+             (> :quantity 0)
              (= :user_id (util/parse-int user-id))))
     (order :title :asc)
     (offset (* (- page 1) per-page))
