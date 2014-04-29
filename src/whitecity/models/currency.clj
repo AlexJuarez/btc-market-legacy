@@ -12,7 +12,7 @@
             (where {:id id}))))
 
 (defn all []
-  (cache/get-set :curriences (select currency)))
+  (cache/cache! "curriences" (select currency)))
 
 (defn add! [currencies]
   (insert currency (values currencies)))

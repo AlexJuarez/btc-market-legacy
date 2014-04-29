@@ -1,23 +1,25 @@
 (ns whitecity.handler  
-  (:use whitecity.routes.market
-        whitecity.routes.message
-        whitecity.routes.auth
-        whitecity.routes.sales
-        whitecity.routes.account
-        whitecity.routes.cart
-        whitecity.routes.orders
-        whitecity.routes.listings
-        whitecity.views.tags)
-  (:require [compojure.core :refer [defroutes]]            
-            [whitecity.models.schema :as schema]
-            [noir.util.middleware :as middleware]
-            [selmer.parser :refer [add-tag!]]
-            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [compojure.route :as route]
-            [taoensso.timbre :as timbre]
-            [whitecity.cache :as cache]
-            [noir.session :as session]
-            [com.postspectacular.rotor :as rotor]))
+  (:use 
+    [whitecity.routes.market :only [market-routes]]
+    [whitecity.routes.message :only [message-routes]]
+    [whitecity.routes.auth :only [auth-routes]]
+    [whitecity.routes.sales :only [sales-routes]]
+    [whitecity.routes.account :only [account-routes]]
+    [whitecity.routes.cart :only [cart-routes]]
+    [whitecity.routes.orders :only [order-routes]]
+    [whitecity.routes.listings :only [listing-routes]]
+    [whitecity.views.tags])
+  (:require 
+    [compojure.core :refer [defroutes]]            
+    [whitecity.models.schema :as schema]
+    [noir.util.middleware :as middleware]
+    [selmer.parser :refer [add-tag!]]
+    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [compojure.route :as route]
+    [taoensso.timbre :as timbre]
+    [whitecity.cache :as cache]
+    [noir.session :as session]
+    [com.postspectacular.rotor :as rotor]))
 
 (defroutes app-routes
   (route/resources "/")

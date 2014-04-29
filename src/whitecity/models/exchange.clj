@@ -23,7 +23,7 @@
         prep (map #(let [s (split (str (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response)]
     (if-not (empty? response)
       (do
-        (dorun (pmap #(cache/get-set (str (:from %) "-" (:to %)) (:value %)) prep))
+        (dorun (pmap #(cache/cache! (str (:from %) "-" (:to %)) (:value %)) prep))
         (transaction
           (delete exchange)
           (insert exchange
@@ -31,7 +31,7 @@
 
 (defn get [from to]
   (when-not (or (nil? from) (nil? to))
-    (cache/get-set (str from "-" to)
+    (cache/cache! (str from "-" to)
       (do (-> (Thread. update-from-remote) .start) 
         (:value (first (select exchange
               (where {:from from :to to}))))))))

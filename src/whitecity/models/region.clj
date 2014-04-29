@@ -12,7 +12,7 @@
     (select region
             (where {:id id}))))
 (defn all []
-  (cache/get-set :regions (select region)))
+  (cache/get-set "regions" (select region)))
 
 (defn add! [regions]
   (insert region (values regions)))

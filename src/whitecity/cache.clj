@@ -31,7 +31,7 @@
   (cache/invalidate! key)
   (c/delete ce key))
 
-(defmacro get-set [key & forms]
+(defmacro cache! [key & forms]
   `(cache/cache! ~key 
                  (let [value# (get ~key)] 
                    (if (nil? value#) 
