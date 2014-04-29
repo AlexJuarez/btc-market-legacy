@@ -163,5 +163,5 @@
 (defn all [id]
   (select listings
       (with category (fields [:name :category_name]))
-      (with currency (fields [:name :currency_name] [:key :currency_key]))
+      (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
     (where {:user_id id})))

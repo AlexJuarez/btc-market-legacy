@@ -65,7 +65,7 @@
       </p>
     </div>
     <div class="cost">
-      <h3>Price: {{listing.price}}</h3>
+      <h3>Price: {{listing.currency_symbol|safe}}{{listing.price}}</h3>
       <h4>Currency: {{listing.currency_key}}</h4>
     </div>
   </div>

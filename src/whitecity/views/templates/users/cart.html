@@ -24,18 +24,18 @@
   <tr>
     <td>{{listing.alias}}</td>
     <td>{{listing.title}}</td>
-    <td>{{listing.price|double-format:5}}</td>
+    <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
     <td><input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
-    <td>{{listing.subtotal|double-format:5}}</td>
+    <td>{{user.currency_symbol|safe}}{{listing.subtotal|double-format:5}}</td>
     <td>
       <select name="postage[{{listing.lid}}]">
         <option>select one</option>
         {% for postage in listing.postage %}
-        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{postage.price|double-format:5}}</option>
+        <option {% ifequal listing.lid|postage-cart postage.id %}selected{% endifequal %} value="{{postage.id}}">{{postage.title}} - {{user.currency_symbol|safe}}{{postage.price|double-format:5}}</option>
         {% endfor %}
       </select>
     </td>
-    <td>{{listing.total|double-format:5}}</td>
+    <td>{{user.currency_symbol|safe}}{{listing.total|double-format:5}}</td>
     <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td><a href="/market/cart/{{listing.lid}}/remove">remove</a></td>
   </tr>
@@ -46,7 +46,7 @@
   <input type="submit" name="submit" value="Update Cart" />
 </p>
 <div class="well">
-  <h1>Total: {{total|double-format:5}} {% if errors.total %}- <span class="error">{{errors.total}}</span>{% endif %}</h1>
+  <h1>Total: {{user.currency_symbol|safe}}{{total|double-format:5}} {% if errors.total %}- <span class="error">{{errors.total}}</span>{% endif %}</h1>
   <p>
     <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address}}</span> {% endif %}</label>
     <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea> 

@@ -19,8 +19,8 @@
 (defn load-currencies []
   (c/add! (distinct 
             (map 
-              #(-> {:key (second %) :name (first %)}) 
-              (jr/parse-string (slurp "resources/currencies.json") true)))))
+              #(-> {:key (second %) :name (first %) :symbol (last %)}) 
+              (jr/parse-string (slurp "resources/currencies_symbols.json") true)))))
 
 
 (defn load-fixtures []

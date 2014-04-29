@@ -8,7 +8,7 @@
            (tbl :currency
                 (varchar :key 3 :unique :not-null)
                 (varchar :name 200)
-                (varchar :symbol 2))))
+                (varchar :symbol 10))))
   (down [] (drop (table :currency))))
 
 (defmigration add-regions-table

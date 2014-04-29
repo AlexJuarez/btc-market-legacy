@@ -76,12 +76,15 @@
   (let [updates (clean slug)
         check (valid-update? updates)]
     (if (empty? check)
+      (let [user (session/get :user)]
       (do 
-        (session/put! :user (merge (session/get :user) updates))
+        (session/put! :user (merge user updates 
+                                   (if-not (= (:curreny_id updates) (:currency_id user)) 
+                                     {:currency_symbol (:symbol (currency/get (:currency_id updates)))})))
         (update users
               (set-fields updates)
               (where {:id id})))
-      {:errors check})))
+      {:errors check}))))
 
 (defn update-password! [id {:keys [pass newpass confirm]}]
   (let [user (get-dirty id)]

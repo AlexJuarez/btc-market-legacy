@@ -16,7 +16,7 @@
                 <nav class="links">
                   <a href="/market/messages">messages <strong>{{user.messages}}</strong></a>
                   | <a href="/market/orders">orders <strong>{{user.orders}}</strong></a>
-                  | <a href="/market/account/wallet">wallet &#3647;{{user.btc|double-format:4}}</strong></a>
+                  | <a href="/market/account/wallet">wallet {{user.currency_symbol|safe}}{{user.btc|double-format:4}}</strong></a>
                   {% if user.vendor %}
                   | <a href="/market/sales">sales <strong>{{user.sales.total}}</strong></a>
                   | <a href="/market/listings">listings <strong>{{user.listings}}</strong></a>
@@ -52,7 +52,7 @@
         <div class="row">
           <div class="cell">
             <footer id="footer">
-              &#3647;1 BTC ~= {{user.conversion|double-format:4}} | <a href="/market/support">support</a> | <a href="/market/feedback">feedback</a> | <a href="/market/about">about</a>
+              &#3647;1 BTC ~= {{user.currency_symbol|safe}}{{user.conversion|double-format:4}} | <a href="/market/support">support</a> | <a href="/market/feedback">feedback</a> | <a href="/market/about">about</a>
             </footer>
           </div>
         </div>

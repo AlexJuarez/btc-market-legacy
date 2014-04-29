@@ -11,7 +11,7 @@
   {% endif %}
   <h1>{{title}}</h1>
   <p>
-    <span class="price">{{price|double-format:4}}</span>
+    <span class="price">{{user.currency_symbol|safe}}{{price|double-format:4}}</span>
     <a href="/market/cart/add/{{lid}}">add to cart</a>
   </p>
   <p>
@@ -39,7 +39,7 @@
     <span>postage options: </span>
     <select id="postage">
       {% for postage in postage %}
-      <option data="{{postage}}">{{postage.title}} - {{postage.price|double-format:4}}</option>
+      <option data="{{postage}}">{{postage.title}} - {{user.currency_symbol|safe}}{{postage.price|double-format:4}}</option>
       {% endfor %}
     </select>
   </p>

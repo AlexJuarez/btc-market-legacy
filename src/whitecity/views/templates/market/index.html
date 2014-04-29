@@ -40,7 +40,7 @@
         {% endif %}
         <div class="sale">
           <div class="text">
-            <span>{{listing.price|double-format:5}}</span>
+            <span>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</span>
             <br />
             <a href="/market/cart/add/{{listing.id}}">add to cart</a>
           </div>
