@@ -14,7 +14,6 @@
              (org.apache.commons.io IOUtils)
              (org.apache.commons.codec.binary Base64)))
 
-
 (defn page-max [items per-page]
   (let [items (or items 0)]
     (+ (if (> (mod items per-page) 0) 1 0) (int (/ items per-page)))))

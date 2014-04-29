@@ -2,8 +2,7 @@
   (:refer-clojure :exclude [set get])
   (:require [clojurewerkz.spyglass.client :as c]
             [ring.middleware.session.store :as session-store]
-            [noir.util.cache :as cache]
-            [whitecity.models.currency :as curr]))
+            [noir.util.cache :as cache]))
 
 (def ^:private address "127.0.0.1:11211")
 

@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [get find])
   (:use [korma.db :only (defdb)]
         [korma.core]
+        [whitecity.cache :as cache]
         [whitecity.db]))
 
 (defn get [id]
@@ -10,7 +11,7 @@
             (where {:id id}))))
 
 (defn all []
-  (select currency))
+  (cache/get-set :curriences (select currency)))
 
 (defn add! [currencies]
   (insert currency (values currencies)))
