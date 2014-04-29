@@ -23,29 +23,30 @@
 
 (def listings-per-page 20)
 
-(defn home-page [{:keys [page sort_by ships_to ships_from]}]
-  (let [page (or (util/parse-int page) 1)
-        sort_options ["bestselling" "lowest" "highest" "title" "newest"]
-        sort_by (or (some #{sort_by} sort_options) "bestselling")
-        ship_to (= "true" ships_to)
-        ship_from (= "true" ships_from)
-        categories (category/public 1)
-        params {:sort_by sort_by :ship_to ship_to :ship_from ship_from}
-        listings (listing/public page listings-per-page params)
-        pagemax (util/page-max (:count categories) listings-per-page)]
-    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url "/market/" :params params} :listings listings :categories categories} (set-info)))))
+(def sort-options ["lowest" "highest" "title" "newest"])
 
-(defn category-page [{:keys [cid page sort_by ships_to ships_from]}]
-  (let [page (or (util/parse-int page) 1)
-        sort_options ["bestselling" "lowest" "highest" "title" "newest"]
-        sort_by (or (some #{sort_by} sort_options) "bestselling")
-        ship_to (= "true" ships_to)
-        ship_from (= "true" ships_from)
+(defn market-page [url {:keys [cid page sort_by ships_to ships_from] :as params}]
+  (let [cid (or cid 1)
         categories (category/public cid)
-        params {:sort_by sort_by :ship_to ship_to :ship_from ship_from}
-        listings (listing/public cid page listings-per-page params)
-        pagemax (util/page-max (:count categories) listings-per-page)]
-    (layout/render "market/index.html" (conj {:page {:page page :max pagemax :url (str "/market/category/" cid) :params params} :listings listings :categories categories} (set-info)))))
+        page (or (util/parse-int page) 1)
+        pagemax (util/page-max (:count categories) listings-per-page)
+        sort_by (some #{sort_by} sort-options)
+        ships_to (= "true" ships_to)
+        ships_from (= "true" ships_from)
+        params (into {} (filter (comp identity second) {:sort_by sort_by :ships_to ships_to :ships_from ships_from}))
+        listings (listing/public cid page listings-per-page params)]
+    (layout/render "market/index.html" 
+                   (conj {:page {:page page :max pagemax :url url :params params} 
+                          :listings listings 
+                          :categories {:tree categories :params params}} 
+                         params 
+                         (set-info)))))
+
+(defn home-page [params]
+  (market-page "/market/" params))
+
+(defn category-page [params]
+  (market-page (str "/market/category/" (:cid params)) params))
 
 (defn about-page []
   (layout/render "about.html"))

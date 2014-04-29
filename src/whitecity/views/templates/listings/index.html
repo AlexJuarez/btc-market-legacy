@@ -57,9 +57,9 @@
           {% endif %}
         </span>
         <br />
-        <span class="ships-from">ships from: {{listing.from}}</span>
+        <span class="ships-from">ships from: {{listing.from|region}}</span>
         <br />
-        <span class="ships-to">ships to: {{listing.to}}</span>
+        <span class="ships-to">ships to: {{listing.to|region}}</span>
         <br />
         <span class="category">Category: <a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
       </p>

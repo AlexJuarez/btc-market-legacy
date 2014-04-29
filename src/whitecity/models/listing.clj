@@ -104,7 +104,7 @@
 
 ;;TODO refactor this area
 
-(defn sortby [query page per-page {:keys [sort_by ship_to ship_from]}]
+(defn sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
   (let [query (-> query
                   (offset (* (- page 1) per-page))
                   (limit per-page))
@@ -114,14 +114,10 @@
           (= sort_by "lowest") (-> query (order :price :asc))
           (= sort_by "title") (-> query (order :title :asc))
           (= sort_by "newest") (-> query (order :created_on :desc))
-          (= sort_by "bestselling") (-> query (order :sold :desc)))
-          query (if ship_to (-> query (where {:to (:region_id (util/current-user))})) query)
-          query (if ship_from (-> query (where {:from (:region_id (util/current-user))})) query)]
-    (println (-> query as-sql))
-    (println ship_to)
-    (println ship_from)
+          :else (-> query (order :sold :desc)))
+          query (if ships_to (-> query (where {:to (:region_id (util/current-user))})) query)
+          query (if ships_from (-> query (where {:from (:region_id (util/current-user))})) query)]
     query))
-    
 
 (defn public
   ([page per-page options] 
