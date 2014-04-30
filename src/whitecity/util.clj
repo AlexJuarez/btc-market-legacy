@@ -23,6 +23,9 @@
     (with-open [in (io/input-stream (io/file path))]
       (.toString (Base64/encodeBase64String (IOUtils/toByteArray in))))))
 
+(defn params [params]
+  (s/join "&amp;" (map #(str (name (key %)) "=" (val %)) params)))
+
 (defn create-uuid [string]
  "creates a uuid from a string"
  (try

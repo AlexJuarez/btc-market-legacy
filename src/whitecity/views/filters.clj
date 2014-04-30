@@ -30,13 +30,14 @@
              (fn [x]
                (let [page (if (nil? (:page x)) 1 (util/parse-int (:page x)))
                      m (:max x)
+                     params (or (:params x) {})
                      pages (paginate page m)
                      url (:url x)]
                  [:safe (html 
                    [:ul.pagination
-                    [:li [:a {:href (str url "?page=1")} "&laquo;"]]
-                    (map #(-> [:li (if (= page %) [:strong.selected %] [:a {:href (str url "?page=" %)} %])]) pages)
-                    [:li [:a {:href (str url "?page=" m)} "&raquo;"]]
+                    [:li [:a {:href (str url "?" (util/params (assoc params :page 1)))} "&laquo;"]]
+                    (map #(-> [:li (if (= page %) [:strong.selected %] [:a {:href (str url "?" (util/params (assoc params :page %)))} %])]) pages)
+                    [:li [:a {:href (str url "?" (util/params (assoc params :page m)))} "&raquo;"]]
                     ])])))
                     ;;[:li [:a {:href (str url "?page=")} ]]]))))
 

@@ -14,7 +14,7 @@
             [whitecity.util :as util]))
 
 (defn account-page []
-  (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info))))
+  (layout/render "account/index.html" (conj {:regions (region/all) :currencies (currency/all)} (set-info))))
 
 (defn account-update [slug]
   (let [user (user/update! (user-id) slug)]
