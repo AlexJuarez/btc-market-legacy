@@ -23,7 +23,7 @@
                   {% endif %}
                 </nav>
                 <form action="/market/search" method="GET" class="search">
-                  <input class="form-control" type="search" name="q" placeholder="Search" />
+                  <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
                   <button type="submit">GO</button>
                 </form>
               </div>

@@ -1,6 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 {% if not users|empty? %}
+<h3>Users</h3>
 <table class="table normal">
   <thead>
   <tr>
@@ -21,28 +22,39 @@
   </tbody>
 </table>
 {% endif %}
-{% if not users|empty? %}
+{% if not categories|empty? %}
+    <h3>Categories</h3>
+    <ul>
+      {% for category in categories %}
+      <li><a href="/market/category/{{category.id}}">{{category.name}}</a></li>
+      {% endfor %}
+    </ul>
+{% endif %}
+{% if not listings|empty? %}
+<h3>Listings</h3>
 <table class="table normal">
   <thead>
   <tr>
-    <th>user</th>
-    <th>rating</th>
-    <th>last seen</th>
+    <th>item</th>
+    <th>category</th>
+    <th>price</th>
+    <th>ships to:</th>
+    <th>ships from:</th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
-  {% for user in users %}
-  <tr>
-    <td><a href="/market/user/{{user.id}}">{{user.alias}}</a></td>
-    <td>{{user.rating}}</td>
-    <td><span data-time="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
-    </td>
-  </tr>
+  {% for listing in listings %}
+    <tr>
+      <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
+      <td><a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
+      <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
+      <td>{{listing.to|region}}</td>
+      <td>{{listing.from|region}}</td>
+      <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
+    </tr>
   {% endfor %}
   </tbody>
 </table>
 {% endif %}
-  {{listings}}
-  <br>
-  {{categories}}
 {% endblock %}

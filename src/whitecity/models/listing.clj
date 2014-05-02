@@ -40,6 +40,7 @@
 (defn search [query]
   (select listings
           (where {:public true :quantity [> 0] :title [like query]})
+          (with category (fields [:name :category_name]))
           (limit 50)))
 
 (defn get-in [cart]
@@ -92,6 +93,7 @@
       (store! listing user-id)
       (conj {:errors check} listing))))
 
+;;TODO make the category count quantity dependent
 (defn update! [listing id user-id]
   (let [check (v/listing-validator listing)]
       (if (empty? check)

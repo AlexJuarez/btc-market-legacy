@@ -65,7 +65,7 @@
   (let [users (user/search query)
         listings (listing/search query)
         categories (category/search query)]
-    (layout/render "market/search.html" (conj {:users users :listings listings :categories categories} (set-info)))))
+    (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query} (set-info)))))
 
 (defn postage-create
   ([]
