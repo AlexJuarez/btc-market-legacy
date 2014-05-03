@@ -3,7 +3,7 @@
             [ring.middleware.reload :as reload]
             [org.httpkit.server :as http-kit]
             [taoensso.timbre :as timbre])
-    (:gen-class))
+    (:gen-class :main true))
 
 (defn dev? [args] (some #{"-dev"} args))
 
