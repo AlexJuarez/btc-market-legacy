@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [get])
   (:import (org.apache.commons.codec.binary Base64))
   (:use [whitecity.db]
+        [whitecity.models.predicates]
         [korma.db :only (transaction)]
         [korma.core])
   (:require 
@@ -27,7 +28,7 @@
 (defn search [query]
   (select users
           (fields :alias :fans :last_login :rating :listings :id :vendor)
-          (where {:alias [like query]})
+          (where {:alias [ilike query]})
           (limit 50)))
 
 (defn get-dirty [id]

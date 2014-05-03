@@ -1,6 +1,7 @@
 (ns whitecity.models.listing
   (:refer-clojure :exclude [get get-in count])
   (:use [korma.db :only (transaction)]
+        [whitecity.models.predicates]
         [korma.core]
         [whitecity.db])
   (:require 
@@ -39,7 +40,7 @@
 
 (defn search [query]
   (select listings
-          (where {:public true :quantity [> 0] :title [like query]})
+          (where {:public true :quantity [> 0] :title [ilike query]})
           (with category (fields [:name :category_name]))
           (limit 50)))
 

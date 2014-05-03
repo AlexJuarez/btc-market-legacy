@@ -1,7 +1,8 @@
 (ns whitecity.routes.market
-  (:use compojure.core
-        noir.util.route
-        whitecity.helpers.route)
+  (:use 
+    [compojure.core :only [GET POST]]
+    [noir.util.route :only (def-restricted-routes)]
+    [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
             [whitecity.models.message :as message]
@@ -62,9 +63,10 @@
 
 ;;todo filters and stuff
 (defn search-page [query]
-  (let [users (user/search query)
-        listings (listing/search query)
-        categories (category/search query)]
+  (let [q (str "%" query "%")
+        users (user/search q)
+        listings (listing/search q)
+        categories (category/search q)]
     (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query} (set-info)))))
 
 (defn postage-create

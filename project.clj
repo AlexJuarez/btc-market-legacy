@@ -5,6 +5,7 @@
   [[org.clojure/clojure "1.6.0"]
    [lib-noir "0.8.1"];;for io and session utils
    [compojure "1.1.5"]
+   [ring-server "0.3.0"]
    [selmer "0.5.9"];;templating engine
    [image-resizer "0.1.6"]
    [com.taoensso/timbre "3.1.4"];;logging
@@ -15,10 +16,9 @@
    [hashids "0.1.0"];;for anon hashing
    [clj-http "0.7.8"];;for reading bitcoins prices from coinbase.com
    [net.sf.jlue/jlue-core "1.3"];;why?
-   ;;[org.clojure/java.jdbc "0.2.3"];;dependency for korma
+   [org.clojure/java.jdbc "0.2.3"];;dependency for korma
    [postgresql/postgresql "9.1-901.jdbc4"]
    [ring-anti-forgery "0.3.0"]
-   [ring-server "0.3.0"]
    [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
    [korma "0.3.0-beta11"];;dbl

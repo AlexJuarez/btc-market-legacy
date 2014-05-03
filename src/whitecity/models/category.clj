@@ -3,6 +3,7 @@
   (:use 
     [whitecity.db :only [category]]
     [korma.core]
+    [whitecity.models.predicates]
     [korma.db :only (transaction)]
     [clojure.string :only (split lower-case)])
   (:require
@@ -16,7 +17,7 @@
 
 (defn search [query]
   (select category 
-          (where {:name [like query]})
+          (where {:name [ilike query]})
           (limit 10)))
 
 (defn all 

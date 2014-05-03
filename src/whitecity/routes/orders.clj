@@ -1,7 +1,8 @@
 (ns whitecity.routes.orders
-  (:use compojure.core
-        noir.util.route
-        whitecity.helpers.route)
+  (:use 
+    [compojure.core :only [GET POST]]
+    [noir.util.route :only (def-restricted-routes)]
+    [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.order :as order]
             [whitecity.models.review :as review]

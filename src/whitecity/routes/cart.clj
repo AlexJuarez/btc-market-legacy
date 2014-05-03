@@ -1,7 +1,8 @@
 (ns whitecity.routes.cart
-  (:use compojure.core
-        noir.util.route
-        whitecity.helpers.route)
+  (:use 
+    [compojure.core :only [GET POST]]
+    [noir.util.route :only (def-restricted-routes)]
+    [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.postage :as postage]
             [whitecity.models.listing :as listing]
