@@ -5,7 +5,6 @@
   [[org.clojure/clojure "1.6.0"]
    [lib-noir "0.8.1"];;for io and session utils
    [compojure "1.1.5"]
-   [ring-server "0.3.0"]
    [selmer "0.5.9"];;templating engine
    [image-resizer "0.1.6"]
    [com.taoensso/timbre "3.1.4"];;logging
@@ -19,6 +18,7 @@
    ;;[org.clojure/java.jdbc "0.3.3"];;dependency for korma
    [postgresql/postgresql "9.1-901.jdbc4"]
    [ring-anti-forgery "0.3.0"]
+   [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
    [korma "0.3.0-RC6"];;dbl
    [lobos "1.0.0-beta1"] 
@@ -30,6 +30,8 @@
      javax.jms/jms
      com.sun.jdmk/jmxtools
      com.sun.jmx/jmxri]]]
+  :main whitecity.core
+  :aot :all
   :ring
   {:handler whitecity.handler/app,
    :init whitecity.handler/init,

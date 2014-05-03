@@ -12,18 +12,19 @@
     [clj-http.client :as client]))
 
 (defn update-from-remote []
-  (let [response (jr/parse-string (slurp "resources/exchange_rates.json"))
-              ;;(:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates" 
-              ;;{:conn-timeout 1000
-              ;; :content-type :json
-              ;; :follow-redirects false
-              ;; :as :json
-              ;; :accept :json}))
+  (let [response ;;(jr/parse-string (slurp "resources/exchange_rates.json"))
+              (:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates" 
+              {:conn-timeout 1000
+               :content-type :json
+               :follow-redirects false
+               :as :json
+               :accept :json}))
         currencies (apply merge (map #(assoc {} (lower-case (:key %)) (:id %)) (currency/all)))
-        prep (map #(let [s (split (str (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response)]
+        prep (filter #(not (or (nil? (:from %)) (nil? (:to %)))) (map #(let [s (split (name (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response))]
+    (println response)
     (if-not (empty? response)
       (do
-        (dorun (pmap #(cache/cache! (str (:from %) "-" (:to %)) (:value %)) prep))
+        (dorun (pmap #(cache/set (str (:from %) "-" (:to %)) (:value %)) prep))
         (transaction
           (delete exchange)
           (insert exchange
@@ -31,7 +32,7 @@
 
 (defn get [from to]
   (when-not (or (nil? from) (nil? to))
-    (cache/cache! (str from "-" to)
-      (do (-> (Thread. update-from-remote) .start) 
-        (:value (first (select exchange
-              (where {:from from :to to}))))))))
+    (do ;;(-> (Thread. update-from-remote) .start) 
+      (cache/cache! (str from "-" to)
+          (:value (first (select exchange
+                (where {:from from :to to}))))))))

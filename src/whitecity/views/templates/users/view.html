@@ -10,7 +10,10 @@
   <br />
   was last seen: <strong class="pretty-time" data-time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
   <br />
-  ranked in the top % of sellers with {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
+  {% if ranking %}
+  ranked in the top % of sellers with
+  {% endif %}
+  {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
   has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
 </p>
