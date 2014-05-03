@@ -60,11 +60,13 @@
   "converts a currency_id to the users preferred currency
    takes a currency_id and price"
   ([{:keys [currency_id price]}]
-    (let [user_currency (:currency_id (session/get :user))]
-      (convert-price currency_id user_currency price)))
+   (convert-currency currency_id price))
   ([currency_id price]
-    (let [user_currency (:currency_id (session/get :user))]
-      (convert-price currency_id user_currency price))))
+    (let [user_currency (:currency_id (session/get :user))
+          currencies [1 26]]
+      (if (or (some #(= user_currency %) currencies) (some #(= currency_id %) currencies))
+        (convert-price currency_id user_currency price)
+        (convert-price 1 user_currency (convert-price currency_id 1 price))))))
 
 (defn parse-int [s]
   (if (string? s)

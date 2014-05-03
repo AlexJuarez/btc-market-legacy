@@ -39,10 +39,10 @@
       (where {:id (util/parse-int id) :user_id user-id})))))
 
 (defn search [query]
-  (select listings
+  (convert (select listings
           (where {:public true :quantity [> 0] :title [ilike query]})
           (with category (fields [:name :category_name]))
-          (limit 50)))
+          (limit 50))))
 
 (defn get-in [cart]
   (if-not (nil? cart)
