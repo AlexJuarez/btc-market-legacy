@@ -1,19 +1,21 @@
 (defproject
   whitecity
   "0.1.0-SNAPSHOT"
+  :repl-options
+  {:init-ns whitecity.repl}
   :dependencies
   [[org.clojure/clojure "1.6.0"]
-   [lib-noir "0.8.1"];;for io and session utils
-   [compojure "1.1.5"]
+   [lib-noir "0.8.2"];;for io and session utils
+   [compojure "1.1.6"]
    [ring-server "0.3.1"]
-   [selmer "0.5.9"];;templating engine
+   [selmer "0.6.6"];;templating engine
    [image-resizer "0.1.6"]
    [com.taoensso/timbre "3.1.4"];;logging
    [com.postspectacular/rotor "0.1.0"];;loggin
    [clojurewerkz/spyglass "1.1.0"];;couchbase interface
    [environ "0.4.0"]
    [com.taoensso/tower "2.0.2"];;localization lib
-   [markdown-clj "0.9.41"];;markdown parser
+   [markdown-clj "0.9.43"];;markdown parser
    [hashids "0.1.0"];;for anon hashing
    [clj-http "0.7.8"];;for reading bitcoins prices from coinbase.com
    [net.sf.jlue/jlue-core "1.3"];;why?
@@ -23,7 +25,7 @@
    [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
    [korma "0.3.0-beta11"];;dbl
-   [lobos "1.0.0-beta1"] 
+   [lobos "1.0.0-beta1"]
    [org.bouncycastle/bcpg-jdk15on "1.50"]
    [log4j
     "1.2.17"
@@ -45,7 +47,7 @@
     {:open-browser? false, :stacktraces? false, :auto-reload? false}},
    :dev
    {:dependencies [[ring-mock "0.1.5"] [ring/ring-devel "1.2.0"]]
-    :env {:selmer-dev true}}}
+    :env {:dev true}}}
   :url
   "http://example.com/FIXME"
   :plugins

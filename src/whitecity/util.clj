@@ -9,8 +9,11 @@
               [noir.io :as noirio]
               [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
-              [markdown.core :as md])
+              [markdown.core :as md]
+              [markdown.transformers :as mdts])
     (:import net.sf.jlue.util.Captcha
+             javax.imageio.ImageIO
+             (java.io ByteArrayInputStream ByteArrayOutputStream)
              (org.apache.commons.io IOUtils)
              (org.apache.commons.codec.binary Base64)))
 
@@ -18,10 +21,13 @@
   (let [items (or items 0)]
     (+ (if (> (mod items per-page) 0) 1 0) (int (/ items per-page)))))
 
+(defn bytes-to-base64 [bytes]
+  (.toString (Base64/encodeBase64String bytes)))
+
 (defn read-image [id]
   (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]
     (with-open [in (io/input-stream (io/file path))]
-      (.toString (Base64/encodeBase64String (IOUtils/toByteArray in))))))
+      (bytes-to-base64  (IOUtils/toByteArray in)))))
 
 (defn params [params]
   (s/join "&" (map #(str (name (key %)) "=" (val %)) params)))
@@ -32,7 +38,7 @@
   (java.util.UUID/fromString string)
   (catch Exception ex
    (error ex "an error has occured while creating the uuid from string")
-   (.getMessage ex)))) 
+   (.getMessage ex))))
 
 (defmacro session! [key func]
   `(let [value# (session/get ~key)]
@@ -51,12 +57,12 @@
 (defn convert-price [from to price]
   (if-not (= from to)
     (let [rate (exchange/get from to)]
-         (if-not (nil? rate) 
+         (if-not (nil? rate)
            (* price rate)
            price))
     price))
 
-(defn convert-currency 
+(defn convert-currency
   "converts a currency_id to the users preferred currency
    takes a currency_id and price"
   ([{:keys [currency_id price]}]
@@ -82,11 +88,11 @@
         (Float. f)))
     s))
 
-(defmacro update-session 
+(defmacro update-session
   [user-id & terms]
     `(let [id# (parse-int ~user-id)
            user-id# (session/get :user_id)]
-      (if (= id# user-id#) 
+      (if (= id# user-id#)
         (doall (map session/remove! (list :user ~@terms)))
         (let [user# (first (select users (fields :session) (where {:id id#})))]
           (when (:session user#)
@@ -94,7 +100,7 @@
                   sess# (cache/get session#)
                   ttl# (* 60 60 10)]
               (if (not (nil? sess#))
-                (cache/set session# 
+                (cache/set session#
                            (assoc sess# :noir (dissoc (:noir sess#) ~@terms :user)) ttl#))))))))
 
 (defn format-time
@@ -106,17 +112,26 @@
 
 ;;Probably not needed
 
-;;TODO: sanitize links out of md->core
 (defn md->html
     "reads a markdown string and returns the html"
     [string]
-    (->> string     
-         (md/md-to-html-string)))
+  (md/md-to-html-string string :replacement-transformers [mdts/empty-line
+                                                          mdts/hr mdts/li
+                                                          mdts/heading mdts/italics
+                                                          mdts/em mdts/strong
+                                                          mdts/bold mdts/strikethrough
+                                                          mdts/superscript mdts/blockquote
+                                                          mdts/paragraph
+                                                          mdts/br]))
 
 (defn gen-captcha-text []
     (->> #(rand-int 26) (repeatedly 6) (map (partial + 97)) (map char) (apply str)))
 
 (defn gen-captcha []
     (let [text (gen-captcha-text)
-                  captcha (doto (new Captcha))]
-          (session/put! :captcha {:text text :image (.gen captcha text 250 40)})))
+          captcha (doto (new Captcha))]
+      (session/put! :captcha {:text text})
+      (with-open [out (new ByteArrayOutputStream)]
+        (ImageIO/write (.gen captcha text 218 28) "jpeg" out)
+        (.flush out)
+        (bytes-to-base64 (.toByteArray out)))))

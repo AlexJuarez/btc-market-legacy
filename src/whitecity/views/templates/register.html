@@ -14,6 +14,14 @@
         {{errors.pass|join:", "}}
       {% endif %}
       <input placeholder="Confirm Password" class="text-input" id="confirm" name="confirm" type="password" />
+
+      <p>
+         {% if errors.captcha %}
+           {{errors.captcha|join:", "}}
+         {% endif %}
+         <img src="data:image/jpeg;base64,{{captcha|safe}}" />
+         <input placeholder="captcha" class="text-input" id="captcha" name="captcha" type="text" />
+      </p>
     </p>
     <input type="submit" class="btn" value="Register" />
   </form>
