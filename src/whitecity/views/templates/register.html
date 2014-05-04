@@ -4,25 +4,28 @@
   <h2>Register</h2>
   <form action="/register" method="POST">
     {% csrf-token %}
-    <p>
+    <div class="p">
+      <div{% if errors.login %} class="has-error"{% endif %}>
       <input placeholder="Username" class="text-input" id="login" name="login" type="text" value="{{login}}" />
       {% if errors.login %}
         {{errors.login|join:", "}}
       {% endif %}
+      </div>
+      <div{% if errors.pass %} class="has-error"{% endif %}>
       <input placeholder="Password" class="text-input" id="pass" name="pass" type="password" />
-      {% if errors.pass %}
-        {{errors.pass|join:", "}}
-      {% endif %}
+        {% if errors.pass %}
+          {{errors.pass|join:", "}}
+        {% endif %}
       <input placeholder="Confirm Password" class="text-input" id="confirm" name="confirm" type="password" />
-
-      <p>
-         {% if errors.captcha %}
-           {{errors.captcha|join:", "}}
-         {% endif %}
-         <img src="data:image/jpeg;base64,{{captcha|safe}}" />
-         <input placeholder="captcha" class="text-input" id="captcha" name="captcha" type="text" />
-      </p>
-    </p>
+      </div>
+    </div>
+    <div class="p{% if errors.captcha %} has-error{% endif %}">
+       {% if errors.captcha %}
+         {{errors.captcha|join:", "}}
+       {% endif %}
+       <img class="captcha" src="data:image/jpeg;base64,{{captcha|safe}}" />
+       <input placeholder="captcha" class="text-input" id="captcha" name="captcha" type="text" />
+    </div>
     <input type="submit" class="btn" value="Register" />
   </form>
   <a href="/">login</a>
