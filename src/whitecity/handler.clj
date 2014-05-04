@@ -13,7 +13,7 @@
     [compojure.core :refer [defroutes]]            
     [whitecity.models.schema :as schema]
     [noir.util.middleware :as middleware]
-    [selmer.parser :refer [add-tag!]]
+    [selmer.parser :refer [cache-off!]]
     [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [compojure.route :as route]
     [taoensso.timbre :as timbre]
@@ -47,6 +47,8 @@
   (timbre/set-config!
     [:shared-appender-config :rotor]
     {:path "whitecity.log" :max-size (* 512 1024) :backlog 10})
+
+  (if (env :selmer-dev) (cache-off!))
   
   (if-not (schema/actualized?)
     (do (schema/actualize) (schema/load-fixtures)))
