@@ -1,5 +1,7 @@
 (ns whitecity.helpers.route
   (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
+            [taoensso.timbre.profiling :as profiling
+            :refer (profile p)]
             [whitecity.cache :as cache]
             [whitecity.util :as util]
             [whitecity.models.user :as user]
@@ -16,13 +18,13 @@
             [clojure.string :as string]
             [noir.response :as resp]
             [noir.session :as session])
-  (:import 
+  (:import
     [java.io File]
     [javax.imageio ImageIO]))
 
 (defn convert-order-price [{:keys [price postage_price postage_currency currency_id] :as order}]
   (when order
-    (-> order (assoc :price (util/convert-currency order) 
+    (-> order (assoc :price (util/convert-currency order)
                      :postage_price (util/convert-currency postage_currency postage_price)))))
 
 (defn encrypt-id [m]
@@ -62,16 +64,14 @@
             (error ex ("File upload failed for image " image_id))))
           image_id))))
 
-(defn session! [key func]
-  (util/session! key func))
-
 (defn set-info []
-  (let [{:keys [id vendor] :as user} (util/current-user)]
-    {:user 
+  (profile :info :set-info
+  (let [{:keys [id vendor] :as user} (p :current-user (util/current-user))]
+    {:user
      (merge user
             {:conversion (util/convert-currency 1 1)}
             {:btc (util/convert-currency 1 (:btc user))}
-            (when vendor {:sales (session! :sales (order/count-sales id))})
-            {:cart (count (session/get :cart))
-             :orders (session! :orders (order/count id))
-             :messages (session! :messages (message/count id))})}))
+            (when vendor {:sales (p :sales (util/session! :sales (order/count-sales id)))})
+            {:cart (p :cart (count (session/get :cart)))
+             :orders (p :orders (util/session! :orders (order/count id)))
+             :messages (p :messages (util/session! :messages (message/count id)))})})))

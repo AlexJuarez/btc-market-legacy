@@ -7,7 +7,12 @@
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
-(defn get [listing-id page per-page]
+(defn get [id user-id]
+  (first (select reviews
+          (with listings (fields :title))
+          (where {:id (util/parse-int id) :user_id user-id}))))
+
+(defn all [listing-id page per-page]
   (select reviews
           (where {:listing_id (util/parse-int listing-id)})
           (order :created_on :asc)
@@ -39,6 +44,14 @@
      :content content
      :shipped (= "true" shipped)
      :user_id user-id}))
+
+(defn update! [id {:keys [rating shipped content]} user_id]
+  (let [id (util/parse-int id)
+        rating (max 0 (min 5 (util/parse-int rating)))
+        shipped (= "true" shipped)]
+    (update reviews
+            (set-fields {:rating rating :shipped shipped :content content})
+            (where {:id id :user_id user_id}))))
 
 (defn store! [{:keys [order_id seller_id listing_id rating user_id] :as review}]
       (transaction

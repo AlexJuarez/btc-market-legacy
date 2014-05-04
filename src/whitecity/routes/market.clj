@@ -1,5 +1,5 @@
 (ns whitecity.routes.market
-  (:use 
+  (:use
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
@@ -36,11 +36,11 @@
         ships_from (= "true" ships_from)
         params (into {} (filter (comp identity second) {:sort_by sort_by :ships_to ships_to :ships_from ships_from}))
         listings (listing/public cid page listings-per-page params)]
-    (layout/render "market/index.html" 
-                   (conj {:page {:page page :max pagemax :url url :params params} 
-                          :listings listings 
-                          :categories {:tree categories :params params}} 
-                         params 
+    (layout/render "market/index.html"
+                   (conj {:page {:page page :max pagemax :url url :params params}
+                          :listings listings
+                          :categories {:tree categories :params params}}
+                         params
                          (set-info)))))
 
 (defn home-page [params]
@@ -53,7 +53,7 @@
   (layout/render "about.html"))
 
 (defn user-view [id page]
-  (let [user (user/get id) 
+  (let [user (user/get id)
         page (or (util/parse-int page) 1)
         description (util/md->html (:description user))
         listings (:listings user)

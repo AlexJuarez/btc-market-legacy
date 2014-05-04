@@ -1,5 +1,8 @@
 {% extends "whitecity/views/templates/account/account.html" %}
 {% block section %}
+{% if success %}
+  <div class="success">{{success}}</div>
+{% endif %}
 {% if not reviews|empty? %}
 <h3>reviews</h3>
 <table class="table normal p">
@@ -13,6 +16,13 @@
       <th></th>
     </tr>
   </thead>
+  <tfoot>
+  <tr>
+    <td colspan="7">
+      {{page|pagination}}
+    </td>
+  </tr>
+  </tfoot>
   <tbody>
   {% for review in reviews %}
     <tr>

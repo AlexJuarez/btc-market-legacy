@@ -14,7 +14,7 @@
 (def sales-per-page 50)
 
 (defn get-sales [k]
-  ((session! :sales (order/count-sales (user-id))) k))
+  ((util/session! :sales (order/count-sales (user-id))) k))
 
 (defn sales [template url status page]
   (let [page (or (util/parse-int page) 1)

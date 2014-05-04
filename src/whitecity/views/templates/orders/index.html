@@ -2,7 +2,7 @@
 {% block content %}
 <h1 class="jumbo">my orders</h1>
 {% if not pending-review|empty? %}
-<form action="/market/orders" method="POST">
+<form method="post">
   {% csrf-token %}
   <table class="table">
     <thead>
@@ -22,7 +22,7 @@
           <label><input type="radio" name="rating[{{order.id}}]" value="2" /> 2</label>
           <label><input type="radio" name="rating[{{order.id}}]" value="3" /> 3</label>
           <label><input type="radio" name="rating[{{order.id}}]" value="4" /> 4</label>
-          <label><input type="radio" selected="selected" name="rating[{{order.id}}]" value="5" /> 5</label>
+          <label><input type="radio" checked name="rating[{{order.id}}]" value="5" /> 5</label>
         </td>
         <td>
           <label><input type="radio" name="shipped[{{order.id}}]" value="true" /> yes</label>

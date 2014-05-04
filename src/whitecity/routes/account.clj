@@ -37,10 +37,18 @@
   ([page]
    (let [page (or (util/parse-int page) 1)
          reviews (review/for-user (user-id) page reviews-per-page)
+         success (session/flash-get :success)
          pagemax (util/page-max (:reviewed (util/current-user)) reviews-per-page)]
-     (layout/render "account/reviews.html" (conj (set-info) {:reviews reviews}))
-     )))
+     (layout/render "account/reviews.html" (conj (set-info) {:success success :reviews reviews :page {:page page :max pagemax :url "/market/account/reviews"}})))))
 
+(defn review-edit
+  ([id]
+   (let [review (review/get id (user-id))]
+     (layout/render "review/edit.html" (conj (set-info) review))))
+  ([id slug]
+   (review/update! id slug (user-id))
+   (session/flash-put! :success "review updated")
+   (resp/redirect "/market/account/reviews")))
 
 (defn images-page []
   (let [images (image/get (user-id))]
@@ -79,6 +87,8 @@
   (GET "/market/account/password" [] (password-page))
   (POST "/market/account/password" {params :params} (password-page params))
   (POST "/market/account" {params :params} (account-update params))
+  (GET "/market/review/:id/edit" [id] (review-edit id))
+  (POST "/market/review/:id/edit" {params :params} (review-edit (:id params) params))
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))

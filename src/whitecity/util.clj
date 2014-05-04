@@ -1,6 +1,8 @@
 (ns whitecity.util
     (:use hiccup.form hiccup.util korma.core whitecity.db)
     (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
+              [taoensso.timbre.profiling :as profiling
+            :refer (profile p)]
               [noir.response :as resp]
               [clojure.java.io :refer [as-url]]
               [noir.session :as session]
