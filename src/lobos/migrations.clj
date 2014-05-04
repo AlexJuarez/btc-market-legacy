@@ -1,5 +1,5 @@
 (ns lobos.migrations
-  (:refer-clojure 
+  (:refer-clojure
      :exclude [alter drop bigint boolean char double float time])
        (:use (lobos [migration :only [defmigration]] core schema config helpers)))
 
@@ -27,7 +27,7 @@
                (boolean :auth (default false))
                (column :session (data-type :uuid) :unique)
                (text :description)
-               (text :pub_key) 
+               (text :pub_key)
                (boolean :banned (default false))
                (varchar :pass 60)
                (varchar :salt 32);;The salt comes out to 30ish characters?
@@ -105,6 +105,7 @@
                 (refer-to :user)
                 (refer-to :image)
                 (float :price :not-null)
+                (float :converted_price :not-null)
                 (integer :quantity (default 0))
                 (integer :bookmarks (default 0))
                 (integer :reviews (default 0))
@@ -206,7 +207,7 @@
                 (integer :user_id [:refer :user :id :on-delete :cascade])
                 (integer :listing_id [:refer :listing :id :on-delete :cascade]))))
   (down [] (drop (table :bookmark))))
-                 
+
 (defmigration add-fans-table
   (up [] (create
            (tbl :fan
