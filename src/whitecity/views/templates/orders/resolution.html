@@ -24,13 +24,13 @@ Order not found
         <td>item:</td><td><a href="/market/listing/{{listing_id}}">{{title}}</a></td>
       </tr>
       <tr>
-        <td>shipping:</td><td>{{posatge_title}}</td>
+        <td>shipping:</td><td>{{postage_title}}</td>
       </tr>
       <tr>
-        <td>postage:</td><td>{{postage_price}}</td>
+        <td>postage:</td><td class="price">{{user.currency_symbol|safe}}{{postage_price}}</td>
       </tr>
       <tr>
-        <td>total price:</td><td>{{price}}</td>
+        <td>total price:</td><td class="price">{{user.currency_symbol|safe}}{{price}}</td>
       </tr>
       <tr>
         <td>ordered:</td><td><span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></td>
