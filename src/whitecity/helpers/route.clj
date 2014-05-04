@@ -1,5 +1,5 @@
 (ns whitecity.helpers.route
-  (:require 
+  (:require
     [taoensso.timbre :refer [trace debug info warn error fatal]]
     [taoensso.timbre.profiling :as profiling
     :refer (profile p)]
@@ -71,7 +71,7 @@
     {:user
      (merge user
             {:conversion (util/convert-currency 1 1)}
-            {:btc (util/convert-currency 1 (:btc user))}
+            {:balance (util/convert-currency 1 (:btc user))}
             (when vendor {:sales (p :sales (util/session! :sales (order/count-sales id)))})
             {:cart (p :cart (count (session/get :cart)))
              :orders (p :orders (util/session! :orders (order/count id)))

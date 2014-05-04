@@ -6,6 +6,7 @@
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
             [whitecity.models.fan :as follower]
+            [whitecity.models.audit :as audit]
             [whitecity.models.currency :as currency]
             [whitecity.models.review :as review]
             [whitecity.models.bookmark :as bookmark]
@@ -25,8 +26,9 @@
     (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
 (defn wallet-page []
-  (let []
-  (layout/render "account/wallet.html" (merge (set-info) {}))))
+  (let [user (util/current-user)
+        transactions (audit/all (user-id))]
+  (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
 
 (defn favorites-page []
   (let [bookmarks (bookmark/all (user-id))

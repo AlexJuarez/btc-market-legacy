@@ -38,4 +38,4 @@
 
 (add-tag! :image-thumbnail (fn [args context-map] 
    (let [id (first (computed-args args context-map))]
-     (create-image id "_thmub"))))
+     (create-image id "_thumb"))))

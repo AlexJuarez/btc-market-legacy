@@ -3,7 +3,7 @@
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
         [noir.session :as session]
@@ -31,7 +31,7 @@
     (with sellers (fields :login :alias))
     (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))))
 
-(defn sold 
+(defn sold
   ([id page per-page]
    (select orders
     (with users (fields :login :alias))
@@ -49,11 +49,11 @@
 
 (defn check-item [item]
   (let [id (key item)
-        quantity (:quantity (val item)) 
-        post (:postage (val item)) 
+        quantity (:quantity (val item))
+        post (:postage (val item))
         listing (listings/get id)
         errors (merge
-                (let [error (reduce merge [(when-not (< 0 quantity) ["Quantity must be greater than 0"]) 
+                (let [error (reduce merge [(when-not (< 0 quantity) ["Quantity must be greater than 0"])
                              (when-not (<= quantity (:quantity listing)) ["You can not order more than the max"])])]
                   (when-not (empty? error)
                    {:quantity error}))
@@ -74,7 +74,7 @@
     (let [order (transaction
       (insert audits (values audit))
       (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
-      (update listings 
+      (update listings
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
               (where {:id listing_id}))
       (insert orders (values order)))]
@@ -87,8 +87,8 @@
         quantity (:quantity (val item))
         post (postage/get postid)
         listing (listings/get id)]
-    {:price (:price listing) 
-     :postage_price (:price post) 
+    {:price (:price listing)
+     :postage_price (:price post)
      :postage_title (:title post)
      :postage_currency (:currency_id post)
      :quantity quantity
@@ -113,8 +113,8 @@
         insufficient-funds (when (< (:btc user) total) {:total "insufficient funds"})
         errors (merge cart-check postage-error address-check pin-check insufficient-funds)]
     (if (empty? errors)
-      (do 
-        (session/put! :cart {}) 
+      (do
+        (session/put! :cart {})
         (util/update-session user-id :orders :sales)
         (apply #(store! (prep % address user-id) user-id pin) cart))
       {:address address :errors errors})))
@@ -130,11 +130,11 @@
 ;;race condition possible nooo
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
-  (let [id (util/parse-int id) 
+  (let [id (util/parse-int id)
         {seller_id :seller_id listing_id :listing_id} (first (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not= 3]})))
         {amount :amount currency_id :currency_id} (first (select escrow (where {:order_id id :from user-id :status "hold"})))
         amount (util/convert-price currency_id 1 amount)
-        audit {:amount amount :user_id user-id :role "sale"}]
+        audit {:amount amount :user_id seller_id :role "sale"}]
       (transaction
         (insert audits (values audit))
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
@@ -165,7 +165,7 @@
     (where {:user_id id :status [in (list 0 1 2)]})))))
 
 ;;map this into vector of status cnt's into a hash
-(defn count-sales 
+(defn count-sales
   ([id]
    (let [sales
      (into {}
