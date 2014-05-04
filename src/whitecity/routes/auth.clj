@@ -14,17 +14,14 @@
   ([params]
    (layout/render "register.html" {:captcha (util/gen-captcha)}))
   ([login pass confirm captcha]
-   (println captcha)
-   (println (:text (session/get :captcha)))
    (if (= (:text (session/get :captcha)) captcha)
      (let [user (users/add! {:login login :pass pass :confirm confirm})]
        (if (nil? (:errors user))
          (do
            (session/flash-put! :success {:success "User has been created"})
-           (resp/redirect "/")))
-         (layout/render "register.html" (conj user {:login login :captcha (util/gen-captcha)} )))
-     (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login} ))
-     )))
+           (resp/redirect "/"))
+         (layout/render "register.html" (conj user {:login login :captcha (util/gen-captcha)}))))
+     (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login} )))))
 
 
 ;;if you change the session name change it here too

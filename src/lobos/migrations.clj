@@ -37,6 +37,8 @@
                (float :rating (default 5))
                (integer :ranking)
                (integer :reviewed (default 0))
+               (integer :login_tries (default 0))
+               (timestamp :last_attempted_login);;Last attempted login
                (integer :fans (default 0))
                (integer :listings (default 0))
                (integer :bookmarks (default 0))

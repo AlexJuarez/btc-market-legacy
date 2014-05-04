@@ -5,7 +5,7 @@
         [whitecity.models.predicates]
         [korma.db :only (transaction)]
         [korma.core])
-  (:require 
+  (:require
         [whitecity.validator :as v]
         [hiccup.util :as hc]
         [clojure.string :as s]
@@ -38,13 +38,18 @@
 (defn make-salt []
   (let [b (byte-array salt-byte-size)
         ran (java.security.SecureRandom.)]
-    (do (.nextBytes ran b) 
+    (do (.nextBytes ran b)
       (.toString (Base64/encodeBase64String b)))))
 
 (defn get-by-login [login]
-  (first (select users
-    (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
-    (where {:login login}))))
+  (first
+   (transaction
+    (update users
+       (set-fields {:login_tries (raw "login_tries + 1")}))
+    (select users
+      (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
+      (where {:login login})))
+   ))
 
 (defn get-by-alias [a]
   (first (select users
@@ -84,9 +89,9 @@
         check (valid-update? updates)]
     (if (empty? check)
       (let [user (session/get :user)]
-      (do 
-        (session/put! :user (merge user updates 
-                                   (if-not (= (:curreny_id updates) (:currency_id user)) 
+      (do
+        (session/put! :user (merge user updates
+                                   (if-not (= (:curreny_id updates) (:currency_id user))
                                      {:currency_symbol (:symbol (currency/get (:currency_id updates)))})))
         (update users
               (set-fields updates)

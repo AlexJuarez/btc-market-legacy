@@ -1,5 +1,5 @@
 (ns whitecity.routes.account
-  (:use 
+  (:use
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
@@ -34,10 +34,12 @@
     (layout/render "account/favorites.html" (merge (set-info) {:bookmarks bookmarks :favorites favs}))))
 
 (defn reviews-page
-  ([]
+  ([page]
    (let [page (or (util/parse-int page) 1)
          reviews (review/for-user (user-id) page reviews-per-page)
-         pagemax (util/page-max (:reviewed (current-user)) reviews-per-page)])))
+         pagemax (util/page-max (:reviewed (util/current-user)) reviews-per-page)]
+     (layout/render "account/reviews.html" (conj (set-info) {:reviews reviews}))
+     )))
 
 
 (defn images-page []
@@ -48,14 +50,14 @@
   (image/remove! id (user-id))
   (resp/redirect "/market/account/images"))
 
-(defn password-page 
+(defn password-page
   ([]
     (layout/render "account/password.html" (set-info)))
   ([slug]
    (let [errors (user/update-password! (user-id) slug)]
     (layout/render "account/password.html" (merge (set-info) (if (nil? errors) {:message "success"})  errors)))))
- 
-(defn images-edit 
+
+(defn images-edit
   ([]
     (let [images (image/get (user-id))]
       (layout/render "images/edit.html" (conj (set-info) {:images images}))))
@@ -80,7 +82,7 @@
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))
-  (GET "/market/account/reviews" [] (reviews-page))
+  (GET "/market/account/reviews" [page] (reviews-page page))
   (POST "/market/account/images/edit" {params :params} (images-edit params))
   (GET "/market/account/images/edit" [] (images-edit))
   (GET "/market/image/:id/delete" [id] (image-delete id))
