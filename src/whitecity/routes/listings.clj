@@ -31,7 +31,7 @@
 
 (defn listing-edit [id]
   (let [listing (listing/get id)]
-    (layout/render "listings/create.html" (merge {:regions (region/all) :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :id id :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]

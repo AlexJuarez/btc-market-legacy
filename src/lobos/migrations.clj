@@ -36,6 +36,7 @@
                (integer :transactions (default 0))
                (float :rating (default 5))
                (integer :ranking)
+               (integer :reviewed (default 0))
                (integer :fans (default 0))
                (integer :listings (default 0))
                (integer :bookmarks (default 0))

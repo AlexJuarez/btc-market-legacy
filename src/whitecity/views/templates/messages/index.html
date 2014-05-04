@@ -1,7 +1,8 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="inbox">
-    <a href="/market/messages">inbox <strong>{{user.messages}}</strong></a> - <a href="/market/messages/sent">sent</a>
+  <h1 class="jumbo">my messages</h1>
+  <nav class="sales-nav"><em><a href="/market/messages">inbox <strong>{{user.messages}}</strong></a></em> - <a href="/market/messages/sent">sent</a></nav>
 </div>
 {% if not messages|empty? %}
 <table class="table normal messages">
@@ -36,6 +37,6 @@
   </tbody>
 </table>
 {% else %}
-<div class="p">You do not have any messages</div>
+<div class="well">You do not have any messages</div>
 {% endif %}
 {% endblock %}
