@@ -19,7 +19,8 @@
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
-(defn prep [{:keys [title description from to public price hedged] :as listing}]
+;;TODO 26 is usd find a better way to set up this var
+(defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
   (merge {:title title 
           :description description
           :from (util/parse-int from)
@@ -27,6 +28,7 @@
           :public (= public "true") 
           :hedged (= hedged "true")
           :price (util/parse-float price)
+          :converted_price (util/convert-price (util/parse-int currency_id) 26 (util/parse-float price))
           :updated_on (raw "now()")} 
          (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id])))
 
@@ -53,6 +55,7 @@
           (fields :id :login :alias :pub_key))
           (where {:id [in cart]})))))
 
+;;TODO update converted_price 
 (defn view [id]
    (update listings
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
@@ -118,8 +121,8 @@
                   (limit per-page))
         query 
         (cond 
-          (= sort_by "highest") (-> query (order :price :desc))
-          (= sort_by "lowest") (-> query (order :price :asc))
+          (= sort_by "highest") (-> query (order :converted_price :desc))
+          (= sort_by "lowest") (-> query (order :converted_price :asc))
           (= sort_by "title") (-> query (order :title :asc))
           (= sort_by "newest") (-> query (order :created_on :desc))
           :else (-> query (order :sold :desc)))
