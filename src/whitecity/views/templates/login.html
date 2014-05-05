@@ -2,16 +2,16 @@
 {% block content %}
 <div id="modal">
   <h2>Login</h2>
-  {% if error %}
-  <h2 class="error">{{error}}</h2>
-  {% endif %}
   {% if success %}
-  <h2 class="success">{{success}}</h2>
+  <div class="success">{{success}}</div>
   {% endif %}
   <form action="/" method="POST">
   {% csrf-token %}
-  <input id="handle" class="text-input" name="login" type="text" placeholder="Username" value="{{login}}"/>
-  <input id="pass" class="text-input" name="pass" type="password" placeholder="password" />
+    <div {% if error %}class="has-error"{% endif %}>
+      {{error}}
+      <input id="handle" class="text-input" name="login" type="text" placeholder="Username" value="{{login}}"/>
+      <input id="pass" class="text-input" name="pass" type="password" placeholder="password" />
+    </div>
   <span class="submit">
     <input type="submit" class="btn" value="login" />
   </span>
