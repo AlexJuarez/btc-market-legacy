@@ -7,12 +7,15 @@
             [whitecity.models.user :as user]
             [whitecity.models.fan :as follower]
             [whitecity.models.currency :as currency]
+            [whitecity.models.review :as review]
             [whitecity.models.bookmark :as bookmark]
             [whitecity.models.image :as image]
             [whitecity.models.region :as region]
             [noir.response :as resp]
             [noir.session :as session]
             [whitecity.util :as util]))
+
+(defonce reviews-per-page 25)
 
 (defn account-page []
   (layout/render "account/index.html" (conj {:regions (region/all) :currencies (currency/all)} (set-info))))
@@ -29,6 +32,13 @@
   (let [bookmarks (bookmark/all (user-id))
         favs (follower/all (user-id))]
     (layout/render "account/favorites.html" (merge (set-info) {:bookmarks bookmarks :favorites favs}))))
+
+(defn reviews-page
+  ([]
+   (let [page (or (util/parse-int page) 1)
+         reviews (review/for-user (user-id) page reviews-per-page)
+         pagemax (util/page-max (:reviewed (current-user)) reviews-per-page)])))
+
 
 (defn images-page []
   (let [images (image/get (user-id))]
@@ -70,6 +80,7 @@
   (GET "/market/account/wallet" [] (wallet-page))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))
+  (GET "/market/account/reviews" [] (reviews-page))
   (POST "/market/account/images/edit" {params :params} (images-edit params))
   (GET "/market/account/images/edit" [] (images-edit))
   (GET "/market/image/:id/delete" [id] (image-delete id))
