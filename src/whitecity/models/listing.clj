@@ -106,16 +106,15 @@
               cat_id (:category_id listing)]
           (transaction
             (if-not (= category_id cat_id)
-              (do (update category (set-fields {:count (raw "count + 1")}) (where {:id cat_id}))
-              (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id}))))
+              (do 
+                (update category (set-fields {:count (raw "count + 1")}) (where {:id cat_id}))
+                (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id}))))
               (update listings
                 (set-fields listing)
                 (where {:id (util/parse-int id) :user_id user-id}))
               (conj {:errors check} listing))))))
 
-;;TODO refactor this area
-
-(defn sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
+(defn- sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
   (let [query (-> query
                   (offset (* (- page 1) per-page))
                   (limit per-page))
@@ -130,24 +129,25 @@
           query (if ships_from (-> query (where {:from (:region_id (util/current-user))})) query)]
     query))
 
+(defn- gen-public-query []
+  (-> 
+   (select* listings)
+   (with users)
+   (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
+   (with currency (fields [:name :currency_name] [:key :currency_key]))))
+
 (defn public
   ([page per-page options] 
    (convert 
      (let [query (-> 
-       (select* listings)
-       (with users)
-       (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
-       (with currency (fields [:name :currency_name] [:key :currency_key]))
+       (gen-public-query)
        (where {:public true :quantity [> 0]}))]
        (-> (sortby query page per-page options) select))))
   ([cid page per-page options]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
    (convert 
     (let [query (->
-      (select* listings)
-      (with users)
-      (fields :title :user.alias :user_id :user.login :from :to :price :id :currency_id :image_id :category_id)
-      (with currency (fields [:name :currency_name] [:key :currency_key]))
+      (gen-public-query)
       (with category)
       (where (and 
                (= :public true)
