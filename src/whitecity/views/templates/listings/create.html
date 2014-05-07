@@ -1,5 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+<h1>{{success}}</h1>
 <form enctype="multipart/form-data" method="post">
   {% csrf-token %}
   <div class="image">
@@ -89,11 +90,11 @@
   </div>
   <div class="form-group{% if errors.quantity %} has-error{% endif %}">
     <label for="quantity">Quantity:
+      <input type="number" class="input" name="quantity" value="{{quantity}}" id="quantity" />
       {% if errors.quantity %}
         {{errors.quantity|join:", "}}
       {% endif %}
     </label>
-    <input type="number" class="form-control" name="quantity" value="{{quantity}}" id="quantity" />
   </div>
   <div class="form-group">
     <label for="ships_from">Ships from:</label>

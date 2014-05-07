@@ -1,5 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+<h1 class="jumbo">postage</h1>
+<hr>
 <form method="post">
   {% csrf-token %}
   {% if errors.title %}
@@ -11,7 +13,7 @@
   </p>
   <p {% if errors.price %}class="errors"{% endif %}>
     <label for="price">Price: </label>
-    <input name="price" class="input" id="price" type="text" value="{{price}}" />
+    <input name="price" class="input" id="price" type="number" value="{{price}}" />
     {% if errors.price %}
       {{errors.price|join:", "}}
     {% endif %}

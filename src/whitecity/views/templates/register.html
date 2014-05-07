@@ -12,11 +12,11 @@
       {% endif %}
       </div>
       <div{% if errors.pass %} class="has-error"{% endif %}>
-      <input placeholder="Password" class="text-input" id="pass" name="pass" type="password" />
+        <input placeholder="Password" class="text-input" id="pass" value="{{pass}}" name="pass" type="password" />
         {% if errors.pass %}
           {{errors.pass|join:", "}}
         {% endif %}
-      <input placeholder="Confirm Password" class="text-input" id="confirm" name="confirm" type="password" />
+        <input placeholder="Confirm Password" class="text-input" id="confirm" value="{{confirm}}" name="confirm" type="password" />
       </div>
     </div>
     <div class="p{% if errors.captcha %} has-error{% endif %}">

@@ -21,7 +21,6 @@
                :accept :json}))
         currencies (apply merge (map #(assoc {} (lower-case (:key %)) (:id %)) (currency/all)))
         prep (filter #(not (or (nil? (:from %)) (nil? (:to %)))) (map #(let [s (split (name (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response))]
-    (println response)
     (if-not (empty? response)
       (do
         (dorun (pmap #(cache/set (str (:from %) "-" (:to %)) (:value %)) prep))

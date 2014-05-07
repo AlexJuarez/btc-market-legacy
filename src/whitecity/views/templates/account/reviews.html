@@ -26,5 +26,9 @@
   {% endfor %}
   </tbody>
 </table>
+{% else %}
+<p class="well">
+You can only see reviews that you have authored in the last 4 months. No reviews were found.
+</p>
 {% endif %}
 {% endblock %}

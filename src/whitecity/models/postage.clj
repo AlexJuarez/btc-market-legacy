@@ -12,6 +12,8 @@
 
 (defn all [user-id]
   (select postage
+      (with currency
+            (fields [:name :currency_name] [:symbol :currency_symbol]))
       (where {:user_id (util/parse-int user-id)})))
 
 (defn public [user-id]

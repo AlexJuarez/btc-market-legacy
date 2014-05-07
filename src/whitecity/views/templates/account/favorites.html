@@ -1,5 +1,12 @@
 {% extends "whitecity/views/templates/account/account.html" %}
 {% block section %}
+{% if bookmarks|empty? %}
+{% if favorites|empty? %}
+<p class="well">
+You don't currently have any users or listings favorited.
+</p>
+{% endif %}
+{% endif %}
 {% if not bookmarks|empty? %}
 <h3>Bookmarks</h3>
 <table class="table normal p">

@@ -9,6 +9,7 @@
     <tr>
       <th>title</th>
       <th>price</th>
+      <th>currency</th>
       <th>&nbsp;</th>
       <th>&nbsp;</th>
     </tr>
@@ -17,7 +18,8 @@
     {% for postage in postages %}
     <tr>
         <td>{{postage.title}}</td>
-        <td>{{postage.price}}</td>
+        <td>{{postage.currency_symbol|safe}}{{postage.price}}</td>
+        <td>{{postage.currency_name}}</td>
         <td><a href="/market/postage/{{postage.id}}/edit">edit</a></td>
         <td><a href="/market/postage/{{postage.id}}/remove">remove</a></td>
       </tr>

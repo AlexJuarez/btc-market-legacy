@@ -21,7 +21,7 @@
            (session/flash-put! :success {:success "User has been created"})
            (resp/redirect "/"))
          (layout/render "register.html" (conj user {:login login :captcha (util/gen-captcha)}))))
-     (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login} )))))
+     (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login :pass pass :confirm confirm} )))))
 
 
 ;;if you change the session name change it here too
