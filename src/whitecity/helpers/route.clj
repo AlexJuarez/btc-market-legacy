@@ -57,9 +57,9 @@
       (let [image_id (:id (image/add! (user-id)))]
         (try
           (do
-            (noirio/upload-file (str (noirio/resource-path) "/uploads") (assoc image :filename (str image_id ".jpg")))
-            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "/uploads/" image_id ".jpg")) 400 300) (str (noirio/resource-path) "/uploads/" image_id "_max.jpg"))
-            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "/uploads/" image_id ".jpg")) 180 135) (str (noirio/resource-path) "/uploads/" image_id "_thumb.jpg"))
+            (noirio/upload-file (str (noirio/resource-path) "uploads") (assoc image :filename (str image_id ".jpg")))
+            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "uploads/" image_id ".jpg")) 400 300) (str (noirio/resource-path) "uploads/" image_id "_max.jpg"))
+            (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "uploads/" image_id ".jpg")) 180 135) (str (noirio/resource-path) "uploads/" image_id "_thumb.jpg"))
             (io/delete-file (str (noirio/resource-path) "uploads/" image_id ".jpg")))
           (catch Exception ex
             (error ex (str "File upload failed for image " image_id))))
