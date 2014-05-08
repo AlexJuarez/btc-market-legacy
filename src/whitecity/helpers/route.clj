@@ -62,7 +62,7 @@
             (save-file (resizer/resize-and-crop (clojure.java.io/file (str (noirio/resource-path) "/uploads/" image_id ".jpg")) 180 135) (str (noirio/resource-path) "/uploads/" image_id "_thumb.jpg"))
             (io/delete-file (str (noirio/resource-path) "uploads/" image_id ".jpg")))
           (catch Exception ex
-            (error ex ("File upload failed for image " image_id))))
+            (error ex (str "File upload failed for image " image_id))))
           image_id))))
 
 (defn set-info []
