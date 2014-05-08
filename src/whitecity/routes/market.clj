@@ -53,7 +53,7 @@
   (layout/render "error.html"))
 
 (defn about-page []
-  (layout/render "about.html"))
+  (layout/render "about.html" (set-info)))
 
 (defn user-view [id page]
   (let [user (user/get id)
@@ -95,6 +95,10 @@
   (do (session/flash-put! :success {:success "postage removed"})
     (resp/redirect "/market/listings")))))
 
+(defn feedback-page
+  ([]
+   (layout/render "feedback.html" (set-info))))
+
 (defn resolution-accept [id referer]
   (resolution/accept id (user-id))
   (resp/redirect referer))
@@ -112,4 +116,6 @@
     (GET "/market/user/:id/unreport" {{id :id} :params {referer "referer"} :headers} (report-remove id (user-id) "user" referer))
     (GET "/market/user/:id" {{id :id page :page} :params} (user-view id page))
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
-    (GET "/market/about" [] (about-page)))
+    (GET "/market/about" [] (about-page))
+    (GET "/market/feedback" [] (feedback-page))
+  )
