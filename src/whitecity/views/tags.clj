@@ -2,10 +2,12 @@
   (:require [selmer.parser :refer [add-tag!]]
             [clojure.java.io :as io]
             [noir.io :as noirio]
-            [ring.util.anti-forgery :refer [anti-forgery-field]])
+            [whitecity.cache :as cache]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
+            [environ.core :refer [env]])
   (:use selmer.filters
         hiccup.core)
-  (:import 
+  (:import
     (org.apache.commons.io IOUtils)
     (org.apache.commons.codec.binary Base64)))
 
@@ -32,10 +34,18 @@
       (let [url (str "/uploads/" id extension ".jpg")]
         (html [:img {:src url}]))))
 
-(add-tag! :image (fn [args context-map] 
+(add-tag! :image (fn [args context-map]
   (let [id (first (computed-args args context-map))]
     (create-image id "_max"))))
 
-(add-tag! :image-thumbnail (fn [args context-map] 
+(add-tag! :image-thumbnail (fn [args context-map]
    (let [id (first (computed-args args context-map))]
      (create-image id "_thumb"))))
+
+(add-tag! :load-styles
+   (fn [args context-map]
+     (let [route (first args)]
+       (html [:style {:type "text/css"}
+                      (cache/cache! route
+                        (slurp (str (noirio/resource-path) route)))
+                      ]))))
