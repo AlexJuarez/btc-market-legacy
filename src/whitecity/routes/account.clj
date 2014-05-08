@@ -31,7 +31,7 @@
   (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
 
 (defn favorites-page []
-  (let [bookmarks (bookmark/all (user-id))
+  (let [bookmarks (map #(assoc % :price (util/convert-currency %)) (bookmark/all (user-id)))
         favs (follower/all (user-id))]
     (layout/render "account/favorites.html" (merge (set-info) {:bookmarks bookmarks :favorites favs}))))
 

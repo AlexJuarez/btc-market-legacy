@@ -28,9 +28,9 @@ You don't currently have any users or listings favorited.
       <td><a href="/market/category/{{bookmark.category_id}}">{{bookmark.category_name}}</a></td>
       <td>{{bookmark.quantity}}</td>
       <td><a href="/market/user/{{bookmark.user_id}}">{{bookmark.user_alias}}</a></td>
-      <td>{{bookmark.price}}</td>
+      <td>{{user.currency_symbol|safe}}{{bookmark.price}}</td>
       <td>{{bookmark.hedged}}</td>
-      <td><a href="/market/listing/{{bookmark.user_id}}/unbookmark">unbookmark</a></td>
+      <td><a href="/market/listing/{{bookmark.id}}/unbookmark">unbookmark</a></td>
     </tr>
     {% endfor %}
   </tbody>
@@ -55,7 +55,7 @@ You don't currently have any users or listings favorited.
       <td>{{favorite.rating}}</td>
       <td>{{favorite.listings}}</td>
       <td data-time="{{favorite.last_login|date:fullDateTime}}" class="pretty-time">{{favorite.last_login|date:shortDate}}</td>
-      <td><a href="/market/user/{{favorite.user_id}}/unfollow">unfollow</a></td>
+      <td><a href="/market/user/{{favorite.id}}/unfollow">unfollow</a></td>
     </tr>
     {% endfor %}
   </tbody>
