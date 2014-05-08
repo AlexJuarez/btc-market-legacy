@@ -66,13 +66,12 @@
           image_id))))
 
 (defn set-info []
-  (profile :info :set-info
-  (let [{:keys [id vendor] :as user} (p :current-user (util/current-user))]
+  (let [{:keys [id vendor] :as user} (util/current-user)]
     {:user
      (merge user
             {:conversion (util/convert-currency 1 1)}
             {:balance (util/convert-currency 1 (:btc user))}
-            (when vendor {:sales (p :sales (util/session! :sales (order/count-sales id)))})
-            {:cart (p :cart (count (session/get :cart)))
-             :orders (p :orders (util/session! :orders (order/count id)))
-             :messages (p :messages (util/session! :messages (message/count id)))})})))
+            (when vendor {:sales (util/session! :sales (order/count-sales id))})
+            {:cart (count (session/get :cart))
+             :orders (util/session! :orders (order/count id))
+             :messages (util/session! :messages (message/count id))})}))
