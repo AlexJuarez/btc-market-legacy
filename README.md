@@ -1,6 +1,6 @@
-# whitecity
+# Cool side project
 
-FIXME
+sudo apt-get install bitcoind
 
 ## Prerequisites
 

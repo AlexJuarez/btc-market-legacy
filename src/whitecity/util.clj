@@ -132,7 +132,7 @@
 (defn gen-captcha []
     (let [text (gen-captcha-text)
           captcha (doto (new Captcha))]
-      (session/put! :captcha {:text text})
+      (session/flash-put! :captcha {:text text})
       (with-open [out (new ByteArrayOutputStream)]
         (ImageIO/write (.gen captcha text 216 26) "jpeg" out)
         (.flush out)
