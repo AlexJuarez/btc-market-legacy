@@ -65,11 +65,16 @@
 
 ;;todo filters and stuff
 (defn search-page [query]
-  (let [q (str "%" query "%")
-        users (user/search q)
-        listings (listing/search q)
-        categories (category/search q)]
-    (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query} (set-info)))))
+  (if (and (>= (count query) 3) (<= (count query) 100))
+    (let [q (str "%" query "%")
+          users (user/search q)
+          listings (listing/search q)
+          categories (category/search q)
+          message (if (and (empty? users) (empty? listings) (empty? categories)) "Nothing was found for your query. Please try again.")]
+      (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query :message message} (set-info))))
+    (layout/render "market/search.html" (conj {:message "Your query is too short it needs to be longers than three characters and less than 100."} (set-info)))
+    ))
+
 
 (defn postage-create
   ([]

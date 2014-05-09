@@ -28,7 +28,7 @@
 (defn search [query]
   (select users
           (fields :alias :fans :last_login :rating :listings :id :vendor)
-          (where {:alias [ilike query]})
+          (where {:alias [ilike query] :vendor true :admin false})
           (limit 50)))
 
 (defn get-dirty [id]
@@ -103,9 +103,10 @@
     (if (and (not (nil? user)) (and (:pass user) (warden/compare (str pass (:salt user)) (:pass user))))
       (let [check (v/user-update-password-validator {:pass newpass :confirm confirm})]
         (if (empty? check)
-          (update users (set-fields {:pass (warden/encrypt (str newpass (:salt user)))}) (where {:id id}))
-          {:errors check}))
-      {:errors {:pass ["Your password is incorrect."]}})))
+          (do (update users (set-fields {:pass (warden/encrypt (str newpass (:salt user)))}) (where {:id id}))
+            {})
+          check))
+      {:pass ["Your password is incorrect."]})))
 
 (defn store! [user]
   (insert users (values user)))
@@ -113,7 +114,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass} (prep) (store!))
+      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id session]

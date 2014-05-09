@@ -64,8 +64,9 @@
   ([]
     (layout/render "account/password.html" (set-info)))
   ([slug]
-   (let [errors (user/update-password! (user-id) slug)]
-    (layout/render "account/password.html" (merge (set-info) (if (nil? errors) {:message "success"})  errors)))))
+   (let [errors (user/update-password! (user-id) slug)
+         message (if (empty? errors) "You have successfully changed your password")]
+    (layout/render "account/password.html" (merge (set-info) {:message message :errors errors})))))
 
 (defn images-edit
   ([]

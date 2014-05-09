@@ -1,6 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<h1>{{success}}</h1>
+<h1 class="jumbo">{% if edit %}Listing Edit{% else %}Listing Create{% endif %}<span class="success">{{success}}</span></h1>
+<hr>
 <form enctype="multipart/form-data" method="post">
   {% csrf-token %}
   <div class="image">

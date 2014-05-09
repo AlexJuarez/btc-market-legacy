@@ -67,7 +67,8 @@
   (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
         postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
         cost (+ item-cost postage-cost)
-        {:keys [user_id seller_id listing_id quantity]} order
+        {lq :listing_quantity lp :listing_pubic cat_id :category_id} order
+        {:keys [user_id seller_id listing_id quantity] :as order} (dissoc order :listing_quantity :listing_pubic :category_id)
         escr {:from user_id :to seller_id :currency_id 1 :amount cost :status "hold"}
         audit {:user_id user-id :role "purchase" :amount (* -1 cost)}]
     (util/update-session seller_id :sales)
@@ -77,6 +78,7 @@
       (update listings
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
               (where {:id listing_id}))
+      (if (and lp (<= lq 0)) (update category (set-fields {:count (raw "count - 1")}) (where {:id cat_id})))
       (insert orders (values order)))]
       (if (not (empty? order));;TODO: what does korma return when it errors out?
       (insert escrow (values (assoc escr :order_id (:id order))))))))
@@ -92,6 +94,9 @@
      :postage_title (:title post)
      :postage_currency (:currency_id post)
      :quantity quantity
+     :listing_quantity (:quantity listing) ;;this field gets removed
+     :listing_pubic (:public listing) ;;placeholder
+     :category_id (:category_id listing)
      :hedged (:hedged listing)
      :title (:title listing)
      :address address

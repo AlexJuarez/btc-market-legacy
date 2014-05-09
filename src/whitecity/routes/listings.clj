@@ -1,5 +1,5 @@
 (ns whitecity.routes.listings
-  (:use 
+  (:use
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
@@ -26,27 +26,27 @@
   (let [record (listing/remove! id (user-id))]
   (if (nil? record)
     (resp/redirect "/market/")
-  (do 
+  (do
     (session/flash-put! :success "listing removed")
     (resp/redirect "/market/listings")))))
 
 (defn listing-edit [id]
   (let [listing (listing/get id)
         success (session/flash-get :success)]
-    (layout/render "listings/create.html" (merge {:regions (region/all) :success success :id id :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :edit true :success success :id id :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
     (layout/render "listings/create.html" (merge {:regions (region/all) :id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
 
 (defn listing-create
-  "Listing creation page" 
+  "Listing creation page"
   ([]
    (layout/render "listings/create.html" (conj {:regions (region/all) :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info))))
   ([{:keys [image image_id] :as slug}]
    (let [listing (listing/add! (assoc slug :image_id (parse-image image_id image)) (user-id))]
      (if (empty? (:errors listing))
-      (do 
+      (do
         (session/flash-put! :success "listing created")
         (resp/redirect (str "/market/listing/" (:id listing) "/edit")))
       (layout/render "listings/create.html" (merge {:regions (region/all) :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))))

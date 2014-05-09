@@ -4,7 +4,7 @@
         [whitecity.models.predicates]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.validator :as v]
         [whitecity.models.category :as cat]
         [whitecity.util :as util]))
@@ -21,18 +21,18 @@
 
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
-  (merge {:title title 
+  (merge {:title title
           :description description
           :from (util/parse-int from)
-          :to (util/parse-int to) 
-          :public (= public "true") 
+          :to (util/parse-int to)
+          :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
           :converted_price (util/convert-price (util/parse-int currency_id) 26 (util/parse-float price))
-          :updated_on (raw "now()")} 
+          :updated_on (raw "now()")}
          (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id])))
 
-(defn get 
+(defn get
   ([id]
     (first (select listings
       (where {:id (util/parse-int id)}))))
@@ -55,11 +55,11 @@
           (fields :id :login :alias :pub_key))
           (where {:id [in cart]})))))
 
-;;TODO update converted_price 
+;;TODO update converted_price
 (defn view [id]
    (update listings
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
-  (first (convert 
+  (first (convert
    (select listings
     (fields [:id :lid] :bookmarks :user_id :image_id :from :to :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
     (with users
@@ -74,21 +74,21 @@
     (where {:user_id id})))))
 
 (defn remove! [id user-id]
-  (if-let [listing (get id user-id)] 
+  (if-let [{:keys [public quantity] :as listing} (get id user-id)]
     (let [category-id (:category_id listing)]
       (util/update-session user-id)
       (transaction
         (update users (set-fields {:listings (raw "listings - 1")}) (where {:id user-id}))
-        (update category (set-fields {:count (raw "count - 1")}) (where {:id category-id})) 
+        (if (and public (> quantity 0)) (update category (set-fields {:count (raw "count - 1")}) (where {:id category-id})))
         (delete listings
           (where {:id (util/parse-int id) :user_id user-id}))))))
 
-(defn store! [listing user-id]
+(defn store! [{:keys [category_id public quantity] :as listing} user-id]
   (let [category-id (util/parse-int (:category_id listing))]
     (util/update-session user-id)
-    (transaction 
+    (transaction
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
-      (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})) 
+      (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
       (insert listings (values (assoc (prep listing) :user_id user-id))))))
 
 (defn add! [listing user-id]
@@ -101,14 +101,21 @@
 (defn update! [listing id user-id]
   (let [check (v/listing-validator listing)]
       (if (empty? check)
-        (let [category_id (:category_id (first (select listings (fields :category_id) (where {:id (util/parse-int id) :user_id user-id}))))
-              listing (prep listing)
-              cat_id (:category_id listing)]
+        (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
+              {:keys [category_id public quantity] :as listing} (prep listing)]
+          (println public_old quantity_old category_id_old)
+          (println public quantity category_id)
           (transaction
-            (if-not (= category_id cat_id)
-              (do 
-                (update category (set-fields {:count (raw "count + 1")}) (where {:id cat_id}))
-                (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id}))))
+              (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
+                (do
+                  (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
+                  (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id_old})))
+                (if (or (and public (> quantity 0) (not public_old))
+                        (and public (> quantity 0) (<= quantity_old 0)))
+                  (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
+                  (if (or (and (not public) public_old (> quantity_old 0))
+                          (and (<= quantity 0) public_old (> quantity_old 0)))
+                    (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
               (update listings
                 (set-fields listing)
                 (where {:id (util/parse-int id) :user_id user-id}))
@@ -118,8 +125,8 @@
   (let [query (-> query
                   (offset (* (- page 1) per-page))
                   (limit per-page))
-        query 
-        (cond 
+        query
+        (cond
           (= sort_by "highest") (-> query (order :converted_price :desc))
           (= sort_by "lowest") (-> query (order :converted_price :asc))
           (= sort_by "title") (-> query (order :title :asc))
@@ -130,26 +137,26 @@
     query))
 
 (defn- gen-public-query []
-  (-> 
+  (->
    (select* listings)
    (with users)
    (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
-  ([page per-page options] 
-   (convert 
-     (let [query (-> 
+  ([page per-page options]
+   (convert
+     (let [query (->
        (gen-public-query)
        (where {:public true :quantity [> 0]}))]
        (-> (sortby query page per-page options) select))))
   ([cid page per-page options]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
-   (convert 
+   (convert
     (let [query (->
       (gen-public-query)
       (with category)
-      (where (and 
+      (where (and
                (= :public true)
                (> :quantity 0)
                (> :category_id gt)
@@ -158,12 +165,12 @@
 
 (defn public-for-user
   ([user-id page per-page]
-   (convert 
+   (convert
     (select listings
     (fields  :title :from :to :price :id :currency_id :image_id :category_id)
     (with category (fields [:name :category_name]))
     (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where (and 
+    (where (and
              (= :public true)
              (> :quantity 0)
              (= :user_id (util/parse-int user-id))))

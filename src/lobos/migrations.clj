@@ -22,8 +22,8 @@
           (tbl :user
                (varchar :login 64 :unique)
                (varchar :alias 64 :unique)
-               (boolean :vendor (default true))
-               (boolean :admin (default true))
+               (boolean :vendor (default false))
+               (boolean :admin (default false))
                (boolean :auth (default false))
                (column :session (data-type :uuid) :unique)
                (text :description)
