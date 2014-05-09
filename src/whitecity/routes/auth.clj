@@ -18,7 +18,7 @@
      (let [user (users/add! {:login login :pass pass :confirm confirm})]
        (if (nil? (:errors user))
          (do
-           ($session/flash-put! :success {:success "User has been created"})
+           (session/flash-put! :success {:success "User has been created"})
            (resp/redirect "/"))
          (layout/render "register.html" (conj user {:login login :captcha (util/gen-captcha)}))))
      (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login :pass pass :confirm confirm} )))))

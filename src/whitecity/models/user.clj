@@ -43,13 +43,23 @@
 
 (defn get-by-login [login]
   (first
-   (transaction
-    (update users
-       (set-fields {:login_tries (raw "login_tries + 1")}))
     (select users
       (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
-      (where {:login login})))
-   ))
+      (where {:login login}))))
+
+(defn failed-login [{:keys [id last_attempted_login login_tries] :as user}]
+  (if (or (= login_tries 0) (> (- (.getTime (java.util.Date.)) (.getTime last_attempted_login)) 86400000))
+    (update users
+            (set-fields {:last_login (raw "now()") :login_tries 1})
+            (where {:id id}))
+    (update users
+            (set-fields {:login_tries (raw "login_tries + 1")})
+            (where {:id id}))))
+
+(defn successful-login [{:keys [id] :as user}]
+  (update users
+            (set-fields {:login_tries 0})
+            (where {:id id})))
 
 (defn get-by-alias [a]
   (first (select users

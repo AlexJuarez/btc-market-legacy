@@ -1,5 +1,5 @@
 (ns whitecity.routes.orders
-  (:use 
+  (:use
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
@@ -11,11 +11,11 @@
             [noir.response :as resp]
             [whitecity.util :as util]))
 
-(defn orders-page 
+(defn orders-page
   ([]
     (let [orders (order/all (user-id))
           orders (map #(let [autofinalize (:auto_finalize %)
-                             res (and (not (nil? autofinalize)) (< 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))];;TODO: switch symbol back
+                             res (and (not (nil? autofinalize)) (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))];;TODO: review resolution stuff
                            (assoc % :resolve res :id (hashids/encrypt (:id %)))) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
@@ -25,13 +25,13 @@
          order-ids (map #(util/parse-int (hashids/decrypt (key %))) rating)
          reviews (review/add! prep (user-id) order-ids)]
     (resp/redirect "/market/orders"))))
-   
+
 (defn order-finalize [id]
   (let [id (hashids/decrypt id)]
     (order/finalize id (user-id));;do is in serial
     (resp/redirect "/market/orders")))
 
-(defn order-view 
+(defn order-view
   ([id]
     (let [id (hashids/decrypt id)
           order (-> (order/get-order id (user-id)) encrypt-id convert-order-price)
@@ -43,7 +43,7 @@
           order (-> (order/get-order id (user-id)) encrypt-id convert-order-price)
           resolutions (resolution/all id (user-id))]
       (layout/render "orders/resolution.html" (merge {:errors {} :resolutions resolutions} slug res order (set-info))))))
-    
+
 (defn order-resolve [hashid]
   (let [id (hashids/decrypt hashid)]
     (order/resolution id (user-id))
