@@ -132,22 +132,20 @@
           (set-fields values)
           (where {:seller_id seller-id :id [in sales]}))))
 
-;;race condition possible nooo
+;;use update instead of select... genius
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id)
-        {seller_id :seller_id listing_id :listing_id} (first (select orders (fields :seller_id) (where {:id id :user_id user-id :status [not= 3]})))
-        {amount :amount currency_id :currency_id} (first (select escrow (where {:order_id id :from user-id :status "hold"})))
+        {seller_id :seller_id listing_id :listing_id} (first (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]})))
+        {amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"})))
         amount (util/convert-price currency_id 1 amount)
         audit {:amount amount :user_id seller_id :role "sale"}]
+    (if listing_id
       (transaction
         (insert audits (values audit))
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
-        (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id}))
         (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id}))
-        (update orders
-              (set-fields {:status 3 :updated_on (raw "now()")})
-              (where {:user_id user-id :id (util/parse-int id)})))))
+        ))))
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)

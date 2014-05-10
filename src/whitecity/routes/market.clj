@@ -6,6 +6,7 @@
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
             [whitecity.models.message :as message]
+            [whitecity.models.feedback :as feedback]
             [whitecity.models.listing :as listing]
             [whitecity.models.category :as category]
             [whitecity.models.resolution :as resolution]
@@ -102,7 +103,11 @@
 
 (defn feedback-page
   ([]
-   (layout/render "feedback.html" (set-info))))
+   (layout/render "feedback.html" (set-info)))
+  ([slug]
+   (let [post (feedback/add! slug (user-id))])
+   (layout/render "feedback.html" (conj {:message "thank you for your feedback"} (set-info)) )
+   ))
 
 (defn resolution-accept [id referer]
   (resolution/accept id (user-id))
@@ -123,4 +128,5 @@
     (GET "/market/postage/:id/remove" [id] (postage-remove id))
     (GET "/market/about" [] (about-page))
     (GET "/market/feedback" [] (feedback-page))
+    (POST "/market/feedback" {params :params} (feedback-page params))
   )
