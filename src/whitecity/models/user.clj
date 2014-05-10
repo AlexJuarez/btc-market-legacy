@@ -47,19 +47,14 @@
       (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
       (where {:login login}))))
 
-(defn failed-login [{:keys [id last_attempted_login login_tries] :as user}]
-  (if (or (= login_tries 0) (> (- (.getTime (java.util.Date.)) (.getTime last_attempted_login)) 86400000))
+(defn track-login [{:keys [id last_attempted_login login_tries] :as user}]
+  (if (or (= login_tries 0) (nil? last_attempted_login) (> (- (.getTime (java.util.Date.)) (.getTime last_attempted_login)) 86400000))
     (update users
-            (set-fields {:last_login (raw "now()") :login_tries 1})
+            (set-fields {:last_attempted_login (raw "now()") :login_tries 1})
             (where {:id id}))
     (update users
             (set-fields {:login_tries (raw "login_tries + 1")})
             (where {:id id}))))
-
-(defn successful-login [{:keys [id] :as user}]
-  (update users
-            (set-fields {:login_tries 0})
-            (where {:id id})))
 
 (defn get-by-alias [a]
   (first (select users
@@ -131,16 +126,19 @@
   (transaction
     (update users (set-fields {:session nil}) (where {:session (util/create-uuid session)}))
     (update users
-            (set-fields {:last_login (raw "now()") :session (util/create-uuid session)})
+            (set-fields {:login_tries 0 :last_login (raw "now()") :session (util/create-uuid session)})
             (where {:id id}))))
 
 (defn login! [{:keys [login pass session] :as user}]
- (let [userstore (get-by-login login)]
+ (let [userstore (track-login (get-by-login login))]
+    (println track-login)
     (if (nil? userstore)
-      (assoc user :error "Username does not exist")
-    (if (and (:pass userstore) (warden/compare (str pass (:salt userstore)) (:pass userstore)))
-        (do (last-login (:id userstore) session) (dissoc userstore :salt :pass))
-        (assoc user :error "Password Incorrect")))))
+      (assoc user :error "Username does not exist.")
+      (if (> 20 (:login_tries userstore)) 
+        (if (and (:pass userstore) (warden/compare (str pass (:salt userstore)) (:pass userstore)))
+            (do (last-login (:id userstore) session) (dissoc userstore :salt :pass))
+            (assoc user :error "Password Incorrect."))
+        (assoc user :error "This account has been locked for failing to login too many times.")))))
 
 (defn remove! [login]
   (delete users
