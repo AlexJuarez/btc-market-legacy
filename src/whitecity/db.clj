@@ -11,7 +11,7 @@
 
 (defdb db db-spec)
 
-(declare audits users resolutions orders messages listings postage images category region currency exchange bookmarks fans reviews escrow)
+(declare audits users feedback resolutions orders messages listings postage images category region currency exchange bookmarks fans reviews escrow)
 
 (defentity audits
   (table :audit)
@@ -67,6 +67,9 @@
   (belongs-to currency))
 
 (defentity escrow)
+
+(defentity feedback
+  (belongs-to users))
 
 (defentity category
   (has-many listings)
