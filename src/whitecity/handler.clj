@@ -81,7 +81,7 @@
                      :store (cache/store)}
 
    ;; add custom middleware here
-   :middleware [wrap-anti-forgery middleware/template-error-page middleware/log-request]
+   :middleware [wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
    :access-rules [user-access]
    ;; I can only assume

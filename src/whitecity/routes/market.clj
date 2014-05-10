@@ -49,6 +49,9 @@
 (defn category-page [params]
   (market-page (str "/market/category/" (:cid params)) params))
 
+(defn error-page []
+  (layout/render "error.html"))
+
 (defn about-page []
   (layout/render "about.html"))
 
