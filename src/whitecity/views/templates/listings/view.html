@@ -46,7 +46,7 @@
   <div class="clear-float"></div>
   {% if not description|empty? %}
     <div class="well description">
-      {{description}}
+      {{description|safe}}
     </div>
   {% endif %}
   {% if not review|empty? %}

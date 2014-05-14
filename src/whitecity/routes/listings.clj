@@ -56,8 +56,9 @@
         page (or (util/parse-int page) 1)
         reviews (review/all id page per-page)
         revs (:reviews listing)
+        description (util/md->html (:description listing))
         pagemax (util/page-max revs per-page)]
-    (layout/render "listings/view.html" (merge {:review reviews :page {:page page :max pagemax :url (str "/market/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing))))
+    (layout/render "listings/view.html" (merge {:review reviews :page {:page page :max pagemax :url (str "/market/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing {:description description}))))
 
 (defn listing-bookmark [id]
   (if-let [bookmark (:errors (bookmark/add! id (user-id)))]

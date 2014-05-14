@@ -1,5 +1,5 @@
 (ns whitecity.middleware
-  (:require 
+  (:require
             [taoensso.timbre :as timbre :refer [trace debug info warn error fatal]]
             [selmer.parser :as parser]
             [whitecity.views.layout :refer [template-path]]
@@ -13,7 +13,7 @@
     handler))
 
 (defn error-page [handler]
-  (if (env :dev)
+  (if (not (env :dev))
     (fn [request]
       (try
         (handler request)

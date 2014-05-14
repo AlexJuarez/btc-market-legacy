@@ -35,6 +35,7 @@
 (defn get
   ([id]
     (first (select listings
+                   (with currency (fields :hedge_fee))
       (where {:id (util/parse-int id)}))))
   ([id user-id]
     (first (select listings

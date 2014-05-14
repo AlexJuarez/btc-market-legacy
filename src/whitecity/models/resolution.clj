@@ -32,7 +32,7 @@
               (where {:id order_id}))))
 
 (defn refund [id user_id seller_id order_id percent res]
-  (let [{amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :from user_id :status "hold"})))
+  (let [{amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :from user_id :status "hold"}))
         user-amount (* (util/convert-price currency_id 1 amount) (/ percent 100))
         seller-amount (- amount user-amount)
         user-audit {:amount user-amount :user_id user_id :role "refund"}
@@ -52,8 +52,8 @@
 
 (defn accept [id user-id]
   (let [id (util/parse-int id)
-        res (first (update resolutions (set-fields {:applied true})
-                    (where {:id id :applied false})))] ;;added a flag to see if the resolution was used
+        res (update resolutions (set-fields {:applied true})
+                    (where {:id id :applied false}))] ;;added a flag to see if the resolution was used
       (let [values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
             values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
         (if (or

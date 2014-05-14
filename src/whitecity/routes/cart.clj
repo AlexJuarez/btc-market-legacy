@@ -1,5 +1,5 @@
 (ns whitecity.routes.cart
-  (:use 
+  (:use
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
@@ -7,7 +7,7 @@
             [whitecity.models.postage :as postage]
             [whitecity.models.listing :as listing]
             [whitecity.models.currency :as currency]
-            [whitecity.models.order :as order]
+            [whitecity.models.order :as orders]
             [noir.response :as resp]
             [noir.session :as session]
             [whitecity.util :as util]))
@@ -46,25 +46,25 @@
 (defn cart-view []
   (let [ls (listing/get-in (keys (session/get :cart)))
         listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
-                             total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
+                             total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
                          (conj % {:subtotal subtotal :total total})) ls))
         total (reduce + (map #(:total %) listings))]
     (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
-  (session/put! :cart 
-                (let [cart (reduce merge 
-                  (map #(hash-map (key %) (merge (val %) {:quantity (util/parse-int (quantity (str (key %)))) 
-                                                          :postage (util/parse-int (postage (str (key %))))})) 
+  (session/put! :cart
+                (let [cart (reduce merge
+                  (map #(hash-map (key %) (merge (val %) {:quantity (util/parse-int (quantity (str (key %))))
+                                                          :postage (util/parse-int (postage (str (key %))))}))
                           (session/get :cart)))] (select-keys cart (for [[k v] cart :when (> (:quantity v) 0)] k))))
   (if (= "Update Cart" submit)
     (cart-view)
     (let [ls (listing/get-in (keys (session/get :cart)))
           listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
-                               total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))] 
+                               total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
                            (conj % {:subtotal subtotal :total total})) ls))
           total (reduce + (map #(:total %) listings))
-          order (order/add! (session/get :cart) (util/convert-price (:currency_id (session/get :user)) 1 total) address pin (user-id))]
+          order (orders/add! (session/get :cart) (util/convert-price (:currency_id (session/get :user)) 1 total) address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/market/orders")
         (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} order (set-info)))))))

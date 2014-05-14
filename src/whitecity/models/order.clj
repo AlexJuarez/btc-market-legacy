@@ -64,17 +64,19 @@
       {id errors})))
 
 (defn store! [order user-id pin]
-  (let [item-cost (util/convert-price (:currency_id order) 1 (:price order))
-        postage-cost (util/convert-price (:postage_currency order) 1 (:postage_price order))
+  (let [currency_id (if (:hedged order) (:currency_id order) 1)
+        item-cost (util/convert-price (:currency_id order) currency_id (:price order))
+        postage-cost (util/convert-price (:postage_currency order) currency_id (:postage_price order))
         cost (+ item-cost postage-cost)
+        btc_cost (util/convert-price currency_id 1 cost) ;;use an env flag for this
         {lq :listing_quantity lp :listing_pubic cat_id :category_id} order
         {:keys [user_id seller_id listing_id quantity] :as order} (dissoc order :listing_quantity :listing_pubic :category_id)
-        escr {:from user_id :to seller_id :currency_id 1 :amount cost :status "hold"}
-        audit {:user_id user-id :role "purchase" :amount (* -1 cost)}]
+        escr {:from user_id :to seller_id :currency_id currency_id :amount cost :status "hold"}
+        audit {:user_id user-id :role "purchase" :amount (* -1 btc_cost)}]
     (util/update-session seller_id :sales)
     (let [order (transaction
       (insert audits (values audit))
-      (update users (set-fields {:btc (raw (str "btc - " cost))}) (where {:id user-id :pin pin}))
+      (update users (set-fields {:btc (raw (str "btc - " btc_cost))}) (where {:id user-id :pin pin}))
       (update listings
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
               (where {:id listing_id}))
@@ -89,10 +91,11 @@
         quantity (:quantity (val item))
         post (postage/get postid)
         listing (listings/get id)]
-    {:price (:price listing)
+    {:price (* quantity (:price listing))
      :postage_price (:price post)
      :postage_title (:title post)
      :postage_currency (:currency_id post)
+     :hedge_fee (:hedge_fee listing)
      :quantity quantity
      :listing_quantity (:quantity listing) ;;this field gets removed
      :listing_pubic (:public listing) ;;placeholder
@@ -121,7 +124,7 @@
       (do
         (session/put! :cart {})
         (util/update-session user-id :orders :sales)
-        (apply #(store! (prep % address user-id) user-id pin) cart))
+        (doall (map #(store! (prep % address user-id) user-id pin) cart)))
       {:address address :errors errors})))
 
 (defn update-sales [sales seller-id status]
@@ -136,13 +139,14 @@
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id)
-        {seller_id :seller_id listing_id :listing_id} (first (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]})))
-        {percent :hedge_fee amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"})))
+        {percent :hedge_fee seller_id :seller_id listing_id :listing_id} (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]}))
+        {amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"}))
+        test (do (println percent amount))
         amount (util/convert-price currency_id 1 amount)
         fee_amount (* percent amount)
         audit {:amount (- amount fee_amount) :user_id seller_id :role "sale"}
         fee {:order_id id :role "order" :amount fee_amount}]
-    (if listing_id
+    (if (not (nil? listing_id))
       (transaction
         (insert fees (values fee))
         (insert audits (values audit))
