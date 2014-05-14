@@ -17,19 +17,18 @@
   (region/add! (jr/parse-string (slurp "resources/regions.json"))))
 
 (defn load-currencies []
-  (c/add! (distinct 
-            (map 
-              #(-> {:key (second %) :name (first %) :symbol (last %)}) 
-              (jr/parse-string (slurp "resources/currencies_symbols.json") true)))))
+  (c/add! (distinct
+           (jr/parse-string (slurp "resources/currencies_symbols.json") true))))
 
 
 (defn load-fixtures []
   (if (empty? (cat/all false))
+    (do
     (load-regions)
     (load-currencies)
     (e/update-from-remote)
-    (cat/load-fixture)))
-  
+    (cat/load-fixture))))
+
 (defn actualized?
     "checks if there are no pending migrations"
     []

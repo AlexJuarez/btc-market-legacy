@@ -137,12 +137,14 @@
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id)
         {seller_id :seller_id listing_id :listing_id} (first (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]})))
-        {amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"})))
+        {percent :hedge_fee amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"})))
         amount (util/convert-price currency_id 1 amount)
-        
-        audit {:amount amount :user_id seller_id :role "sale"}]
+        fee_amount (* percent amount)
+        audit {:amount (- amount fee_amount) :user_id seller_id :role "sale"}
+        fee {:order_id id :role "order" :amount fee_amount}]
     (if listing_id
       (transaction
+        (insert fees (values fee))
         (insert audits (values audit))
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
         (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id}))

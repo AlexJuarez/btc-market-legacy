@@ -8,6 +8,7 @@
            (tbl :currency
                 (varchar :key 3 :unique :not-null)
                 (varchar :name 200)
+                (float :hedge_fee)
                 (varchar :symbol 10))))
   (down [] (drop (table :currency))))
 
@@ -140,6 +141,7 @@
                 (integer :postage_currency [:refer :currency :id])
                 (integer :quantity)
                 (boolean :hedged (default false))
+                (float :hedge_fee)
                 (boolean :reviewed (default false))
                 (varchar :title 100)
                 (timestamp :auto_finalize)
@@ -191,7 +193,6 @@
   (up [] (create
           (tbl :fee
                (refer-to :order)
-               (hedged :boolean (default false))
                (varchar :role 10)
                (float :amount))))
   (down [] (drop (table :fee))))
