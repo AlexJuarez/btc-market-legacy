@@ -2,7 +2,7 @@
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
@@ -27,49 +27,47 @@
       (update resolutions
               (set-fields res)
               (where {:id id}))
-      (update orders 
+      (update orders
               (set-fields {:auto_finalize (raw (str "(auto_finalize + interval '" days  " days')"))})
               (where {:id order_id}))))
 
 (defn refund [id user_id seller_id order_id percent res]
-  (let [{amount :amount currency_id :currency_id} (first (select escrow (where {:order_id order_id :from user_id :status "hold"})))
+  (let [{amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :from user_id :status "hold"})))
         user-amount (* (util/convert-price currency_id 1 amount) (/ percent 100))
-        seller-amount (- amount user-amount) 
+        seller-amount (- amount user-amount)
         user-audit {:amount user-amount :user_id user_id :role "refund"}
         seller-audit {:amount seller-amount :user_id seller_id :role "refund"}]
     (util/update-session user_id :orders :sales)
     (util/update-session seller_id :orders :sales)
-    (transaction
-      (update resolutions
-              (set-fields res)
-              (where {:id id}))
-      (insert audits (values [user-audit seller-audit]))
-      (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
-      (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
-      (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id}))
-      (update orders (set-fields {:status 3 :updated_on (raw "now()")})
-              (where {:user_id user_id :id order_id})))))
+    (if amount
+      (transaction
+        (update resolutions
+                (set-fields res)
+                (where {:id id}))
+        (insert audits (values [user-audit seller-audit]))
+        (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
+        (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
+        (update orders (set-fields {:status 3 :updated_on (raw "now()")})
+                (where {:user_id user_id :id order_id}))))))
 
 (defn accept [id user-id]
   (let [id (util/parse-int id)
-        res (first (select resolutions
-                    (where {:id id})))] ;;added a flag to see if the resolution was used
-    (if-not (:applied res)
-      (let [values {:applied true}
-            values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
+        res (first (update resolutions (set-fields {:applied true})
+                    (where {:id id :applied false})))] ;;added a flag to see if the resolution was used
+      (let [values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
             values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
-        (if (or 
+        (if (or
               (and (:user_accepted values) (:seller_accepted res))
               (and (:user_accepted res) (:seller_accepted values))) ;;check to see if everyone wants this resolution
           (if (= (:action res) "extension")
             (extension id (:value res) (:order_id res) values)
-            (refund id (:user_id res) (:seller_id res) (:order_id res) (:value res) values)))))))
+            (refund id (:user_id res) (:seller_id res) (:order_id res) (:value res) values))))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
 
 (defn prep [{:keys [action extension refund content]} order-id user-id]
-  "prepares content for the resolutions table, 
+  "prepares content for the resolutions table,
   takes in a map with an action, extension, refund and message"
   (let [order-id (util/parse-int order-id)
         order (first (select orders (where {:id order-id})))

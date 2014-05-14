@@ -28,7 +28,7 @@
 
 (defn order-finalize [id]
   (let [id (hashids/decrypt id)]
-    (order/finalize id (user-id));;do is in serial
+    (order/finalize id (user-id))
     (resp/redirect "/market/orders")))
 
 (defn order-view
