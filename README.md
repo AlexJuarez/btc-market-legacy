@@ -1,5 +1,13 @@
 # Cool side project
 
+[] need to work on bitcoind framework
+[] need to put server config files into a repo
+[] work on hedged functionality - backlog
+[] need to start on admin functionality
+[] add fields to the schema to support hedged listing
+[] add a escrow entry for our fee - remember our fee needs to include the blockchain transaction fee.
+
+
 sudo apt-get install bitcoind
 
 ## Prerequisites

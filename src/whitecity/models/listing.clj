@@ -118,8 +118,8 @@
                     (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
               (update listings
                 (set-fields listing)
-                (where {:id (util/parse-int id) :user_id user-id}))
-              (conj {:errors check} listing))))))
+                (where {:id (util/parse-int id) :user_id user-id})))))
+      (conj {:errors check} listing)))
 
 (defn- sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
   (let [query (-> query

@@ -29,15 +29,15 @@
   (do
     (session/flash-put! :success "listing removed")
     (resp/redirect "/market/listings")))))
-
+;;Check convert currency set this to a global constant
 (defn listing-edit [id]
   (let [listing (listing/get id)
         success (session/flash-get :success)]
-    (layout/render "listings/create.html" (merge {:regions (region/all) :edit true :success success :id id :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01) :edit true :success success :id id :images (image/get (user-id)) :listing listing :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
-    (layout/render "listings/create.html" (merge {:regions (region/all) :id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} listing (set-info)))))
+    (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01) :id id :images (image/get (user-id)) :categories (category/all) :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-create
   "Listing creation page"
