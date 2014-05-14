@@ -187,6 +187,14 @@
                 (float :amount))))
   (down [] (drop (table :audit))))
 
+(defmigration add-fee-table
+  (up [] (create
+          (tbl :fee
+               (refer-to :order)
+               (hedged :boolean (default false))
+               (float :amount))))
+  (down [] (drop (table :fee))))
+
 (defmigration add-resolutions-table
   (up [] (create
            (tbl :resolution
