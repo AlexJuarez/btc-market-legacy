@@ -11,7 +11,7 @@
             [lobos.migration :as lm]))
 
 (defcommand pending-migrations []
-              (lm/pending-migrations db/db-spec sname))
+  (lm/pending-migrations db/db-spec sname))
 
 (defn load-regions []
   (region/add! (jr/parse-string (slurp "resources/regions.json"))))
@@ -24,10 +24,11 @@
 
 
 (defn load-fixtures []
-  (load-regions)
-  (load-currencies)
-  (e/update-from-remote)
-  (cat/load-fixture))
+  (if (empty? (cat/all false))
+    (load-regions)
+    (load-currencies)
+    (e/update-from-remote)
+    (cat/load-fixture)))
   
 (defn actualized?
     "checks if there are no pending migrations"

@@ -192,6 +192,7 @@
           (tbl :fee
                (refer-to :order)
                (hedged :boolean (default false))
+               (varchar :role 10)
                (float :amount))))
   (down [] (drop (table :fee))))
 

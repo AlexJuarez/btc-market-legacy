@@ -139,6 +139,7 @@
         {seller_id :seller_id listing_id :listing_id} (first (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]})))
         {amount :amount currency_id :currency_id} (first (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"})))
         amount (util/convert-price currency_id 1 amount)
+        
         audit {:amount amount :user_id seller_id :role "sale"}]
     (if listing_id
       (transaction
