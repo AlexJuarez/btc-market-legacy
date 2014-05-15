@@ -103,8 +103,6 @@
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)]
-          (println public_old quantity_old category_id_old)
-          (println public quantity category_id)
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
                 (do

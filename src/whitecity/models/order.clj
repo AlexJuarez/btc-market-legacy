@@ -141,7 +141,6 @@
   (let [id (util/parse-int id)
         {percent :hedge_fee seller_id :seller_id listing_id :listing_id} (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]}))
         {amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"}))
-        test (do (println percent amount))
         amount (util/convert-price currency_id 1 amount)
         fee_amount (* percent amount)
         audit {:amount (- amount fee_amount) :user_id seller_id :role "sale"}
