@@ -18,7 +18,7 @@
     {% for message in messages %}
     <tr>
       <td>
-        {% ifequal user.id message.user_id %}
+        {% ifequal user.id message.sender_id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
           <a href="/market/user/{{message.user_id}}" class="sender">{{message.user_alias}}</a>
@@ -35,7 +35,7 @@
         </div>
       </td>
       <td><span data-time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
-      <td><a href="/market/message/{{message.id}}/delete">delete</a></td>
+      <td>{% ifequal message.user_id user.id %}<a href="/market/message/{{message.id}}/delete">delete</a>{% endifequal %}</td>
     </tr>
     {% endfor %}
   </tbody>
