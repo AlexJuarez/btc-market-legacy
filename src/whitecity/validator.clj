@@ -14,10 +14,6 @@
   (first (sql/select users
     (sql/where (and (or (= :alias alias) (= :login alias)) (not (= :id (util/user-id))))))))
 
-(defn min-price [map key _]
-  (when-not (> (util/convert-currency (util/parse-int (get map :currency_id)) (util/parse-float (get map key))) (util/convert-currency 1 0.01))
-    "You need to meet the minimun price requirements."))
-
 (defn login-taken [map key _]
   (when-not (empty? (get-by-login (get map key)))
     "This username is already taken"))
@@ -43,12 +39,12 @@
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
-  [:price [:presence :min-price :numericality {:greater-than-or-equal-to 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
   [:currency_id [:presence]]
   [:quantity [:presence :numericality {:greater-than-or-equal-to 0}]])
 
 (v/defvalidator postage-validator
-  [:price [:presence :min-price :numericality {:greater-than-or-equal-to 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
   [:title [:presence :in-range {:start 4 :end 100}]])
 
 (v/defvalidator message-validator
