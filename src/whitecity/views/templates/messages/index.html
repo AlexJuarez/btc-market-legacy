@@ -2,7 +2,7 @@
 {% block content %}
 <div class="inbox">
   <h1 class="jumbo">my messages</h1>
-  <nav class="sales-nav"><em><a href="/market/messages">inbox <strong>{{user.messages}}</strong></a></em> - <a href="/market/messages/sent">sent</a></nav>
+  <nav class="nav"><em><a href="/market/messages">inbox <strong>{{user.messages}}</strong></a></em> - <a href="/market/messages/sent">sent</a></nav>
 </div>
 {% if not messages|empty? %}
 <table class="table normal messages">

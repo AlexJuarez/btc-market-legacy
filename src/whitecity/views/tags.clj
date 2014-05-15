@@ -46,6 +46,8 @@
    (fn [args context-map]
      (let [route (first args)]
        (html [:style {:type "text/css"}
-                      (cache/cache! route
-                        (slurp (str (noirio/resource-path) route)))
+                      (if (:dev env)
+                        (slurp (str (noirio/resource-path) route))
+                        (cache/cache! route
+                          (slurp (str (noirio/resource-path) route))))
                       ]))))

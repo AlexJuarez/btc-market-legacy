@@ -54,7 +54,7 @@
   (session/get :user_id ))
 
 (defn current-user []
-  (session! :user (-> (select users (with currency (fields [:symbol :currency_symbol])) (where {:id (session/get :user_id)})) first (dissoc :salt :pass))))
+  (session! :user (-> (select users (with currency (fields [:key :currency_key] [:symbol :currency_symbol])) (where {:id (session/get :user_id)})) first (dissoc :salt :pass))))
 
 (defn convert-price [from to price]
   (if-not (= from to)

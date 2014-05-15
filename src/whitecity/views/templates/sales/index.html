@@ -1,7 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1 class="jumbo"> my sales </h1>
-<nav class="sales-nav">
+<nav class="nav">
   <a href="/market/sales">overview ({{user.sales.total|default:0}})</a> - 
   <a href="/market/sales/new">new ({{user.sales.new|default:0}})</a> - 
   <a href="/market/sales/shipped">in transit ({{user.sales.ship|default:0}})</a> - 

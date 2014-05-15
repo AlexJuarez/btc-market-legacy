@@ -54,7 +54,8 @@
             (where {:id id}))
     (update users
             (set-fields {:login_tries (raw "login_tries + 1")})
-            (where {:id id}))))
+            (where {:id id})))
+   user)
 
 (defn get-by-alias [a]
   (first (select users
@@ -133,7 +134,7 @@
  (let [userstore (track-login (get-by-login login))]
     (if (nil? userstore)
       (assoc user :error "Username does not exist.")
-      (if (> 20 (:login_tries userstore)) 
+      (if (> 20 (:login_tries userstore))
         (if (and (:pass userstore) (warden/compare (str pass (:salt userstore)) (:pass userstore)))
             (do (last-login (:id userstore) session) (dissoc userstore :salt :pass))
             (assoc user :error "Password Incorrect."))
