@@ -131,7 +131,6 @@
 
 (defn login! [{:keys [login pass session] :as user}]
  (let [userstore (track-login (get-by-login login))]
-    (println track-login)
     (if (nil? userstore)
       (assoc user :error "Username does not exist.")
       (if (> 20 (:login_tries userstore)) 
