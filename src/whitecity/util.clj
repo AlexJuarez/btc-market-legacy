@@ -1,5 +1,7 @@
 (ns whitecity.util
-    (:use hiccup.form hiccup.util korma.core whitecity.db)
+    (:use hiccup.form
+          [hiccup.core :only [html]]
+          hiccup.util korma.core whitecity.db)
     (:require [taoensso.timbre :refer [trace debug info warn error fatal]]
               [taoensso.timbre.profiling :as profiling
             :refer (profile p)]
@@ -112,25 +114,27 @@
     ([time fmt]
          (.format (new java.text.SimpleDateFormat fmt) time)))
 
-(defn handle-img-link [xs]
-  (if (= [\[ \! \[] (take 3 xs))
-    (let [xs (drop 3 xs)
-          [alt xy] (split-with (partial not= \]) xs)
-          [url-title zy] (->> xy (drop 2) (split-with (partial not= \))))
-          [url title] (split-with (partial not= \space) url-title)]
-      (concat "[" (img alt url (not-empty title)) (rest zy)))
-    xs))
-
-(defn image-tranform [text state]
-  (let [[head xs]   (split-with (partial not= \[) tokens)
-        xs          (handle-img-link xs)
-        [title ys]  (split-with (partial not= \]) xs)
-        [dud zs]    (split-with (partial not= \() ys)
-        [link tail] (split-with (partial not= \)) zs)]
-  )
-    (println head xs title dud link)
-  )
-
+(defn image-transform [text state]
+  (loop [out []
+         tokens (seq text)]
+    (if (empty? tokens)
+      [(s/join out) state]
+      (let [tokens (seq text)
+            [head xs]   (split-with (partial not= \[) tokens)
+            [title ys]  (split-with (partial not= \]) xs)
+            [dud zs]    (split-with (partial not= \() ys)
+            [link tail] (split-with (partial not= \)) zs)]
+        (if (or (< (count link) 2)
+                (< (count tail) 1)
+                (> (count dud) 1))
+          (recur (concat out head title dud link) tail)
+          (recur
+           (into out
+                 (let [alt (s/join (rest title))
+                       [url title] (split-with (partial not= \space) (rest link))
+                       title (s/join (rest title))]
+                   (concat (butlast head) (html [:img {:alt alt :src (s/join url) :title (s/join title)}]))))
+           (rest tail)))))))
 
 (defn md->html
     "reads a markdown string and returns the html"
