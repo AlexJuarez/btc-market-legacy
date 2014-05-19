@@ -1,7 +1,9 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="images">
-  <strong>my images</strong> - <a href="/market/account/images/upload">upload</a> - <a href="/market/account/images/edit">edit</a>
+  <nav class="nav p">
+    <strong>my images</strong> - <a href="/market/account/images/upload">upload</a> - <a href="/market/account/images/edit">edit</a>
+  </nav>
   {% if success %}
     <h2 class="success">{{success}}</h2>
   {% endif %}

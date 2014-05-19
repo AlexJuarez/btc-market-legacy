@@ -11,7 +11,7 @@
    [selmer "0.6.6"];;templating engine
    [image-resizer "0.1.6"]
    [com.taoensso/timbre "3.1.4"];;logging
-   [com.postspectacular/rotor "0.1.0"];;loggin
+   [com.postspectacular/rotor "0.1.0"];;logging
    [clojurewerkz/spyglass "1.1.0"];;couchbase interface
    [environ "0.4.0"]
    [com.taoensso/tower "2.0.2"];;localization lib
