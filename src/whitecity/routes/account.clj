@@ -53,11 +53,20 @@
    (resp/redirect "/market/account/reviews")))
 
 (defn images-page []
-  (let [images (image/get (user-id))]
-    (layout/render "images/index.html" (conj (set-info) {:images images}))))
+  (let [images (image/get (user-id)) success (session/flash-get :success)]
+    (layout/render "images/index.html" (conj (set-info) {:images images :success success}))))
+
+(defn images-upload 
+  ([]
+    (layout/render "images/upload.html" (set-info)))
+  ([{image :image}]
+   (parse-image nil image)
+   (session/flash-put! :success "image uploaded")
+   (resp/redirect "/market/account/images")))
 
 (defn image-delete [id]
   (image/remove! id (user-id))
+  (session/flash-put! :success "image deleted")
   (resp/redirect "/market/account/images"))
 
 (defn password-page
@@ -98,6 +107,8 @@
   (GET "/market/account/reviews" [page] (reviews-page page))
   (POST "/market/account/images/edit" {params :params} (images-edit params))
   (GET "/market/account/images/edit" [] (images-edit))
+  (POST "/market/account/images/upload" {params :params} (images-upload params))
+  (GET "/market/account/images/upload" [] (images-upload))
   (GET "/market/image/:id/delete" [id] (image-delete id))
   (GET "/market/user/:id/follow" [id] (user-follow id))
   (GET "/market/user/:id/unfollow" {{id :id} :params {referer "referer"} :headers} (user-unfollow id referer)))

@@ -1,0 +1,20 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<div class="images">
+  <nav class="nav p">
+    <a href="/market/account/images">my images</a> - <strong>upload</strong> - <a href="/market/account/images/edit">edit</a>
+  </nav>
+  <form class="well p" enctype="multipart/form-data" method="post">
+    {% csrf-token %}
+    <div class="form-group">
+      <label>Upload a Image (.jpg):</label>
+      <div>
+        <input type="file" name="image" accept="image/jpeg" />
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn">upload</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

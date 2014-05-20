@@ -14,6 +14,7 @@
               [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
               [markdown.core :as md]
+              [whitecity.util.image :as image]
               [markdown.transformers :as mdts])
     (:import net.sf.jlue.util.Captcha
              javax.imageio.ImageIO
@@ -133,7 +134,7 @@
                  (let [alt (s/join (rest title))
                        [url title] (split-with (partial not= \space) (rest link))
                        title (s/join (rest title))]
-                   (concat (butlast head) (html [:img {:alt alt :src (s/join url) :title (s/join title)}]))))
+                   (concat (butlast head) (image/img (s/join url) (s/join title) alt))))
            (rest tail)))))))
 
 (defn md->html
@@ -145,7 +146,7 @@
                                                           mdts/em mdts/strong
                                                           mdts/bold mdts/strikethrough
                                                           mdts/superscript mdts/blockquote
-                                                          mdts/paragraph
+                                                          mdts/paragraph image-transform
                                                           mdts/br]))
 
 (defn gen-captcha-text []

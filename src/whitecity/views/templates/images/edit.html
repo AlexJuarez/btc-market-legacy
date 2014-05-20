@@ -1,7 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div class="images">
-  <a href="/market/account/images">my images</a> - <strong>edit</strong>
+  <a href="/market/account/images">my images</a> - <a href="/market/account/images/upload">upload</a> - <strong>edit</strong>
   {% if not images|empty? %}
   <form action="/market/account/images/edit" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
@@ -36,7 +36,7 @@
   </div>
   </form>
   {% else %}
-    You do not currently have an hosted images
+    You do not currently have any hosted images
   {% endif %}
 </div>
 {% endblock %}

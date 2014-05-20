@@ -22,8 +22,10 @@
   (let [id (util/parse-int id)]
     (if-let [image (get id user-id)]
       (do 
-        (io/delete-file (str (resource-path) "uploads/" id "_max.jpg"))
-        (io/delete-file (str (resource-path) "uploads/" id "_thumb.jpg"))
+        (try
+          (io/delete-file (str (resource-path) "uploads/" id "_max.jpg"))
+          (io/delete-file (str (resource-path) "uploads/" id "_thumb.jpg"))
+          (catch Exception ex))
         (delete images
                 (where {:user_id user-id :id id}))))))
 
