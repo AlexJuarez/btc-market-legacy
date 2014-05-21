@@ -1,19 +1,19 @@
 (ns whitecity.models.exchange
   (:refer-clojure :exclude [get])
-  (:use 
-        [whitecity.db]
-        [korma.core]
-        [korma.db :only (transaction)]
-        [clojure.string :only (split lower-case)])
+  (:use
+   [whitecity.db]
+   [korma.core]
+   [korma.db :only (transaction)]
+   [clojure.string :only (split lower-case)])
   (:require
-    [cheshire.core :as jr]
-    [whitecity.cache :as cache]
-    [whitecity.models.currency :as currency]
-    [clj-http.client :as client]))
+   [cheshire.core :as jr]
+   [whitecity.cache :as cache]
+   [whitecity.models.currency :as currency]
+   [clj-http.client :as client]))
 
 (defn update-from-remote []
   (let [response ;;(jr/parse-string (slurp "resources/exchange_rates.json"))
-              (:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates" 
+              (:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates"
               {:conn-timeout 1000
                :content-type :json
                :follow-redirects false
@@ -31,7 +31,7 @@
 
 (defn get [from to]
   (when-not (or (nil? from) (nil? to))
-    (do ;;(-> (Thread. update-from-remote) .start) 
+    (do ;;(-> (Thread. update-from-remote) .start)
       (cache/cache! (str from "-" to)
           (:value (first (select exchange
                 (where {:from from :to to}))))))))

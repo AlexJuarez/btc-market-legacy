@@ -22,6 +22,7 @@
    [org.clojure/java.jdbc "0.2.3"];;dependency for korma
    [postgresql/postgresql "9.1-901.jdbc4"]
    [ring-anti-forgery "0.3.0"]
+   [clj-btc "0.1.1"]
    [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
    [korma "0.3.0-beta11"];;dbl

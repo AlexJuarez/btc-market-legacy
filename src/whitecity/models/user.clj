@@ -6,6 +6,7 @@
         [korma.db :only (transaction)]
         [korma.core])
   (:require
+        [whitecity.util.btc :as btc]
         [whitecity.validator :as v]
         [hiccup.util :as hc]
         [clojure.string :as s]
@@ -120,7 +121,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
+      (-> {:login login :wallet (btc/address login) :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id session]
