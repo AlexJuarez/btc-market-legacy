@@ -3,21 +3,22 @@
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
-  (:require [whitecity.views.layout :as layout]
-            [whitecity.models.user :as user]
-            [whitecity.models.message :as message]
-            [whitecity.models.feedback :as feedback]
-            [whitecity.models.listing :as listing]
-            [whitecity.models.category :as category]
-            [whitecity.models.resolution :as resolution]
-            [whitecity.models.report :as report]
-            [whitecity.models.review :as review]
-            [whitecity.models.fan :as follower]
-            [whitecity.models.postage :as postage]
-            [whitecity.models.currency :as currency]
-            [noir.response :as resp]
-            [noir.session :as session]
-            [whitecity.util :as util]))
+  (:require 
+    [whitecity.views.layout :as layout]
+    [whitecity.models.user :as user]
+    [whitecity.models.message :as message]
+    [whitecity.models.feedback :as feedback]
+    [whitecity.models.listing :as listing]
+    [whitecity.models.category :as category]
+    [whitecity.models.resolution :as resolution]
+    [whitecity.models.report :as report]
+    [whitecity.models.review :as review]
+    [whitecity.models.fan :as follower]
+    [whitecity.models.postage :as postage]
+    [whitecity.models.currency :as currency]
+    [noir.response :as resp]
+    [noir.session :as session]
+    [whitecity.util :as util]))
 
 (def user-per-page 10)
 
