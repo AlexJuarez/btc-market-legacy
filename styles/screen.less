@@ -6,6 +6,7 @@
 @import "listing";
 @import "market";
 @import "footer";
+@import "account";
 
 @price: #771105;
 
@@ -241,6 +242,11 @@ ul.pagination {
 
 .has-error {
   color: #b94a48;
+  .text-input {
+    border-color: #b94a48;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0, 0.075);
+  }
 }
 
 .has-error .form-control, .has-error .text-input {
