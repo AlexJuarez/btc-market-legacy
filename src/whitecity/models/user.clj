@@ -148,7 +148,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :wallet (btc/address login) :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
+      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id session]

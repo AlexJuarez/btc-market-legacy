@@ -41,7 +41,9 @@
    :init whitecity.handler/init,
    :destroy whitecity.handler/destroy}
   :profiles
-  {:uberjar
+  {:user {:env {:db-user "devil"
+                :db-pass "admin"}}
+   :uberjar
    {:aot :all},
    :production
    {:ring
@@ -49,10 +51,6 @@
    :dev
    {:dependencies [[ring-mock "0.1.5"] [ring/ring-devel "1.2.0"]]
     :env {:dev true}}}
-  :url
-  "http://example.com/FIXME"
   :plugins
   [[lein-ring "0.8.7"] [lein-environ "0.4.0"]]
-  :description
-  "FIXME: write description"
   :min-lein-version "2.0.0")
