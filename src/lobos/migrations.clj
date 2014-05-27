@@ -57,10 +57,17 @@
 (defmigration add-user-wallets-table
   (up [] (create
            (tbl :wallet
+                (refer-to :user)
                 (varchar :wallet 34 :unique)
-                (varchar :key 64)
                 (timestamp :checked_on))))
   (down [] (drop (table :wallet))))
+
+(defmigration wallet-withdrawals-table
+  (up [] (create
+           (tbl :withdrawal
+                (refer-to :user)
+                (float :amount))))
+  (down [] (drop (table :withdrawal))))
 
 (defmigration add-messages-table
   (up [] (create
