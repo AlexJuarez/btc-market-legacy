@@ -83,14 +83,16 @@
   (if (string? s)
     (let [i (re-find #"\d+" s)]
       (if-not (s/blank? i)
-        (Integer. i)))
+        (Integer. i)
+        0))
     s))
 
 (defn parse-float [s]
   (if (string? s)
     (let [f (re-find #"[0-9]*\.?[0-9]+" s)]
       (if-not (s/blank? f)
-        (Float. f)))
+        (Float. f)
+        0.0))
     s))
 
 (defmacro update-session

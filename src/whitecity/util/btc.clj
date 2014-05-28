@@ -12,3 +12,5 @@
 
 (defn newaddress [account]
   (btc/getnewaddress :account (str account) :config config))
+
+(defn validate [address] address)

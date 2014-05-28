@@ -66,6 +66,7 @@
   (up [] (create
            (tbl :withdrawal
                 (refer-to :user)
+                (varchar :address 34)
                 (float :amount))))
   (down [] (drop (table :withdrawal))))
 

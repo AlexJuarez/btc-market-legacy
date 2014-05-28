@@ -25,10 +25,15 @@
   (let [user (user/update! (user-id) slug)]
     (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
-(defn wallet-page []
-  (let [user (util/current-user)
-        transactions (audit/all (user-id))]
-  (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
+(defn wallet-page
+  ([]
+    (let [user (util/current-user)
+          transactions (audit/all (user-id))]
+    (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
+  ([amount address]
+   (user/withdraw-btc! amount address (user-id))
+   (wallet-page)))
+
 
 (defn wallet-new []
   (user/update-btc-address! (user-id))
@@ -106,6 +111,7 @@
   (GET "/market/review/:id/edit" [id] (review-edit id))
   (POST "/market/review/:id/edit" {params :params} (review-edit (:id params) params))
   (GET "/market/account/wallet" [] (wallet-page))
+  (POST "/market/account/wallet" [amount address] (wallet-page amount address))
   (GET "/market/account/wallet/new" [] (wallet-new))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))

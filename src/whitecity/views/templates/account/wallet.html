@@ -9,9 +9,16 @@
   <a href="/market/account/wallet/new">generate a new address</a>
 </p>
 <h3>Withdraw Funds</h3>
-<p class="well">
-  insufficient funds
-</p>
+<div class="well p">
+  {% if user.btc >= 0 %}
+    <form method="post">
+      {% csrf-token %}
+      <label>amount: <input type="number" name="amount" /></label><label>bitcoin address: <input type="text" name="address" /></label><button type="submit" class="btn">submit</button>
+    </form>
+  {% else %}
+    insufficient funds
+  {% endif %}
+</div>
 <h3>Recent Transactions</h3>
 {% if not transactions|empty? %}
 <table class="table normal p">

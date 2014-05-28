@@ -112,6 +112,21 @@
       (insert wallets (values {:wallet new-address :user_id id}))
       (update users (set-fields {:wallet new-address}) (where {:id id})))))
 
+(defn withdraw-btc! [amount address user-id]
+  (let [amount (util/parse-float amount)
+        address (btc/validate address)
+        user (first (select users (fields :btc) (where {:id user-id})))
+        audit {:user_id user-id :role "withdrawal" :amount (* -1 amount)}]
+    (if (>= (:btc user) amount)
+      (do
+        (transaction
+          (update users (set-fields {:btc (raw (str "btc - " amount))}) (where {:id user-id}))
+          (insert withdrawals (values {:amount amount :address address :user_id user-id}))
+          (insert audits (values audit)))
+        (util/update-session user-id))
+      {:error "user does not have the required funds"}
+    )))
+
 (defn update-password! [id {:keys [pass newpass confirm]}]
   (let [user (get-dirty id)]
     (if (and (not (nil? user)) (and (:pass user) (warden/compare (str pass (:salt user)) (:pass user))))
