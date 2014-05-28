@@ -8,7 +8,7 @@
              :rpcport "8332"})
 
 (defn address [account]
-  (btc/getaccountaddress :account account :config config))
+  (btc/getaccountaddress :account (str account) :config config))
 
 (defn newaddress [account]
-  (btc/getnewaddress :account account :config config))
+  (btc/getnewaddress :account (str account) :config config))

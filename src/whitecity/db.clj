@@ -11,10 +11,14 @@
 
 (defdb db db-spec)
 
-(declare audits fee users senders feedback resolutions orders messages listings postage images category region currency exchange bookmarks fans reviews escrow)
+(declare audits fee users wallets senders feedback resolutions orders messages listings postage images category region currency exchange bookmarks fans reviews escrow)
 
 (defentity audits
   (table :audit)
+  (has-one users))
+
+(defentity wallets
+  (table :wallet)
   (has-one users))
 
 (defentity users
@@ -24,6 +28,7 @@
   (has-many listings)
   (has-many messages)
   (has-many images)
+  (has-many wallets)
   (has-many postage)
   (has-many fans)
   (has-many bookmarks)

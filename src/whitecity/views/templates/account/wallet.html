@@ -5,6 +5,8 @@
   <strong>availible:</strong>&#3647;{{user.btc}} {% if balance %}(~{{user.currency_symbol|safe}}{{user.balance|double-format:2}}){% endif %}
   <br>
   <strong>Bitcoin address:</strong> <span class="bitcoin-address">{{user.wallet}}</span>
+  <br>
+  <a href="/market/account/wallet/new">generate a new address</a>
 </p>
 <h3>Withdraw Funds</h3>
 <p class="well">

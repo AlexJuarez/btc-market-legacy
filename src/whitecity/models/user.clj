@@ -95,15 +95,22 @@
   (let [updates (clean slug)
         check (valid-update? updates)]
     (if (empty? check)
-      (let [user (session/get :user)]
-      (do
-        (session/put! :user (merge user updates
-                                   (if-not (= (:curreny_id updates) (:currency_id user))
+      (let [user (util/current-user)]
+        (session/put! :user
+                      (merge
+                       (update users
+                        (set-fields updates)
+                        (where {:id id}))
+                       (if-not (= (:curreny_id updates) (:currency_id user))
                                      {:currency_symbol (:symbol (currency/get (:currency_id updates)))})))
-        (update users
-              (set-fields updates)
-              (where {:id id})))
       {:errors check}))))
+
+(defn update-btc-address! [id]
+  (let [new-address (btc/newaddress id)]
+    (session/put! :user (merge (util/current-user) {:wallet new-address}))
+    (transaction
+      (insert wallets (values {:wallet new-address :user_id id}))
+      (update users (set-fields {:wallet new-address}) (where {:id id})))))
 
 (defn update-password! [id {:keys [pass newpass confirm]}]
   (let [user (get-dirty id)]
@@ -116,7 +123,11 @@
       {:pass ["Your password is incorrect."]})))
 
 (defn store! [user]
-  (insert users (values user)))
+  (let [new-user (insert users (values user))
+        user-id (:id new-user)
+        wallet (btc/address user-id)]
+    (insert wallets (values {:wallet wallet :user_id user-id}))
+    (update users (set-fields {:wallet wallet}) (where {:id user-id}))))
 
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]

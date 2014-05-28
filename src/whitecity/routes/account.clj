@@ -30,6 +30,10 @@
         transactions (audit/all (user-id))]
   (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
 
+(defn wallet-new []
+  (user/update-btc-address! (user-id))
+  (resp/redirect "/market/account/wallet"))
+
 (defn favorites-page []
   (let [bookmarks (map #(assoc % :price (util/convert-currency %)) (bookmark/all (user-id)))
         favs (follower/all (user-id))]
@@ -56,7 +60,7 @@
   (let [images (image/get (user-id)) success (session/flash-get :success)]
     (layout/render "images/index.html" (conj (set-info) {:images images :success success}))))
 
-(defn images-upload 
+(defn images-upload
   ([]
     (layout/render "images/upload.html" (set-info)))
   ([{image :image}]
@@ -102,6 +106,7 @@
   (GET "/market/review/:id/edit" [id] (review-edit id))
   (POST "/market/review/:id/edit" {params :params} (review-edit (:id params) params))
   (GET "/market/account/wallet" [] (wallet-page))
+  (GET "/market/account/wallet/new" [] (wallet-new))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))
   (GET "/market/account/reviews" [page] (reviews-page page))
