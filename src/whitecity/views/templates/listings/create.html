@@ -75,7 +75,7 @@
   <div class="form-group{% if errors.title %} has-error{% endif %}">
     <label for="price" title="Must be greater than {{user.currency_symbol|safe}}{{min-price}}">
     Price: 
-    <input type="number" name="price" id="price" class="input" type="text" value="{{price}}" />
+    <input name="price" id="price" class="input" type="text" value="{{price}}" />
     </label>
     <select title="currency" name="currency_id" id="currency_id">
       {% for currency in currencies %}

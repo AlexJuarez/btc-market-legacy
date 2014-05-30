@@ -13,7 +13,7 @@
   {% if user.btc >= 0 %}
     <form method="post">
       {% csrf-token %}
-      <label>amount: <input type="number" name="amount" /></label><label>bitcoin address: <input type="text" name="address" /></label><button type="submit" class="btn">submit</button>
+      <label>amount: <input type="text" name="amount" /></label><label>bitcoin address: <input type="text" name="address" /></label><button type="submit" class="btn">submit</button>
     </form>
   {% else %}
     insufficient funds
