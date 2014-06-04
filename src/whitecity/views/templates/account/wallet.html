@@ -11,13 +11,19 @@
 <h3>Withdraw Funds</h3>
 <div class="well p">
   {% if user.btc >= 0 %}
-    <form method="post">
+    <form method="post{% if not errors!empty? %} has-errors{% endif %}">
       {% csrf-token %}
       <p>
         <label>amount: <input type="text" name="amount" /></label>
+        {% if errors.amount %}
+          {{errors.amount|join:", "}}
+        {% endif %}
       </p>
       <p>
         <label>bitcoin address: <input type="text" name="address" /></label>
+        {% if errors.address %}
+          {{errors.address|join:", "}}
+        {% endif %}
       </p>
 
       <button type="submit" class="btn">submit</button>

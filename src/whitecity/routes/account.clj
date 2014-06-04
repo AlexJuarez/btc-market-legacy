@@ -29,10 +29,13 @@
   ([]
     (let [user (util/current-user)
           transactions (audit/all (user-id))]
-    (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))}))))
+    (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))})))
+   )
   ([amount address]
-   (user/withdraw-btc! amount address (user-id))
-   (wallet-page)))
+    (let [errors (:errors (user/withdraw-btc! amount address (user-id)))
+          user (util/current-user)
+          transactions (audit/all (user-id))]
+    (layout/render "account/wallet.html" (merge (set-info) {:errors errors :transactions transactions :balance (not (= (:currency_id user) 1))})))))
 
 
 (defn wallet-new []
