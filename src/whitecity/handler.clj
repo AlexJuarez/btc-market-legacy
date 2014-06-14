@@ -17,6 +17,7 @@
     [whitecity.middleware :as middleware]
     [selmer.parser :as parser :refer [cache-off!]]
     [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [ring.middleware.gzip :refer [wrap-gzip]]
     [compojure.route :as route]
     [taoensso.timbre :as timbre]
     [whitecity.cache :as cache]
@@ -81,7 +82,7 @@
                      :store (cache/store)}
 
    ;; add custom middleware here
-   :middleware [wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
+   :middleware [wrap-gzip wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
    :access-rules [user-access]
    ;; I can only assume

@@ -21,6 +21,7 @@
    [net.sf.jlue/jlue-core "1.3"];;why?
    [org.clojure/java.jdbc "0.2.3"];;dependency for korma
    [postgresql/postgresql "9.1-901.jdbc4"]
+   [org.clojars.mikejs/ring-gzip-middleware "0.1.0-SNAPSHOT"]
    [ring-anti-forgery "0.3.0"]
    [clj-btc "0.1.1"]
    [http-kit "2.1.16"]

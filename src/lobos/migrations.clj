@@ -67,6 +67,8 @@
            (tbl :withdrawal
                 (refer-to :user)
                 (varchar :address 34)
+                (boolean :locked (default false))
+                (boolean :ready (default false))
                 (float :amount))))
   (down [] (drop (table :withdrawal))))
 
@@ -195,6 +197,7 @@
            (tbl :audit
                 (refer-to :user)
                 (varchar :role 10)
+                (varchar :tx 64)
                 (float :amount))))
   (down [] (drop (table :audit))))
 
