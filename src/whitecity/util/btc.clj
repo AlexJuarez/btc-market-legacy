@@ -23,11 +23,12 @@
       (error ex "Address creation error - new address"))))
 
 (defn decode-base58 [s]
-  (byte-array
-    (cons 0
-        (seq
-          (.toByteArray
-            (.toBigInteger (reduce #(+ (* 58 %) %2) (map #(bigint (.indexOf digits58 (str %))) s))))))))
+  (let [arr (.toByteArray
+            (.toBigInteger (reduce #(+ (* 58 %) %2) (map #(bigint (.indexOf digits58 (str %))) s))))]
+    (if (> 25 (count arr))
+      (-> arr seq (cons (take (- 25 (count arr)) (repeat 0))) byte-array)
+      arr
+    )))
 
 (defn validate [bc]
   (let [bcbytes (decode-base58 bc)
