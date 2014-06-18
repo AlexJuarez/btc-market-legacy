@@ -69,7 +69,7 @@
                 (refer-to :user)
                 (varchar :address 34)
                 (boolean :locked (default false))
-                (boolean :ready (default false))
+                (boolean :processed (default false))
                 (float :amount))))
   (down [] (drop (table :withdrawal))))
 
