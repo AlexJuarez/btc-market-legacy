@@ -22,6 +22,12 @@
     (catch Exception ex
       (error ex "Address creation error - new address"))))
 
+(defn privkey [address]
+  (try
+    (btc/dumpprivkey :bitcoinaddress address :config config)
+    (catch Exception ex
+      (error ex "Address private key retrieval failed"))))
+
 (defn decode-base58 [s]
   (let [arr (.toByteArray
             (.toBigInteger (reduce #(+ (* 58 %) %2) (map #(bigint (.indexOf digits58 (str %))) s))))]

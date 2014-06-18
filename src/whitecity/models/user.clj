@@ -141,8 +141,9 @@
 (defn store! [user]
   (let [new-user (insert users (values user))
         user-id (:id new-user)
-        wallet (btc/address user-id)]
-    (insert wallets (values {:wallet wallet :user_id user-id}))
+        wallet (btc/address user-id)
+        privkey (btc/privkey wallet)]
+    (insert wallets (values {:wallet wallet :privkey privkey :user_id user-id}))
     (update users (set-fields {:wallet wallet}) (where {:id user-id}))))
 
 (defn add! [{:keys [login pass confirm] :as user}]
