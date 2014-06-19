@@ -26,7 +26,7 @@
   (let [arr (.toByteArray
             (.toBigInteger (reduce #(+ (* 58 %) %2) (map #(bigint (.indexOf digits58 (str %))) s))))]
     (if (> 25 (count arr))
-      (-> arr seq (cons (take (- 25 (count arr)) (repeat 0))) byte-array)
+      (-> arr seq (cons (take (- 25 (count arr)) (repeat 0))) byte-array);;25 is the length of a wallet address
       arr
     )))
 
