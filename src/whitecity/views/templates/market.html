@@ -13,6 +13,17 @@
           <div class="cell header">
             <header id="header">
               <div id="banner"><a href="/market/">Grand Trunk<br><span class="bar"></span></a></div>
+              <div class="account-cart">
+                <div class="account">
+                  Hi, <a href="/market/account">{{user.alias}}</a>
+                  | <a href="/logout">logout</a>
+                </div>
+                <div class="cart">
+                  <a href="/market/cart">
+                    <strong><span class="cart-icon">Cart</span> {{user.cart}}</strong>
+                  </a>
+                </div>
+              </div>
               <div class="nav-search">
                 <nav class="links">
                   <a href="/market/messages">messages <strong>{{user.messages}}</strong></a>
@@ -27,17 +38,6 @@
                   <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
                   <button type="submit">GO</button>
                 </form>
-              </div>
-              <div class="account-cart">
-                <div class="account">
-                  Hi, <a href="/market/account">{{user.alias}}</a>
-                  | <a href="/logout">logout</a>
-                </div>
-                <div class="cart">
-                  <a href="/market/cart">
-                    <strong><span class="cart-icon">Cart</span> {{user.cart}}</strong>
-                  </a>
-                </div>
               </div>
             </header>
           </div>
