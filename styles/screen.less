@@ -10,6 +10,15 @@
 
 @price: #771105;
 
+@media only screen and (max-device-width: 480px) {
+  .bitcoin-address {
+    word-break: break-all;
+  }
+  .btc-address {
+    width: 100%;
+  }
+}
+
 .price {
   color: @price;
 }
@@ -151,29 +160,30 @@ ul.pagination {
   *zoom: 1;
   padding: 0;
   margin: 0;
+
+  li {
+    display: inline-block;
+    *display: inline;
+    margin: 0 3px;
+  }
+
+  a, strong {
+    text-decoration: none;
+  }
+
+  .active a {
+    color: #999999;
+    cursor: default;
+  }
+  .disabled span, .disabled a, .disabled a:hover {
+    color: #999999;
+    background-color: transparent;
+    cursor: default;
+  }
 }
-.pagination li {
-  display: inline-block;
-  *display: inline;
-  margin: 0 3px;
-}
-.pagination a, .pagination strong {
-  text-decoration: none;
-}
-.pagination .active a {
-  color: #999999;
-  cursor: default;
-}
-.pagination .disabled span,
-.pagination .disabled a,
-.pagination .disabled a:hover {
-  color: #999999;
-  background-color: transparent;
-  cursor: default;
-}
+
 .wrapper {
   max-width: 1080px;
-  min-width: 640px;
   min-height: 100%;
   height: 100%;
   margin: 0 auto;
@@ -434,7 +444,7 @@ textarea.form-control {
 #modal {
   position: absolute;
   left: 50%;
-  margin-left: -125px;
+  margin-left: -140px;
   top: 15%;
   width: 280px;
   border-radius: 6px;

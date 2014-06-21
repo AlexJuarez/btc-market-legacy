@@ -26,7 +26,6 @@
 
     input {
       display: inline-block;
-      width: 480px;
       border-radius: 0;
       margin: 0;
       vertical-align: top;
@@ -92,6 +91,51 @@
     position: absolute;
     bottom: 27px;
     left: 3px;
+  }
+}
+
+@media only screen and (min-device-width: 820px) {
+  #header {
+    .nav-search {
+      input {
+        width: 480px;
+      }
+    }
+
+  }
+}
+
+@media only screen and (max-device-width: 480px) {
+  #header {
+    .nav-search {
+      float: none;
+      button {
+        width: 100%;
+        margin-top: 5px;
+        display: block;
+      }
+    }
+
+    #banner {
+      float: none;
+    }
+
+    .cart {
+      margin-top: 0;
+    }
+
+    .account-cart {
+      float: none;
+      display: block;
+      overflow: hidden;
+
+      .account {
+        float: left;
+      }
+      .cart {
+        float: right;
+      }
+    }
   }
 }
 
