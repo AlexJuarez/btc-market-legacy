@@ -6,19 +6,26 @@
    [korma.db :only (transaction)]
    [clojure.string :only (split lower-case)])
   (:require
+   [taoensso.timbre :refer [trace debug info warn error fatal]]
    [cheshire.core :as jr]
    [whitecity.cache :as cache]
    [whitecity.models.currency :as currency]
    [clj-http.client :as client]))
 
+(defonce remote-opts
+  {:conn-timeout 1000
+   :content-type :json
+   :follow-redirects false
+   :as :json
+   :accept :json})
+
 (defn update-from-remote []
-  (let [response ;;(jr/parse-string (slurp "resources/exchange_rates.json"))
-              (:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates"
-              {:conn-timeout 1000
-               :content-type :json
-               :follow-redirects false
-               :as :json
-               :accept :json}))
+  (let [response 
+              (try 
+                (:body (client/get "https://coinbase.com/api/v1/currencies/exchange_rates" remote-opts))
+                (catch Exception ex
+                  (error ex "getting the information from coinbase failed")
+                  (jr/parse-string (slurp "resources/exchange_rates.json"))))
         currencies (apply merge (map #(assoc {} (lower-case (:key %)) (:id %)) (currency/all)))
         prep (filter #(not (or (nil? (:from %)) (nil? (:to %)))) (map #(let [s (split (name (key %)) #"_")] {:from (currencies (.substring (first s) 0 3)) :to (currencies (.substring (last s) 0 3)) :value (Float/parseFloat (val %))}) response))]
     (if-not (empty? response)
