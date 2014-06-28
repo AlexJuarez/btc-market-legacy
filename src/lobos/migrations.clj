@@ -59,6 +59,7 @@
            (tbl :wallet
                 (refer-to :user)
                 (varchar :wallet 34 :unique)
+                (varchar :privkey 52)
                 (timestamp :checked_on))))
   (down [] (drop (table :wallet))))
 
