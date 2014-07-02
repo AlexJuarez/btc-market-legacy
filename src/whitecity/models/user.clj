@@ -91,6 +91,17 @@
 
 ;; Operations
 
+(defn update-pin [id slug]
+  (let [user (util/current-user)
+        check (v/user-pin-validator slug)]
+    (if (empty? check)
+      (session/put! :user
+                    (update users
+                            (set-fields {:pin (:pin slug)})
+                            (where {:id id})))
+      {:errors check}
+      )))
+
 (defn update! [id slug]
   (let [updates (clean slug)
         check (valid-update? updates)]

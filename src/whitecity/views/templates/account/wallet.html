@@ -11,11 +11,68 @@
 <h3>Wallet Pin</h3>
 <div class="well p">
   {% if not pin %}
-  You need to create a pin to preform a purchase or withdrawal.
+  <h4>You need to create a pin to preform a purchase or withdrawal.</h4>
   <form method="post">
-    <label>Enter Pin: <input class="text-input" type="text" name="address" value="{{pin}}" /></label>
+    <table>
+      <tbody>
+        <tr>
+          <td><label for="pin">New Pin: </label></td>
+          <td {% if not errors.pin|empty? %}class="has-error"{% endif %}>
+            <input id="pin" class="text-input" type="text" name="pin" value="{{pin}}" placeholder="New Pin" />
+            {% if errors.pin %}
+              {{errors.pin|join:", "}}
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td><label for="confirmpin">Confirm Pin: </label></td>
+          <td {% if not errors.confirmpin|empty? %}class="has-error"{% endif %}>
+            <input id="confirmpin" class="text-input" type="text" name="confirmpin" value="{{confirmpin}}" placeholder="Confirm Pin" />
+            {% if errors.confirmpin %}
+              {{errors.confirmpin|join:", "}}
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <input type="submit" name="submit" value="Create Pin" />
   </form>
   {% else %}
+  <h4>Enter your old pin, and a new pin to change your pin</h4>
+  <form method="post">
+    <table>
+      <tbody>
+        <tr>
+          <td><label for="pin">Old Pin: </label></td>
+          <td {% if not errors.oldpin|empty? %}class="has-error"{% endif %}>
+          <input id="oldpin" class="text-input" type="text" name="oldpin" value="{{oldpin}}" placeholder="Current Pin" />
+          {% if errors.oldpin %}
+          {{errors.oldpin|join:", "}}
+          {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td><label for="pin">New Pin: </label></td>
+          <td {% if not errors.pin|empty? %}class="has-error"{% endif %}>
+          <input id="pin" class="text-input" type="text" name="pin" value="{{pin}}" placeholder="New Pin" />
+          {% if errors.pin %}
+          {{errors.pin|join:", "}}
+          {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td><label for="confirmpin">Confirm Pin: </label></td>
+          <td {% if not errors.confirmpin|empty? %}class="has-error"{% endif %}>
+          <input id="confirmpin" class="text-input" type="text" name="confirmpin" value="{{confirmpin}}" placeholder="Confirm Pin" />
+          {% if errors.confirmpin %}
+          {{errors.confirmpin|join:", "}}
+          {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <input type="submit" name="submit" value="Update Pin" />
+  </form>
   {% endif %}
 </div>
 <h3>Withdraw Funds</h3>
@@ -36,7 +93,7 @@
         {% endif %}
       </div>
 
-      <button type="submit" class="btn">submit</button>
+      <input type="submit" name="submit" value="Withdraw" />
     </form>
   {% else %}
     insufficient funds

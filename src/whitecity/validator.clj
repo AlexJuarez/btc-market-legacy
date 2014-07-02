@@ -22,6 +22,9 @@
   (when-not (empty? (get-by-alias (get map key)))
     "This alias is already taken"))
 
+(defn pin-match [map key _]
+  (if-not (or (nil? (:pin (util/current-user))))))
+
 (defn in-range [map key options]
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))
     (str "This needs to between " (:start options) " and " (:end options))))
@@ -36,6 +39,9 @@
 
 (v/defvalidator user-update-validator
   [:alias [:presence :formatted {:pattern #"[A-Za-z0-9]+" :message "Only alphanumeric characters are valid"} :alias-taken :in-range {:start 3 :end 64}]])
+
+(v/defvalidator user-pin-validator
+  [:pin [:presence :in-range {:start 6 :end 73} :confirmation {:confirm :confirmpin}]])
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
