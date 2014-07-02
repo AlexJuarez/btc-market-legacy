@@ -37,11 +37,12 @@
     )))
 
 (defn validate [bc]
-  (let [bcbytes (decode-base58 bc)
-        md (java.security.MessageDigest/getInstance "SHA-256")
-        hashone (do (.update md (byte-array (drop-last 4 bcbytes))) (.digest md))
-        md (java.security.MessageDigest/getInstance "SHA-256")
-        hashtwo (do (.update md hashone) (.digest md))]
-    (=
-      (take-last 4 bcbytes)
-      (take 4 hashtwo))))
+  (if-not (empty? bc)
+    (let [bcbytes (decode-base58 bc)
+          md (java.security.MessageDigest/getInstance "SHA-256")
+          hashone (do (.update md (byte-array (drop-last 4 bcbytes))) (.digest md))
+          md (java.security.MessageDigest/getInstance "SHA-256")
+          hashtwo (do (.update md hashone) (.digest md))]
+      (=
+        (take-last 4 bcbytes)
+        (take 4 hashtwo)))))

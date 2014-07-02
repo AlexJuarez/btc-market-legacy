@@ -49,29 +49,29 @@
     <table>
       <tbody>
         <tr>
-          <td><label for="pin">Old Pin: </label></td>
-          <td {% if not errors.oldpin|empty? %}class="has-error"{% endif %}>
+          <td><label for="oldpin">Old Pin: </label></td>
+          <td {% if not pinerrors.oldpin|empty? %}class="has-error"{% endif %}>
           <input id="oldpin" class="text-input" type="text" name="oldpin" placeholder="Current Pin" />
-          {% if errors.oldpin %}
-          {{errors.oldpin|join:", "}}
+          {% if pinerrors.oldpin %}
+            {{pinerrors.oldpin|join:", "}}
           {% endif %}
           </td>
         </tr>
         <tr>
           <td><label for="pin">New Pin: </label></td>
-          <td {% if not errors.pin|empty? %}class="has-error"{% endif %}>
+          <td {% if not pinerrors.pin|empty? %}class="has-error"{% endif %}>
           <input id="pin" class="text-input" type="text" name="pin"  placeholder="New Pin" />
-          {% if errors.pin %}
-          {{errors.pin|join:", "}}
+          {% if pinerrors.pin %}
+            {{pinerrors.pin|join:", "}}
           {% endif %}
           </td>
         </tr>
         <tr>
           <td><label for="confirmpin">Confirm Pin: </label></td>
-          <td {% if not errors.confirmpin|empty? %}class="has-error"{% endif %}>
+          <td {% if not pinerrors.confirmpin|empty? %}class="has-error"{% endif %}>
           <input id="confirmpin" class="text-input" type="text" name="confirmpin" placeholder="Confirm Pin" />
-          {% if errors.confirmpin %}
-          {{errors.confirmpin|join:", "}}
+          {% if pinerrors.confirmpin %}
+            {{pinerrors.confirmpin|join:", "}}
           {% endif %}
           </td>
         </tr>

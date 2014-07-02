@@ -25,8 +25,8 @@
   (let [user (user/update! (user-id) slug)]
     (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
-(defn withdrawal [{:keys [amount address pin]}]
-  (let [errors (:errors (user/withdraw-btc! amount address pin (user-id)))
+(defn withdrawal [{:keys [amount address pin] :as slug}]
+  (let [errors (:errors (user/withdraw-btc! slug (user-id)))
         user (util/current-user)
         transactions (audit/all (user-id))]
     (layout/render "account/wallet.html" (merge (set-info) {:amount amount :address address
@@ -36,9 +36,10 @@
   (let [errors (:errors (user/update-pin! (user-id) slug))
         user (util/current-user)
         transactions (audit/all (user-id))]
-    (layout/render "account/wallet.html" (merge (set-info) {:pin-success "Your pin has been changed"
-                                                            :errors errors :transactions transactions
-                                                            :balance (not (= (:currency_id user) 1))}))))
+    (layout/render "account/wallet.html" (merge (set-info)
+                                                (if (empty? errors) {:pin-success "Your pin has been changed"})
+                                                {:pinerrors errors :transactions transactions
+                                                 :balance (not (= (:currency_id user) 1))}))))
 
 (defn wallet-page
   ([]

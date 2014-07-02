@@ -72,7 +72,7 @@
       {% endfor %}
     </select>
   </div>
-  <div class="form-group{% if errors.title %} has-error{% endif %}">
+  <div class="form-group{% if errors.price %} has-error{% endif %}">
     <label for="price" title="Must be greater than {{user.currency_symbol|safe}}{{min-price}}">
     Price: 
     <input name="price" id="price" class="input" type="text" value="{{price}}" />
@@ -109,7 +109,11 @@
     <label for="ships_to">Ships to:</label>
     <select id="ships_to" name="to">
       {% for region in regions %}
-      <option value="{{region.id}}" {% ifequal region.id to %}selected="selected"{% endifequal %}>{{region.name}}</option>
+        {% if region.id = 1 %}
+          <option value="{{region.id}}">Worldwide</option>
+        {% else %}
+          <option value="{{region.id}}" {% ifequal region.id to %}selected="selected"{% endifequal %}>{{region.name}}</option>
+        {% endif %}
       {% endfor %}
     </select>
   </div>
