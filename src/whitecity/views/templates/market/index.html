@@ -35,7 +35,9 @@
       <div class="listing-row">
         {% if listing.image_id %}
         <div class="thumbnail">
-          {% image-thumbnail listing.image_id %}
+          <a href="/market/listing/{{listing.id}}">
+            {% image-thumbnail listing.image_id %}
+          </a>
         </div>
         {% endif %}
         <div class="sale">

@@ -54,7 +54,7 @@
       <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
       <td><a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
       <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
-      <td>{{listing.to|region}}</td>
+      <td>{% if listing.to = 1 %} Worldwide {% else %} {{listing.to|region}} {% endif %}</td>
       <td>{{listing.from|region}}</td>
       <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
     </tr>

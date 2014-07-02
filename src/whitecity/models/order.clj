@@ -142,13 +142,13 @@
         fee_amount (* percent amount)
         audit {:amount (- amount fee_amount) :user_id seller_id :role "sale"}
         fee {:order_id id :role "order" :amount fee_amount}]
-    (if (not (nil? listing_id))
+    (when (not (nil? listing_id))
       (transaction
         (insert fees (values fee))
         (insert audits (values audit))
         (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
-        (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id}))
-        ))))
+        (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id})))
+      (util/update-session seller_id))))
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)
