@@ -91,14 +91,16 @@
 
 ;; Operations
 
-(defn update-pin [id slug]
+(defn update-pin! [id slug]
   (let [user (util/current-user)
         check (v/user-pin-validator slug)]
     (if (empty? check)
-      (session/put! :user
-                    (update users
-                            (set-fields {:pin (:pin slug)})
-                            (where {:id id})))
+      (do
+        (update users
+                (set-fields {:pin (:pin slug)})
+                (where {:id id}))
+        (session/put! :user (assoc (session/get :user) :pin (:pin slug)))
+      {})
       {:errors check}
       )))
 
@@ -123,7 +125,7 @@
       (insert wallets (values {:wallet new-address :user_id id}))
       (update users (set-fields {:wallet new-address}) (where {:id id})))))
 
-(defn withdraw-btc! [amount address user-id]
+(defn withdraw-btc! [amount address pin user-id]
   (let [amount (util/parse-float amount)
         user (first (select users (fields :btc) (where {:id user-id})))
         audit {:user_id user-id :role "withdrawal" :amount (* -1 amount)}]

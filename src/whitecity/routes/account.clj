@@ -25,25 +25,31 @@
   (let [user (user/update! (user-id) slug)]
     (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
-(defn withdrawal [{:keys [amount address]}]
-  (let [errors (:errors (user/withdraw-btc! amount address (user-id)))
-          user (util/current-user)
-          transactions (audit/all (user-id))]
+(defn withdrawal [{:keys [amount address pin]}]
+  (let [errors (:errors (user/withdraw-btc! amount address pin (user-id)))
+        user (util/current-user)
+        transactions (audit/all (user-id))]
     (layout/render "account/wallet.html" (merge (set-info) {:amount amount :address address
                                                             :errors errors :transactions transactions
                                                             :balance (not (= (:currency_id user) 1))}))))
-(defn change-pin [{:keys [oldpin pin confirmpin]}]
-
-  )
+(defn change-pin [slug]
+  (let [errors (:errors (user/update-pin! (user-id) slug))
+        user (util/current-user)
+        transactions (audit/all (user-id))]
+    (layout/render "account/wallet.html" (merge (set-info) {:pin-success "Your pin has been changed"
+                                                            :errors errors :transactions transactions
+                                                            :balance (not (= (:currency_id user) 1))}))))
 
 (defn wallet-page
   ([]
-    (let [user (util/current-user)
-          transactions (audit/all (user-id))]
-    (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))})))
+   (let [user (util/current-user)
+         transactions (audit/all (user-id))]
+     (layout/render "account/wallet.html" (merge (set-info) {:transactions transactions :balance (not (= (:currency_id user) 1))})))
    )
-  ([amount address]
-    ))
+  ([slug]
+   (if (not (nil? (:confirmpin slug)))
+     (change-pin slug)
+     (withdrawal slug))))
 
 
 (defn wallet-new []
@@ -122,7 +128,7 @@
   (GET "/market/review/:id/edit" [id] (review-edit id))
   (POST "/market/review/:id/edit" {params :params} (review-edit (:id params) params))
   (GET "/market/account/wallet" [] (wallet-page))
-  (POST "/market/account/wallet" [amount address] (wallet-page amount address))
+  (POST "/market/account/wallet" {params :params} (wallet-page params))
   (GET "/market/account/wallet/new" [] (wallet-new))
   (GET "/market/account/images" [] (images-page))
   (GET "/market/account/favorites" [] (favorites-page))

@@ -33,7 +33,7 @@
                (varchar :pass 60)
                (varchar :salt 32);;The salt comes out to 30ish characters?
                (varchar :wallet 34 :unique)
-               (integer :pin)
+               (varchar :pin 60)
                (integer :transactions (default 0))
                (float :rating (default 5.0))
                (integer :ranking)
