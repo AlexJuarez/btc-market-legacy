@@ -5,6 +5,8 @@ Order not found
 {% else %}
 <h1 class="jumbo">Order Information</h1>
 <span>Transaction #<a href="/market/order/{{id}}">{{id}}</a></span>
+{{resolutions|join:" "}}
+{{order}}
 <div class="well">
   <table class="fact-table">
     <tbody>
@@ -83,7 +85,7 @@ Order not found
         extend by {{resolution.value}} day{% if not resolution.value = 1 %}s{% endif %}
         {% endifequal %}
         {% ifequal resolution.action "refund" %}
-        refund {{resolution.value}}%
+        refund {{resolution.value}}% ~({{refund.est}})
         {% endifequal %}
       </td>
       <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
@@ -101,10 +103,11 @@ Order not found
   <p>
     Propose a resolution:
   </p>
-  <ul>
+  <ul class="list-unstyled">
     <li>
-    <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
-      <label for="extension">Extension:</label>
+      <label>
+        <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
+      Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
       {% ifequal action "extension" %}
@@ -114,8 +117,8 @@ Order not found
       {% endifequal %}
     </li>
     <li>
-      <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
-      <label for="refund">Refund:</label>
+      <label><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
+      Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
       {% ifequal action "refund" %}

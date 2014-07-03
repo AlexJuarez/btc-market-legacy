@@ -31,17 +31,26 @@
     (order/finalize id (user-id))
     (resp/redirect "/market/orders")))
 
+(defn estimate-refund [resolutions {:keys [user_id postage_price postage_currency currency_id price quantity]}]
+  (map #(if (= (:action %) "refund")
+          (let [p (* (util/convert-currency currency_id price) quantity)
+                post (util/convert-currency postage_currency postage_price)
+                est (* (:value %) (+ p post))]
+            (assoc % :est price))
+          %
+         ) resolutions))
+
 (defn order-view
   ([id]
     (let [id (hashids/decrypt id)
           order (-> (order/get-order id (user-id)) encrypt-id convert-order-price)
-          resolutions (resolution/all id (user-id))]
-      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
+          resolutions (estimate-refund (resolution/all id (user-id)) order)]
+      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions :order order} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))
           order (-> (order/get-order id (user-id)) encrypt-id convert-order-price)
-          resolutions (resolution/all id (user-id))]
+          resolutions (estimate-refund (resolution/all id (user-id)) order)]
       (layout/render "orders/resolution.html" (merge {:errors {} :resolutions resolutions} slug res order (set-info))))))
 
 (defn order-resolve [hashid]

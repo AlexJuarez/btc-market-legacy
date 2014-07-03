@@ -87,10 +87,10 @@ Sale not found
 {% endif %}
 <form class="well" action="/market/sale/{{id}}" method="POST">
   Propose a resolution:
-  <ul>
+  <ul class="list-unstyled">
     <li>
-    <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
-      <label for="extension">Extension:</label>
+      <label><input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
+      Extension:</label>
       <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
       {% ifequal action "extension" %}
@@ -100,8 +100,8 @@ Sale not found
       {% endifequal %}
     </li>
     <li>
-      <input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
-      <label for="refund">Refund:</label>
+      <label><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
+      Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
       {% ifequal action "refund" %}
