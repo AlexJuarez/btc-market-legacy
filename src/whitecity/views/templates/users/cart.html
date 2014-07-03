@@ -46,16 +46,16 @@
   <input type="submit" name="submit" value="Update Cart" />
 </p>
 <div class="well">
-  <h1>Total: {{user.currency_symbol|safe}}{{total|double-format:5}} {% if errors.total %}- <span class="error">{{errors.total}}</span>{% endif %}</h1>
+  <h1>Total: {{user.currency_symbol|safe}}{{total|double-format:5}} {% if errors.total %}- <span class="error">{{errors.total|join:", "}}</span>{% endif %}</h1>
   <p>
-    <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address}}</span> {% endif %}</label>
+    <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address|join:", "}}</span> {% endif %}</label>
     <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea> 
   </p>
   <label for="pin">Pin: </label>
-    {% if errors.pin %}
-      {{errors.pin}}
-    {% endif %}
     <input class="text-input" type="password" name="pin" id="pin" />
+    {% if errors.pin %}
+      <span class="error">{{errors.pin|join:", "}}</span>
+    {% endif %}
     <p>
       <input type="submit" name="submit" value="Place Order" onclick="return confirm('Order?')" />
     </p>

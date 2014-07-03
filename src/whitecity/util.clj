@@ -83,8 +83,7 @@
   (if (string? s)
     (let [i (re-find #"\d+" s)]
       (if-not (s/blank? i)
-        (Integer. i)
-        0))
+        (Integer. i)))
     s))
 
 (defn parse-float [s]

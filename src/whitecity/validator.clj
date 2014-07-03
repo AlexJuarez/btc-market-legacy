@@ -42,11 +42,14 @@
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))
     (str "This needs to between " (:start options) " and " (:end options))))
 
+(defn check-funds [map key _]
+  (let [user-id (get map :user_id)
+        funds (or (:btc (first (sql/select users (sql/fields :btc) (sql/where {:id user-id})))) 0)]
+    (when-not (>= funds (get map key)) "insufficient funds")))
+
 (v/defvalidator cart-validator
   [:address [:presence]]
   [:total [:check-funds]]
-  [:cart [:check-cart]]
-  [:postage [:check-postage]]
   [:pin [:presence :pin-match]])
 
 ;;Bcypt only looks at the first 73 characters, and saves 60 of them

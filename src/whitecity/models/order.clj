@@ -6,6 +6,7 @@
   (:require
         [whitecity.models.postage :as postage]
         [whitecity.models.listing :as listings]
+        [whitecity.validator :as v]
         [noir.session :as session]
         [whitecity.util :as util]))
 
@@ -111,13 +112,11 @@
      :status 0}))
 
 (defn add! [cart total address pin user-id]
-  (let [user (first (select users (fields :login :btc) (where {:id user-id :pin pin})))
-        cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
-        pin-check (when (empty? user) {:pin "Your pin does not match"})
+  (let [cart-check (let [cart (reduce merge (map check-item cart))] (when-not (empty? cart) {:cart cart}))
         postage (some false? (map #(not (nil? (:postage (val %)))) cart-check))
         postage-error (when postage {:postage postage})
-        insufficient-funds (when (< (or 0 (:btc user) total)) {:total "insufficient funds"})
-        errors (merge cart-check postage-error address-check pin-check insufficient-funds)]
+        check (v/cart-validator {:address address :pin pin :total total :user_id user-id})
+        errors (merge cart-check postage-error check)]
     (if (empty? errors)
       (do
         (session/put! :cart {})
