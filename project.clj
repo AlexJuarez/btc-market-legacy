@@ -43,7 +43,8 @@
    :destroy whitecity.handler/destroy}
   :profiles
   {:user {:env {:db-user "devil"
-                :db-pass "admin"}}
+                :db-pass "admin"
+                :fee 0.06}}
    :uberjar
    {:aot :all},
    :production

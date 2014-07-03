@@ -3,7 +3,7 @@
 {% if not id %}
 Sale not found
 {% else %}
-<h1 class="jumbo">Order Information</h1>
+<h1 class="jumbo">Sale Information</h1>
 <span>Transaction #<a href="/market/sale/{{id}}">{{id}}</a></span>
 <div class="well">
   <table class="fact-table">
@@ -12,10 +12,10 @@ Sale not found
       <td>status:</td><td>{{status|status}}</td>
     </tr>
     <tr>
-      <td>buyer:</td><td>{{user.alias}}</td>
+      <td>buyer:</td><td><a href="/market/user/{{user_id}}">{{alias}}</a></td>
     </tr>
     <tr>
-      <td>seller:</td><td><a href="/market/user/{{seller_id}}">{{alias}}</a></td>
+      <td>seller:</td><td>{{user.alias}}</td>
     </tr>
     <tr>
       <td>contract:</td><td>~</td>

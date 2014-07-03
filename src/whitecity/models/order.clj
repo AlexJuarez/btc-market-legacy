@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [get count])
   (:use [korma.db :only (transaction)]
         [korma.core]
+        [environ.core :only [env]]
         [whitecity.db])
   (:require
         [whitecity.models.postage :as postage]
@@ -136,9 +137,10 @@
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id)
-        {percent :hedge_fee seller_id :seller_id listing_id :listing_id} (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]}))
+        {:keys [hedge_fee seller_id listing_id hedged]} (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]}))
         {amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"}))
         amount (util/convert-price currency_id 1 amount)
+        percent (if hedged hedge_fee (env :fee))
         fee_amount (* percent amount)
         audit {:amount (- amount fee_amount) :user_id seller_id :role "sale"}
         fee {:order_id id :role "order" :amount fee_amount}]
