@@ -6,6 +6,7 @@
   {% csrf-token %}
   <input type="submit" name="submit" value="accept" />
   <input type="submit" name="submit" value="reject" />
+  {{sales|join:", "}}
   <table class="table normal sales">
     <thead>
       <tr>
@@ -15,6 +16,8 @@
         <th>postage type</th>
         <th>quantity</th>
         <th>buyer</th>
+        <th>amount</th>
+        <th>fee</th>
         <th>address</th>
       </tr>
     </thead>
@@ -34,6 +37,8 @@
       <td>{{order.postage_title}}</td>
       <td>{{order.quantity}}</td>
       <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
+      <td></td>
+      <td></td>
       <td><em>{{order.address}}</em></td>
     </tr>
     {% endfor %}
