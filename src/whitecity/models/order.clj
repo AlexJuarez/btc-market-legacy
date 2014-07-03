@@ -146,7 +146,7 @@
       (transaction
         (insert fees (values fee))
         (insert audits (values audit))
-        (update users (set-fields {:btc (raw (str "btc + " amount))}) (where {:id seller_id}))
+        (update users (set-fields {:btc (raw (str "btc + " (- amount fee_amount)))}) (where {:id seller_id}))
         (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id})))
       (util/update-session seller_id))))
 
