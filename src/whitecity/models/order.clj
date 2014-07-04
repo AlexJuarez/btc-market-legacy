@@ -82,7 +82,7 @@
       (update listings
               (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity - " quantity))})
               (where {:id listing_id}))
-      (if (and lp (<= lq 0)) (update category (set-fields {:count (raw "count - 1")}) (where {:id cat_id})))
+      (if (and lp (<= (- lq quantity) 0)) (update category (set-fields {:count (raw "count - 1")}) (where {:id cat_id})))
       (insert orders (values order)))]
       (if (not (empty? order));;TODO: what does korma return when it errors out?
       (insert escrow (values (assoc escr :order_id (:id order))))))))

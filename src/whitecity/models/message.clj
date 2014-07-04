@@ -36,7 +36,7 @@
   ([id receiver-id]
    (let [rid (util/parse-int receiver-id)]
      (do
-       (update! id rid)
+       (when (not (empty? (update! id rid))) (util/update-session id :messages))
        (select messages
         (fields :id :subject :content :created_on :user_id :sender_id :read)
         (with senders (fields [:login :user_login] [:alias :user_alias]))

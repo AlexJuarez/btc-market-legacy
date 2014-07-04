@@ -30,10 +30,12 @@
 
 (defn messages-thread
   ([receiver-id]
-   (layout/render "messages/thread.html" (merge (set-info) {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
+   (layout/render "messages/thread.html" (merge (set-info)
+                                                {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
   ([slug & options]
    (let [message (message/add! slug (user-id) (:id slug))]
-     (layout/render "messages/thread.html" (merge (set-info) {:user_id (:id slug) :messages (message/all (user-id) (:id slug))} message)))))
+     (layout/render "messages/thread.html" (merge (set-info)
+                                                  {:user_id (:id slug) :messages (message/all (user-id) (:id slug))} message)))))
 
 (def-restricted-routes message-routes
     (GET "/market/message/:id/delete" [id] (message-delete id))
