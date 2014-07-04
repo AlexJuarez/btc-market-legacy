@@ -73,7 +73,7 @@
         btc_cost (util/convert-price currency_id 1 cost) ;;use an env flag for this
         {lq :listing_quantity lp :listing_pubic cat_id :category_id} order
         {:keys [user_id seller_id listing_id quantity] :as order} (dissoc order :listing_quantity :listing_pubic :category_id)
-        escr {:from user_id :to seller_id :currency_id currency_id :amount cost :status "hold"}
+        escr {:from user_id :hedged (:hedged order) :to seller_id :currency_id currency_id :amount cost :btc_amount btc_cost :status "hold"}
         audit {:user_id user-id :role "purchase" :amount (* -1 btc_cost)}]
     (util/update-session seller_id :sales)
     (let [order (transaction
@@ -86,6 +86,29 @@
       (insert orders (values order)))]
       (if (not (empty? order));;TODO: what does korma return when it errors out?
       (insert escrow (values (assoc escr :order_id (:id order))))))))
+
+(defn cancel!
+  ([{:keys [id seller_id user_id listing_id quantity] :as order}]
+   (println order)
+   (let [escr (update escrow (set-fields {:status "refunded"}) (where {:status "hold" :order_id id}))
+         listing (update listings
+                         (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity + " quantity))})
+                         (where {:id listing_id}))]
+     (println escr)
+     (when-not (empty? escrow)
+       (util/update-session seller_id :sales :orders)
+       (util/update-session user_id :sales :orders)
+       (transaction
+        (insert audits (values {:user_id user_id :role "refund" :amount (:btc_amount escr)}))
+        (update users (set-fields {:btc (raw (str "btc + " (:btc_amount escr)))}) (where {:id user_id}))
+        (if (and (:public listing) (<= (- (:quantity listing) quantity) 0))
+          (update category (set-fields {:count (raw "count + 1")}) (where {:id (:category_id listing)})))
+        (update orders (set-fields {:status 3 :reviewed true}) (where {:id id}))))))
+  ([id user-id]
+   (let [order (first (select orders (where {:id id :status 0})))]
+     (if (or (= (:seller_id order) user-id)
+             (= (:user_id order) user-id))
+       (cancel! order)))))
 
 (defn prep [item address user-id]
   (let [id (key item)
@@ -163,13 +186,9 @@
 ;;make sure to separate logic here
 ;;so that catagories and things are updated as the sales are rejected.
 (defn reject-sales [sales seller-id]
-  (util/update-session seller-id :sales :orders)
   (let [o (select orders
-                  (where {:seller_id seller-id :id [in sales]}))]
-    (dorun (map #(update listings (set-fields {:quantity (raw (str "quantity + " (:quantity %)))}) (where {:id (:listing_id %) :user_id seller-id})) o))
-    (delete orders
-            (where {:seller_id seller-id :id [in sales]}))
-    (util/update-session seller-id)))
+                  (where {:seller_id seller-id :status 0 :id [in sales]}))]
+    (dorun (map #(-cancel %) o))))
 
 (defn count [id]
   (:cnt (first (select orders

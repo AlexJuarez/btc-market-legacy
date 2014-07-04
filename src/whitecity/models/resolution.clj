@@ -32,8 +32,8 @@
               (where {:id order_id}))))
 
 (defn refund [id user_id seller_id order_id percent res]
-  (let [{amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :from user_id :status "hold"}))
-        user-amount (* (util/convert-price currency_id 1 amount) (/ percent 100))
+  (let [{amount :btc_amount} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :from user_id :status "hold"}))
+        user-amount (* amount (/ percent 100))
         seller-amount (- amount user-amount)
         user-audit {:amount user-amount :user_id user_id :role "refund"}
         seller-audit {:amount seller-amount :user_id seller_id :role "refund"}]
