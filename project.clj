@@ -16,7 +16,7 @@
    [environ "0.4.0"]
    [com.taoensso/tower "2.0.2"];;localization lib
    [markdown-clj "0.9.43"];;markdown parser
-   [hashids "0.1.0"];;for anon hashing
+   [hashobject/hashids "0.2.0"];;for anon hashing
    [clj-http "0.7.8"];;for reading bitcoins prices from coinbase.com
    [net.sf.jlue/jlue-core "1.3"];;why?
    [org.clojure/java.jdbc "0.2.3"];;dependency for korma
