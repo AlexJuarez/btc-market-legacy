@@ -24,14 +24,12 @@
     [noir.session :as session]
     [com.postspectacular.rotor :as rotor]))
 
-(defroutes app-routes
+(defroutes app-routes$
   (route/resources "/")
   (route/not-found "Not Found"))
 
 (defn user-access [request]
-  (and
-    (not (nil? (session/get :user_id)))
-    (session/get :authed)))
+  (= (session/get :authed) (not (nil? (session/get :user_id)))))
 
 (defn init
   "init will be called once when

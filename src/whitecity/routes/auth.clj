@@ -34,7 +34,7 @@
         (let [{:keys [id vendor auth pub_key]} user]
           (do
             (when vendor (session/put! :sales (order/count-sales id)))
-            (session/put! :authed (or (not (and auth (not (nil? pub_key)))) (not auth)))
+            (session/put! :authed (not (and auth (not (nil? pub_key)))))
             (session/put! :user_id id)
             (session/put! :user user)
             (session/put! :orders (order/count id))
