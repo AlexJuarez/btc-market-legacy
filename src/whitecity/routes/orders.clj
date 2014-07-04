@@ -19,8 +19,6 @@
                            (assoc % :resolve res :id (hashids/encrypt (:id %)))) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
-       (println pending-review)
-       (println "this here")
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
   ([{:keys [rating shipped content] :as slug}]
    (let [prep (map #(let [id (key %) value (val %)] {:order_id (hashids/decrypt id) :rating value :shipped (shipped id) :content (content id)}) rating)
