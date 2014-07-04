@@ -21,7 +21,7 @@
         {% ifequal user.id message.sender_id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
-          <a href="/market/user/{{message.user_id}}" class="sender">{{message.user_alias}}</a>
+          <a href="/market/user/{{message.sender_id}}" class="sender">{{message.user_alias}}</a>
         {% endifequal %}
       </td>
       <td>
