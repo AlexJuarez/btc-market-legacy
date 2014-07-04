@@ -48,8 +48,9 @@
         listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
                              total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
                          (conj % {:subtotal subtotal :total total})) ls))
-        total (reduce + (map #(:total %) listings))]
-    (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} (set-info)))))
+        total (reduce + (map #(:total %) listings))
+        btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
+    (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} (set-info)))))
 
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
   (session/put! :cart
@@ -64,10 +65,11 @@
                                total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
                            (conj % {:subtotal subtotal :total total})) ls))
           total (reduce + (map #(:total %) listings))
-          order (orders/add! (session/get :cart) (util/convert-currency 1 total) address pin (user-id))]
+          btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
+          order (orders/add! (session/get :cart) btc-total address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/market/orders")
-        (layout/render "users/cart.html" (merge {:errors {} :total total :listings listings} order (set-info)))))))
+        (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} order (set-info)))))))
 
 (def-restricted-routes cart-routes
     (GET "/market/cart" [] (cart-view))

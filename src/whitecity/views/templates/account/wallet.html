@@ -2,7 +2,7 @@
 {% block section %}
 <h3>Wallet</h3>
 <p class="well">
-  <strong>availible:</strong>&#3647;{{user.btc}} {% if balance %}(~{{user.currency_symbol|safe}}{{user.balance|double-format:2}}){% endif %}
+  <strong>availible: </strong>&#3647;{{user.btc}} {% if balance %}(~{{user.currency_symbol|safe}}{{user.balance|double-format:2}}){% endif %}
   <br>
   <strong>Bitcoin address:</strong> <span class="bitcoin-address">{{user.wallet}}</span>
   <br>
