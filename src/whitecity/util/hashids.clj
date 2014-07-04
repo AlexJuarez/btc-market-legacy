@@ -9,8 +9,8 @@
 
 (defonce h (Hashids. salt minlength alphabet))
 
-(defn encrypt [& nums]
-  (.encrypt h (long-array (seq nums))))
+(defn encrypt [n]
+  (.encrypt h n))
 
 (defn decrypt [s]
   (let [nums (vec (.decrypt h (name s)))];;handles strings and keywords
