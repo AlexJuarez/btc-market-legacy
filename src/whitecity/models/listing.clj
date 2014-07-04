@@ -130,8 +130,10 @@
           (= sort_by "title") (-> query (order :title :asc))
           (= sort_by "newest") (-> query (order :created_on :desc))
           :else (-> query (order :sold :desc)))
-          query (if ships_to (-> query (where {:to (:region_id (util/current-user))})) query)
-          query (if ships_from (-> query (where {:from (:region_id (util/current-user))})) query)]
+          query (if (and (= (not (:region_id (util/current-user))) 1) ships_to)
+                  (-> query (where {:to (:region_id (util/current-user))})) query)
+          query (if (and (= (not (:region_id (util/current-user))) 1) ships_from)
+                  (-> query (where {:from (:region_id (util/current-user))})) query)]
     query))
 
 (defn- gen-public-query []

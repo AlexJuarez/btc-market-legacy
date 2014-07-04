@@ -3,7 +3,7 @@
     [compojure.core :only [GET POST]]
     [noir.util.route :only (def-restricted-routes)]
     [whitecity.helpers.route])
-  (:require 
+  (:require
     [whitecity.views.layout :as layout]
     [whitecity.models.user :as user]
     [whitecity.models.message :as message]
@@ -63,7 +63,13 @@
         description (util/md->html (:description user))
         listings (:listings user)
         pagemax (util/page-max listings user-listings-per-page)]
-    (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)} :listings-all (listing/public-for-user id page user-listings-per-page) :description description :feedback-rating (int (* (/ (:rating user) 5) 100)) :review (review/for-seller id) :reported (report/reported? id (user-id) "user") :followed (follower/followed? id (user-id))} (set-info) ))))
+    (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/market/user/" id)}
+                                                  :listings-all (listing/public-for-user id page user-listings-per-page)
+                                                  :description description
+                                                  :feedback-rating (int (* (/ (:rating user) 5) 100))
+                                                  :review (review/for-seller id)
+                                                  :reported (report/reported? id (user-id) "user")
+                                                  :followed (follower/followed? id (user-id))} (set-info) ))))
 
 ;;todo filters and stuff
 (defn search-page [query]
