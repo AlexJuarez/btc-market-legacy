@@ -32,7 +32,7 @@
       (join
         users (= :user.id :sender_id))
       (where {:user_id id})
-      (order :created_on :ASC)))
+      (order :created_on :DESC)))
   ([id receiver-id]
    (let [rid (util/parse-int receiver-id)]
      (do
@@ -40,7 +40,8 @@
        (select messages
         (fields :id :subject :content :created_on :user_id :sender_id :read)
         (with senders (fields [:login :user_login] [:alias :user_alias]))
-        (where (or {:sender_id id :user_id rid} {:sender_id rid :user_id id})))))))
+        (where (or {:sender_id id :user_id rid} {:sender_id rid :user_id id}))
+        (order :created_on :ASC))))))
 
 (defn prep [{:keys [subject content sender_id user_id]}]
   {:subject subject
