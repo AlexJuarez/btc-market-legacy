@@ -188,7 +188,7 @@
 (defn reject-sales [sales seller-id]
   (let [o (select orders
                   (where {:seller_id seller-id :status 0 :id [in sales]}))]
-    (dorun (map #(-cancel %) o))))
+    (dorun (map #(cancel! %) o))))
 
 (defn count [id]
   (:cnt (first (select orders
