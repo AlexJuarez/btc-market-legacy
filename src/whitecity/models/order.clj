@@ -31,7 +31,8 @@
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
-    (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))
+    (where (and (= :user_id id)
+                (or (< :status 3) (not :reviewed))))
     (order :created_on :desc)))
 
 (defn sold

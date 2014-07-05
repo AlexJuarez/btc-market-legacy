@@ -88,6 +88,7 @@ Sale not found
   </tbody>
 </table>
 {% endif %}
+{% if not arbitration %}
 <form class="well" action="/market/sale/{{id}}" method="POST">
   Propose a resolution:
   <ul class="list-unstyled">
@@ -123,6 +124,7 @@ Sale not found
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
 {% endif %}
 {% endif %}
 {% endblock %}

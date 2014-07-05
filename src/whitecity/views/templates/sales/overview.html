@@ -41,6 +41,9 @@
       {% endif %}
     </td>
     <td>
+      {% if order.arbitration %}
+      <em>awaiting arbitration</em>
+      {% else %}
         {% ifequal order.status "2" %}
           <a href="/market/sale/{{order.id}}">
             {{order.status|status}}
@@ -48,6 +51,7 @@
         {% else %}
           <em> {{order.status|status}}</em>
         {% endifequal %}
+      {% endif %}
     </td>
   </tr>
   {% endfor %}

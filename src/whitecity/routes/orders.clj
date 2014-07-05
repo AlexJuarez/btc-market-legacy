@@ -15,8 +15,9 @@
   ([]
     (let [orders (order/all (user-id))
           orders (map #(let [autofinalize (:auto_finalize %)
-                             res (and (not (nil? autofinalize)) (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))];;TODO: review resolution stuff
-                           (assoc % :resolve res :id (hashids/encrypt (:id %)))) orders)
+                             res (and (not (nil? autofinalize)) (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))
+                             arbitration (and (= (:status %) 2) (<= (.getTime autofinalize) (.getTime (java.util.Date.))))];;TODO: review resolution stuff
+                           (assoc % :resolve res :arbitration arbitration :id (hashids/encrypt (:id %)))) orders)
           pending-review (filter #(= (:status %) 3) orders)
           orders (filter #(< (:status %) 3) orders)]
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
@@ -46,8 +47,9 @@
   ([id]
     (let [id (hashids/decrypt id)
           order (-> (order/get-order id (user-id)) encrypt-id convert-order-price)
+          arbitration (and (= (:status order) 2) (<= (.getTime (:auto_finalize order)) (.getTime (java.util.Date.))))
           resolutions (estimate-refund (resolution/all id (user-id)) order)]
-      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions :order order} order (set-info)))))
+      (layout/render "orders/resolution.html" (merge {:errors {} :action "extension" :arbitration arbitration :resolutions resolutions :order order} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))

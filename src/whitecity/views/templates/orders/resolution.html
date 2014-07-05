@@ -100,6 +100,7 @@ Order not found
   </tbody>
 </table>
 {% endif %}
+{% if not arbitration %}
 <form class="well" action="/market/order/{{id}}" method="POST">
   <p>
     Propose a resolution:
@@ -138,6 +139,7 @@ Order not found
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
 {% endif %}
 {% endif %}
 {% endblock %}
