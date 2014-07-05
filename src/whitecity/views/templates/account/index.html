@@ -37,7 +37,9 @@
   <div class="form-group">
     <label for="pub-key">Public Key:
     {% if errors.pub_key %}
-      {{errors.pub_key}}
+      <span class="error">
+        {{errors.pub_key}}
+      </span>
     {% endif %}
     </label>
     <textarea id="pub-key" class="form-control" rows="14" name="pub_key">{{user.pub_key}}</textarea>

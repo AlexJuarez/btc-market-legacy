@@ -23,6 +23,7 @@
 
 (defn account-update [slug]
   (let [user (user/update! (user-id) slug)]
+    (println user)
     (layout/render "account/index.html" (merge {:regions (region/all) :currencies (currency/all)} (set-info) user))))
 
 (defn withdrawal [{:keys [amount address pin] :as slug}]

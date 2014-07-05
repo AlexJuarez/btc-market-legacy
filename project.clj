@@ -50,7 +50,7 @@
    :production
    {:env {:fee 0.06
           :db-user "devil"
-          :db-pass "admin"}
+                :db-pass "admin"}
     :ring
     {:open-browser? false, :stacktraces? false, :auto-reload? false}},
    :dev

@@ -1,12 +1,12 @@
 (ns whitecity.util.pgp
   (:require [taoensso.timbre :refer [trace debug info warn error fatal]])
-  (:import 
+  (:import
     org.bouncycastle.jce.provider.BouncyCastleProvider
     (org.bouncycastle.bcpg ArmoredOutputStream)
     (org.bouncycastle.openpgp PGPLiteralData PGPLiteralDataGenerator PGPEncryptedDataGenerator PGPEncryptedData PGPObjectFactory PGPPublicKey PGPPublicKeyRing PGPUtil)))
 
 (defn get-key-ring [s]
-  (try 
+  (try
     (let [factory (-> (.getBytes s "UTF-8") java.io.ByteArrayInputStream. PGPUtil/getDecoderStream PGPObjectFactory.)]
       (.nextObject factory))
       (catch Exception ex
@@ -36,7 +36,7 @@
           encryptGen (PGPEncryptedDataGenerator. algorithm (java.security.SecureRandom.) provider)]
       (.addMethod encryptGen public-key)
       (let [encryptedout (.open encryptGen armored-output (byte-array buffer-size))
-            finalout (.open (PGPLiteralDataGenerator.) 
+            finalout (.open (PGPLiteralDataGenerator.)
                             encryptedout
                             PGPLiteralDataGenerator/UTF8
                             PGPLiteralData/CONSOLE

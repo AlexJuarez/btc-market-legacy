@@ -115,8 +115,8 @@
                         (set-fields updates)
                         (where {:id id}))
                        (if-not (= (:curreny_id updates) (:currency_id user))
-                                     {:currency_symbol (:symbol (currency/get (:currency_id updates)))})))
-      {:errors check}))))
+                                     {:currency_symbol (:symbol (currency/get (:currency_id updates)))}))))
+      {:errors check})))
 
 (defn update-btc-address! [id]
   (let [new-address (btc/newaddress id)]
