@@ -162,19 +162,22 @@
   ([user-id page per-page]
    (convert
     (select listings
-    (fields  :title :from :to :price :id :currency_id :image_id :category_id)
-    (with category (fields [:name :category_name]))
-    (with currency (fields [:name :currency_name] [:key :currency_key]))
-    (where (and
-             (= :public true)
-             (> :quantity 0)
-             (= :user_id (util/parse-int user-id))))
-    (order :title :asc)
-    (offset (* (- page 1) per-page))
-    (limit per-page)))))
+            (fields  :title :from :to :price :id :currency_id :image_id :category_id)
+            (with category (fields [:name :category_name]))
+            (with currency (fields [:name :currency_name] [:key :currency_key]))
+            (where (and
+                    (= :public true)
+                    (> :quantity 0)
+                    (= :user_id (util/parse-int user-id))))
+            (order :title :asc)
+            (offset (* (- page 1) per-page))
+            (limit per-page)))))
 
-(defn all [id]
+(defn all [id page per-page]
   (select listings
-      (with category (fields [:name :category_name]))
-      (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
-    (where {:user_id id})))
+          (with category (fields [:name :category_name]))
+          (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
+          (where {:user_id id})
+          (offset (* (- page 1) per-page))
+          (limit per-page)
+          (order :title :asc)))
