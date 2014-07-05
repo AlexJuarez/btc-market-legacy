@@ -14,6 +14,13 @@
       <th>&nbsp;</th>
     </tr>
   </thead>
+  <tfoot>
+  <tr>
+    <td colspan="4">
+      {{page|pagination}}
+    </td>
+  </tr>
+  </tfoot>
   <tbody>
   {% for message in messages %}
     <tr class="message">

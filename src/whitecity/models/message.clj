@@ -14,6 +14,11 @@
     (aggregate (count :*) :cnt)
     (where (and {:read false } {:user_id id}))))))
 
+(defn count-all [id]
+  (:cnt (first (select messages
+    (aggregate (count :*) :cnt)
+    (where {:user_id id})))))
+
 (defn update! [id receiver-id]
   (update messages
           (set-fields {:read true})
@@ -26,22 +31,24 @@
     (where {:sender_id id})))
 
 (defn all
-  ([id]
+  ([id page per-page]
     (select messages
-      (fields :id [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
-      (join
-        users (= :user.id :sender_id))
-      (where {:user_id id})
-      (order :created_on :DESC)))
+            (fields :id [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
+            (join
+             users (= :user.id :sender_id))
+            (where {:user_id id})
+            (order :created_on :DESC)
+            (limit per-page)
+            (offset (* (- page 1) per-page))))
   ([id receiver-id]
    (let [rid (util/parse-int receiver-id)]
      (do
        (when (not (empty? (update! id rid))) (util/update-session id :messages))
        (select messages
-        (fields :id :subject :content :created_on :user_id :sender_id :read)
-        (with senders (fields [:login :user_login] [:alias :user_alias]))
-        (where (or {:sender_id id :user_id rid} {:sender_id rid :user_id id}))
-        (order :created_on :ASC))))))
+               (fields :id :subject :content :created_on :user_id :sender_id :read)
+               (with senders (fields [:login :user_login] [:alias :user_alias]))
+               (where (or {:sender_id id :user_id rid} {:sender_id rid :user_id id}))
+               (order :created_on :ASC))))))
 
 (defn prep [{:keys [subject content sender_id user_id]}]
   {:subject subject
