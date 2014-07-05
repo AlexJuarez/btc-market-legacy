@@ -22,16 +22,10 @@
   (->CouchBaseSessionStore ce (* 60 60 10)))
 
 (defn set [key value & ttl]
-  (try
-    (c/set ce key (or (first ttl) (+ (* 60 10) (rand-int 600))) value) ;;Prevent stampede
-    (catch Exception ex
-      nil)))
+  (c/set ce key (or (first ttl) (+ (* 60 10) (rand-int 600))) value));;Prevent stampede
 
 (defn get [key]
-  (try
-    (c/get ce key)
-    (catch Exception ex
-      nil)))
+  (c/get ce key))
 
 (defn delete [key]
   (cache/invalidate! key)
