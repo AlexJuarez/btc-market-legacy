@@ -31,23 +31,26 @@
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
-    (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))))
+    (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))
+    (order :created_on :desc)))
 
 (defn sold
   ([id page per-page]
    (select orders
-    (with users (fields :login :alias))
-    (with postage (fields [:title :postage_title]))
-    (where {:seller_id id})
-    (offset (* (- page 1) per-page))
-    (limit per-page)))
+           (with users (fields :login :alias))
+           (with postage (fields [:title :postage_title]))
+           (where {:seller_id id})
+           (offset (* (- page 1) per-page))
+           (limit per-page)
+           (order :created_on :desc)))
  ([status id page per-page]
   (select orders
-    (with users (fields :login :alias))
-    (with postage (fields [:title :postage_title]))
-    (where {:seller_id id :status status})
-    (offset (* (- page 1) per-page))
-    (limit per-page))))
+          (with users (fields :login :alias))
+          (with postage (fields [:title :postage_title]))
+          (where {:seller_id id :status status})
+          (offset (* (- page 1) per-page))
+          (limit per-page)
+          (order :created_on :desc))))
 
 (defn check-item [item]
   (let [id (key item)

@@ -118,6 +118,7 @@
     <tr>
       <th>amount</th>
       <th>note</th>
+      <th>date</th>
     </tr>
   </thead>
   <tbody>
@@ -125,6 +126,7 @@
     <tr {% if transaction.amount > 0 %}class="gain"{% else %}class="loss"{% endif %}>
       <td>{{transaction.amount}}</td>
       <td>{{transaction.role}}</td>
+      <td>{{transaction.created_on|date:shortDate}}</td>
     </tr>
   {% endfor %}
   </tbody>
