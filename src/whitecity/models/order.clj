@@ -179,10 +179,17 @@
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)
-  (update orders
-          (set-fields {:status 2 :updated_on (raw "now()")})
-          (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)})))
-
+  (let [order (update orders
+                      (set-fields {:status 2 :updated_on (raw "now()")})
+                      (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")]
+                              :user_id user-id :id (util/parse-int id)}))]
+    (transaction
+     (update users
+             (set-fields {:resolutions (raw "resolutions + 1")})
+             (where {id {:user_id user-id}}))
+     (update users
+             (set-fields {:resolutions (raw "resolutions + 1")})
+             (where {id {:user_id (:seller_id order)}})))))
 
 (defn moderate [page per-page]
   (select orders
@@ -190,6 +197,11 @@
           (where {:status 2 :auto_finalize [< (raw "now()")]})
           (offset (* (- page 1) per-page))
           (limit per-page)))
+
+(defn moderate-order [id]
+  (first (select orders
+                 (with sellers (fields :login :alias))
+                 (where {:id (util/parse-int id) :status 2 :auto_finalize [< (raw "now()")]}))))
 
 ;;cancel button does not work
 ;;make sure to separate logic here
@@ -203,6 +215,11 @@
   (:cnt (first (select orders
     (aggregate (count :*) :cnt)
     (where {:user_id id :status [in (list 0 1 2)]})))))
+
+(defn count-past [id]
+  (:cnt (first (select orders
+    (aggregate (count :*) :cnt)
+    (where {:user_id id :status 3})))))
 
 ;;map this into vector of status cnt's into a hash
 (defn count-sales

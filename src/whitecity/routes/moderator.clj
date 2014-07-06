@@ -8,6 +8,7 @@
             [whitecity.models.review :as review]
             [whitecity.util.hashids :as hashids]
             [whitecity.models.resolution :as resolution]
+            [whitecity.models.user :as user]
             [noir.response :as resp]
             [whitecity.util :as util]))
 
@@ -20,5 +21,16 @@
         ]
   (layout/render "moderate/index.html" (merge {:orders orders} (set-info)))))
 
+(defn moderator-view [id]
+  (let [id (hashids/decrypt id)
+        order (-> (order/moderate-order id) encrypt-id convert-order-price)
+        past-orders (order/count-past (:user_id order))
+        seller (user/get (:seller_id order))
+        buyer (user/get (:buyer_id order))
+        resolutions (resolution/all id (user-id))]
+    (layout/render "moderate/resolution.html" (merge {:resolutions resolutions :buyer buyer
+                                                      :seller seller :past_orders past-orders} order (set-info)))))
+
 (def-restricted-routes moderator-routes
-  (GET "/market/moderate" [page] (moderator-page page)))
+  (GET "/market/moderate" [page] (moderator-page page))
+  (GET "/market/moderate/:id" [id] (moderator-view id)))
