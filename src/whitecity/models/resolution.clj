@@ -52,16 +52,16 @@
 
 (defn accept [id user-id]
   (let [id (util/parse-int id)
-        res (update resolutions (set-fields {:applied true})
-                    (where {:id id :applied false}))] ;;added a flag to see if the resolution was used
-      (let [values (if (= (:seller_id res) user-id) (assoc values :seller_accepted true) values)
+        res (select resolutions (where {:id id :applied false}))] ;;added a flag to see if the resolution was used
+      (let [values (if (= (:seller_id res) user-id) {:seller_accepted true} {})
             values (if (= (:user_id res) user-id) (assoc values :user_accepted true) values)]
         (if (or
               (and (:user_accepted values) (:seller_accepted res))
               (and (:user_accepted res) (:seller_accepted values))) ;;check to see if everyone wants this resolution
-          (if (= (:action res) "extension")
-            (extension id (:value res) (:order_id res) values)
-            (refund id (:user_id res) (:seller_id res) (:order_id res) (:value res) values))))))
+          (do (update resolutions (set-fields {:applied true}) (where {:id id}))
+            (if (= (:action res) "extension")
+              (extension id (:value res) (:order_id res) values)
+              (refund id (:user_id res) (:seller_id res) (:order_id res) (:value res) values)))))))
 
 (defn store! [resolution]
   (insert resolutions (values resolution)))
