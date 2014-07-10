@@ -5,8 +5,6 @@ Order not found
 {% else %}
 <h1 class="jumbo">Order Information</h1>
 <span>Transaction #<a href="/market/order/{{id}}">{{id}}</a></span>
-{{resolutions|join:" "}}
-{{order}}
 <div class="well">
   <table class="fact-table">
     <tbody>
@@ -32,7 +30,10 @@ Order not found
         <td>postage:</td><td class="price">{{user.currency_symbol|safe}}{{postage_price}}</td>
       </tr>
       <tr>
-        <td>total price:</td><td class="price">{{user.currency_symbol|safe}}{{price}}</td>
+        <td>price:</td><td class="price">{{user.currency_symbol|safe}}{{price}}</td>
+      </tr>
+      <tr>
+        <td>total:</td><td class="price">{{user.currency_symbol|safe}}{{total}}</td>
       </tr>
       <tr>
         <td>ordered:</td><td><span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></td>
@@ -85,7 +86,7 @@ Order not found
         extend by {{resolution.value}} day{% if not resolution.value = 1 %}s{% endif %}
         {% endifequal %}
         {% ifequal resolution.action "refund" %}
-        refund {{resolution.value}}% ~({{refund.est}})
+        refund {{resolution.value}}% ~({{user.currency_symbol|safe}}{{resolution.est|double-format:5}})
         {% endifequal %}
       </td>
       <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
@@ -117,7 +118,7 @@ Order not found
       {% endifequal %}
     </li>
     <li>
-      <label><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
+      <label title="This is the percentage of the total that you will receive"><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
@@ -131,7 +132,7 @@ Order not found
   <p>
     <label for="message">Message:</label>
     <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
-  </p> 
+  </p>
   <span class="submit">
     <input type="submit" class="btn" value="send" />
   </span>

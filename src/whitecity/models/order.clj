@@ -69,7 +69,7 @@
   (let [currency_id (if (:hedged order) (:currency_id order) 1)
         item-cost (util/convert-price (:currency_id order) currency_id (:price order))
         postage-cost (util/convert-price (:postage_currency order) currency_id (:postage_price order))
-        cost (+ item-cost postage-cost)
+        cost (+ (* (:quantity order) item-cost) postage-cost)
         btc_cost (util/convert-price currency_id 1 cost) ;;use an env flag for this
         {lq :listing_quantity lp :listing_pubic cat_id :category_id} order
         {:keys [user_id seller_id listing_id quantity] :as order} (dissoc order :listing_quantity :listing_pubic :category_id)
@@ -93,7 +93,7 @@
         quantity (:quantity (val item))
         post (postage/get postid)
         listing (listings/get id)]
-    {:price (* quantity (:price listing))
+    {:price (:price listing)
      :postage_price (:price post)
      :postage_title (:title post)
      :postage_currency (:currency_id post)

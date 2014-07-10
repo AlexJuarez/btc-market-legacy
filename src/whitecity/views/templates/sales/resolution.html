@@ -30,7 +30,10 @@ Sale not found
       <td>postage:</td><td class="price">{{user.currency_symbol|safe}}{{postage_price}}</td>
     </tr>
     <tr>
-      <td>total price:</td><td class="price">{{user.currency_symbol|safe}}{{price}}</td>
+      <td>price:</td><td class="price">{{user.currency_symbol|safe}}{{price}}</td>
+    </tr>
+    <tr>
+      <td>total:</td><td class="price">{{user.currency_symbol|safe}}{{total}}</td>
     </tr>
     <tr>
       <td>ordered:</td><td><span class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</span></td>
@@ -100,7 +103,7 @@ Sale not found
       {% endifequal %}
     </li>
     <li>
-      <label><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
+      <label title="this is the amount you will give your customer"><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       Refund:</label>
       <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
@@ -114,7 +117,7 @@ Sale not found
   <p>
     <label for="message">Message:</label>
     <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
-  </p> 
+  </p>
   <span class="submit">
     <input type="submit" class="btn" value="send" />
   </span>

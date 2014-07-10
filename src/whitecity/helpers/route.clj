@@ -23,10 +23,14 @@
     [java.io File]
     [javax.imageio ImageIO]))
 
-(defn convert-order-price [{:keys [price postage_price postage_currency currency_id] :as order}]
+(defn convert-order-price [{:keys [price postage_price postage_currency currency_id quantity] :as order}]
   (when order
-    (-> order (assoc :price (util/convert-currency order)
-                     :postage_price (util/convert-currency postage_currency postage_price)))))
+    (let [price (util/convert-currency order)
+          postage (util/convert-currency postage_currency postage_price)
+          total (+ (* price quantity) postage)]
+    (-> order (assoc :price price
+                     :total total
+                     :postage_price postage)))))
 
 (defn encrypt-id [m]
   (when m

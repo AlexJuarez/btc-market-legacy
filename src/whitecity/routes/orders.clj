@@ -31,12 +31,9 @@
     (order/finalize id (user-id))
     (resp/redirect "/market/orders")))
 
-(defn estimate-refund [resolutions {:keys [user_id postage_price postage_currency currency_id price quantity]}]
+(defn estimate-refund [resolutions {:keys [total]}]
   (map #(if (= (:action %) "refund")
-          (let [p (* (util/convert-currency currency_id price) quantity)
-                post (util/convert-currency postage_currency postage_price)
-                est (* (:value %) (+ p post))]
-            (assoc % :est price))
+            (assoc % :est (* (/ (:value %) 100) total))
           %
          ) resolutions))
 
