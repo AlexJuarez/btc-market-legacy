@@ -3,7 +3,7 @@
   (:use [korma.db :only (defdb)]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
@@ -20,7 +20,7 @@
   (convert (select postage
       (where {:user_id (util/parse-int user-id)}))))
 
-(defn get 
+(defn get
   ([id]
    (first (select postage
       (where {:id (util/parse-int id)}))))
@@ -33,8 +33,8 @@
     (where {:id (util/parse-int id) :user_id user-id})))
 
 (defn prep [{:keys [title price currency_id]}]
-  {:title title 
-   :price (util/parse-int price) 
+  {:title title
+   :price (util/parse-float price)
    :currency_id (util/parse-int currency_id)
    :updated_on (raw "now()")})
 

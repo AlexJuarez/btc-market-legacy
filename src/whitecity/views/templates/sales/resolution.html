@@ -74,7 +74,7 @@ Sale not found
         extend by {{resolution.value}} day{% if not resolution.value = 1 %}s{% endif %}
         {% endifequal %}
         {% ifequal resolution.action "refund" %}
-        refund {{resolution.value}}%
+        refund {{resolution.value}}% you will receive ~({{user.currency_symbol|safe}}{{resolution.est|double-format:5}})
         {% endifequal %}
       </td>
       <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>

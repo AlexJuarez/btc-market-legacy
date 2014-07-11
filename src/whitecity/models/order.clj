@@ -158,6 +158,10 @@
           (set-fields {:status 2 :updated_on (raw "now()")})
           (where {:user_id user-id :id (util/parse-int id)})))
 
+
+;;cancel button does not work
+;;make sure to separate logic here
+;;so that catagories and things are updated as the sales are rejected.
 (defn reject-sales [sales seller-id]
   (util/update-session seller-id :sales :orders)
   (let [o (select orders

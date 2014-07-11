@@ -13,7 +13,7 @@
   </p>
   <p {% if errors.price %}class="errors"{% endif %}>
     <label for="price">Price: </label>
-    <input name="price" class="input" id="price" type="number" value="{{price}}" />
+    <input name="price" class="input" id="price" value="{{price}}" />
     {% if errors.price %}
       {{errors.price|join:", "}}
     {% endif %}

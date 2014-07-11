@@ -32,6 +32,12 @@
         sales (calculate-amount (encrypt-ids (order/sold status (user-id) page sales-per-page)))]
      (layout/render template (merge {:sales sales :page {:page page :max pagemax :url url}} (set-info)))))
 
+(defn estimate-refund [resolutions {:keys [total]}]
+  (map #(if (= (:action %) "refund")
+            (assoc % :est (* (/ (- 100 (:value %)) 100) total))
+          %
+         ) resolutions))
+
 (defn sales-new
   [page]
   (sales "sales/new.html" "/market/sales/new" 0 page))
@@ -59,13 +65,13 @@
   ([hashid]
     (let [id (hashids/decrypt hashid)
           order (-> (order/get-sale id (user-id)) encrypt-id convert-order-price)
-          resolutions (resolution/all-sales id (user-id))]
+          resolutions (estimate-refund (resolution/all-sales id (user-id)) order)]
       (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))
           order (-> (order/get-sale id (user-id)) encrypt-id convert-order-price)
-          resolutions (resolution/all-sales id (user-id))]
+          resolutions (estimate-refund (resolution/all-sales id (user-id)) order)]
         (layout/render "sales/resolution.html" (merge {:errors {} :resolutions resolutions} res slug order (set-info))))))
 
 (defn sales-page

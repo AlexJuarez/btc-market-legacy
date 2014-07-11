@@ -37,6 +37,12 @@
           %
          ) resolutions))
 
+
+(defn order-cancel [id]
+  (let [id (hashids/decrypt id)]
+    (order/cancel! id (user-id))
+    (resp/redirect (str "/market/orders"))))
+
 (defn order-view
   ([id]
     (let [id (hashids/decrypt id)
@@ -59,6 +65,7 @@
     (GET "/market/orders" [] (orders-page))
     (POST "/market/orders" {params :params} (orders-page params))
     (GET "/market/order/:id/resolve" [id] (order-resolve id))
+    (GET "/market/order/:id/cancel" [id] (order-cancel id))
     (GET "/market/order/:id" [id] (order-view id))
     (POST "/market/order/:id" {params :params} (order-view params true))
     (GET "/market/order/:id/finalize" [id] (order-finalize id)))

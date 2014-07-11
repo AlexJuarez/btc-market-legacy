@@ -66,7 +66,7 @@
     <td><em>{{order.status|status}}</em></td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td>
-      {% if order.status = 0 %} 
+      {% if order.status = 0 %}
         N/A
       {% else %}
         <span data-time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span>
@@ -75,9 +75,9 @@
     <td>
       {% if order.status = 2 %}<a href="/market/order/{{order.id}}">resolution page</a>{% else %}
         {% if order.status = 0 %}
-          <a href="/market/order/{{order.id}}">cancel</a>
+          <a href="/market/order/{{order.id}}/cancel">cancel</a>
         {% else %}
-          {% if order.resolve %} 
+          {% if order.resolve %}
           <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
           {% endif %}
       {% endif %}
