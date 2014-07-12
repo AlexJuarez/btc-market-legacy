@@ -75,7 +75,10 @@
   ([currency_id price]
     (let [user_currency (:currency_id (session/get :user))
           currencies [1 26]]
-      (if (or (some #(= user_currency %) currencies) (some #(= currency_id %) currencies))
+      (if (or
+           (= user_currency currency_id)
+           (some #(= user_currency %) currencies)
+           (some #(= currency_id %) currencies))
         (convert-price currency_id user_currency price)
         (convert-price 1 user_currency (convert-price currency_id 1 price))))))
 

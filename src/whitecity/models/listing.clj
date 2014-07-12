@@ -10,7 +10,7 @@
         [whitecity.util :as util]))
 
 (defn convert-post [postage]
-  (map #(assoc % :price (util/convert-currency %) ) postage))
+  (map #(assoc % :price (util/convert-currency %)) postage))
 
 (defn convert [listings]
   (map #(assoc % :price (util/convert-currency %) :postage (convert-post (:postage %))) listings))
@@ -144,12 +144,6 @@
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
-  ([page per-page options]
-   (convert
-     (let [query (->
-       (gen-public-query)
-       (where {:public true :quantity [> 0]}))]
-       (-> (sortby query page per-page options) select))))
   ([cid page per-page options]
    (let [c (cat/get cid) lte (:lte c) gt (:gt c)]
    (convert
@@ -162,6 +156,7 @@
                (> :category_id gt)
                (<= :category_id lte))))]
       (-> (sortby query page per-page options) select))))))
+
 
 (defn public-for-user
   ([user-id page per-page]
