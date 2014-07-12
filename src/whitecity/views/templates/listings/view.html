@@ -6,7 +6,9 @@
 <div class="listing">
   {% if image_id %}
     <div class="image">
-      {% image image_id %}
+      <div class="image-wrapper">
+        {% image image_id %}
+      </div>
     </div>
   {% endif %}
   <h1>{{title}}</h1>

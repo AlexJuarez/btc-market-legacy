@@ -1,13 +1,3 @@
 TODO
-Add yaml slurping so that categories can be populated automatically
-need to add categories, itemization and updating
-  - when a listing is added it will update the categories guess* the guess is what we will load
-  - when a order is placed if the listings quantity is 0 we should update
-  - when a listing is edited and the quantity is increased above 0 update
-  - when a listing is deleted that had quantity > 1 update the count
-need to add and work on currenices, add conversion for inputs & fields, could add it in the view filters 
-need to add sort for listings, newest, bestselling, price high to low, and domestic
-need to add user settings, country, alias, pw, pin, wallet, language
   - need to add language support
-Wallet information, amount you currently have = amount in escrow hedged + unhedged + unspent
-total amount spent for each user spent last 30 + 60 + 90
+  - total amount spent for each user spent last 30 + 60 + 90
