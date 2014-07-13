@@ -6,9 +6,9 @@
 <h1 class="jumbo">{{alias}}</h1>
 <a href="/market/messages/{{id}}">send a message</a>
 <p class="well">
-  has been a member for: <strong class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
+  has been a member since: <strong>{{created_on|date:shortDate}}</strong>
   <br />
-  was last seen: <strong class="pretty-time" data-time="{{last_login|date:fullDateTime}}">{{last_login|freshness}}</strong>
+  was last seen: <strong>{{last_login|freshness}}</strong>
   <br />
   {% if ranking %}
   ranked in the top % of sellers with
