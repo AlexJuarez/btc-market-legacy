@@ -8,7 +8,7 @@
 <p class="well">
   has been a member for: <strong class="pretty-time" data-time="{{created_on|date:fullDateTime}}">{{created_on|date:shortDate}}</strong>
   <br />
-  was last seen: <strong class="pretty-time" data-time="{{last_login|date:fullDateTime}}">{{last_login|date:shortDate}}</strong>
+  was last seen: <strong class="pretty-time" data-time="{{last_login|date:fullDateTime}}">{{last_login|freshness}}</strong>
   <br />
   {% if ranking %}
   ranked in the top % of sellers with

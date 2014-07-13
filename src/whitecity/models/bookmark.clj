@@ -3,7 +3,7 @@
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.util :as util]))
 
 (defn get [listing-id user-id]
@@ -45,7 +45,7 @@
   (select bookmarks
           (fields [:id :bid] :listing_id)
           (with listings
-            (fields :user_id [:category.name :category_name] :category_id :quantity :title :id :price [:user.alias :user_alias] [:user.login :user_login] :hedged)
+            (fields :user_id [:category.name :category_name] :currency_id :category_id :quantity :title :id :price [:user.alias :user_alias] [:user.login :user_login] :hedged)
             (with users)
             (with category))
           (where {:user_id user-id})))

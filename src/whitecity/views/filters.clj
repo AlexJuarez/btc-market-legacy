@@ -7,7 +7,7 @@
   (:use selmer.filters
         hiccup.core))
 
-(add-filter! :empty? (fn [x] 
+(add-filter! :empty? (fn [x]
                        (if (string? x) (s/blank? x) (empty? x))))
 
 (add-filter! :count-cart
@@ -17,6 +17,21 @@
 (add-filter! :postage-cart
              (fn [x]
                (:postage ((session/get :cart) x))))
+
+(add-filter! :freshness
+             (fn [x]
+               (let [diff (/ (Math/abs (- (.getTime x) (.getTime (java.util.Date.)))) 1000)
+                     day (* 24 60 60)
+                     days (mod diff day)
+                     months (mod diff (* days 30))]
+                 (cond
+                  (< diff day) "today"
+                  (< diff (* 30 day)) (if (= days 1) "yesterday" (str days " days ago"))
+                  :else (if (= months 1) "1 month ago" (str months " months ago"))
+                  )
+                 )))
+
+(.getTime (java.util.Date. ))
 
 (defn paginate [page maxpage]
   (loop [c 1 o [page]]
@@ -33,7 +48,7 @@
                      params (or (:params x) {})
                      pages (paginate page m)
                      url (:url x)]
-                 [:safe (html 
+                 [:safe (html
                    [:ul.pagination
                     [:li [:a {:href (str url "?" (util/params (assoc params :page 1)))} "&laquo;"]]
                     (map #(-> [:li (if (= page %) [:strong.selected %] [:a {:href (str url "?" (util/params (assoc params :page %)))} %])]) pages)
@@ -44,8 +59,8 @@
 (defn render-tree [tree params]
   (let [children (:children tree)]
     (if-not (empty? children)
-      [:li 
-       [:a.category {:href (str "/market/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)] 
+      [:li
+       [:a.category {:href (str "/market/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]
        [:ul (map #(render-tree % params) children)]]
       [:li
        [:a.category {:href (str "/market/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]])))
