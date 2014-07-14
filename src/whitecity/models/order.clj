@@ -89,12 +89,10 @@
 
 (defn cancel!
   ([{:keys [id seller_id user_id listing_id quantity] :as order}]
-   (println order)
    (let [escr (update escrow (set-fields {:status "refunded"}) (where {:status "hold" :order_id id}))
          listing (update listings
                          (set-fields {:updated_on (raw "now()") :quantity (raw (str "quantity + " quantity))})
                          (where {:id listing_id}))]
-     (println escr)
      (when-not (empty? escrow)
        (util/update-session seller_id :sales :orders)
        (util/update-session user_id :sales :orders)
@@ -179,7 +177,7 @@
   (util/update-session user-id :orders :sales)
   (update orders
           (set-fields {:status 2 :updated_on (raw "now()")})
-          (where {:user_id user-id :id (util/parse-int id)})))
+          (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)})))
 
 
 ;;cancel button does not work

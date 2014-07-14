@@ -73,7 +73,7 @@
   ([{:keys [currency_id price]}]
    (convert-currency currency_id price))
   ([currency_id price]
-    (let [user_currency (:currency_id (session/get :user))
+    (let [user_currency (:currency_id (current-user))
           currencies [1 26]]
       (if (or
            (= user_currency currency_id)
