@@ -180,6 +180,12 @@
           (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)})))
 
 
+(defn moderate [page per-page]
+  (select orders
+          (where {:status 2 :auto_finalize (> (raw "now()"))})
+          (offset (* (- page 1) per-page))
+          (limit per-page)))
+
 ;;cancel button does not work
 ;;make sure to separate logic here
 ;;so that catagories and things are updated as the sales are rejected.

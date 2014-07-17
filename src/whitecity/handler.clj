@@ -7,6 +7,7 @@
     [whitecity.routes.auth :refer [auth-routes]]
     [whitecity.routes.sales :refer [sales-routes]]
     [whitecity.routes.account :refer [account-routes]]
+    [whitecity.routes.moderator :refer [moderator-routes]]
     [whitecity.routes.cart :refer [cart-routes]]
     [whitecity.routes.orders :refer [order-routes]]
     [whitecity.routes.listings :refer [listing-routes]]
@@ -33,10 +34,10 @@
   (= (session/get :authed) (not (nil? (session/get :user_id)))))
 
 (defn moderator-access [req]
-  (not (:mod (util/current-user))))
+  (:mod (util/current-user)))
 
 (defn vendor-access [req]
-  (not (:vendor (util/current-user))))
+  (:vendor (util/current-user)))
 
 (defn init
   "init will be called once when
@@ -80,6 +81,7 @@
     order-routes
     listing-routes
     message-routes
+    moderator-routes
     app-routes]
    :session-options {:cookie-attrs {:http-only true
                                     :max-age (* 60 60 10)}
@@ -90,7 +92,7 @@
    :middleware [wrap-gzip wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
    :access-rules [user-access
-                  {:uri "/market/moderator/*" :redirect "/market/" :rule moderator-access}
+                  {:uri "/market/moderate*" :redirect "/market/" :rule moderator-access}
                   {:uri "/market/sales*" :redirect "/market/" :rule vendor-access}
                   {:uri "/market/listings*" :redirect "/market/" :rule vendor-access}]
    ;; I can only assume

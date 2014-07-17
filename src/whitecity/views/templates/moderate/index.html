@@ -1,0 +1,34 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<h1 class="jumbo">Moderater Overview</h1>
+<p class="well">On the moderaters landing page you can look at orders that need a resolution.
+    Please use your best judgement to come up with a solution. The solutions will
+    be voted upon by other moderators, and should you attempt to make biased moderaterations
+    you may been striped of your moderating privileges.</p>
+{% if not orders|empty? %}
+<table class="table normal">
+  <thead>
+    <tr>
+      <th>order #</th>
+      <th>item</th>
+      <th>quantity</th>
+      <th>price</th>
+      <th>age</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for order in orders %}
+  <tr>
+    <td><a href="/market/moderate/{{order.id}}">{{order.id}}</a></td>
+    <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
+    <td>{{order.quantity}}</td>
+    <td><strong>{{order.price}}</strong></td>
+    <td><em>{{order.age}}</em></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="well">There are not any orders that require your attension.</p>
+{% endif %}
+{% endblock %}

@@ -33,6 +33,9 @@
                   | <a href="/market/sales">my sales <strong>{{user.sales.total}}</strong></a>
                   | <a href="/market/listings">my listings <strong>{{user.listings}}</strong></a>
                   {% endif %}
+                  {% if user.mod %}
+                  | <a href="/market/moderate">moderate</a>
+                  {% endif %}
                 </nav>
                 <form action="/market/search" method="GET" class="search">
                   <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
