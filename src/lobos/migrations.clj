@@ -25,6 +25,7 @@
                (varchar :alias 64 :unique)
                (boolean :vendor (default false))
                (boolean :admin (default false))
+               (boolean :mod (default false))
                (boolean :auth (default false))
                (column :session (data-type :uuid) :unique)
                (text :description)
@@ -227,6 +228,38 @@
                 (text :content)
                 (check :value (>= :value 0)))))
   (down [] (drop (table :resolution))))
+
+(defmigration add-mod-resolutions-table
+  (up [] (create
+          (tbl :modresolution
+               (refer-to :user)
+               (integer :buyer_id [:refer :user :id :on-delete :set-null])
+               (integer :seller_id [:refer :user :id :on-delete :set-null])
+               (refer-to :order)
+               (integer :votes)
+               (boolean :applied)
+               (integer :percent)
+               (check :percent (>= :percent 0))
+               (text :content))))
+  (down [] (drop (table :mod-resolution))))
+
+(defmigration add-mod-votes-table
+  (up [] (create
+          (tbl :modvote
+               (index :vote_unique_constraint [:modresolution_id :user_id] :unique)
+               (refer-to :modresolution)
+               (refer-to :user))))
+  (down [] (drop (table :modvote)))
+  )
+
+(defmigration add-mod-comment-table
+  (up [] (create
+          (tbl :modcomment
+               (refer-to :order)
+               (refer-to :user)
+               (text :content)
+               )))
+  (down [] (drop (table :modcomment))))
 
 (defmigration add-bookmarks-table
   (up [] (create

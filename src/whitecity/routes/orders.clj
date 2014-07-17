@@ -37,7 +37,6 @@
           %
          ) resolutions))
 
-
 (defn order-cancel [id]
   (let [id (hashids/decrypt id)]
     (order/cancel! id (user-id))

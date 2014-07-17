@@ -19,17 +19,24 @@
     [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [ring.middleware.gzip :refer [wrap-gzip]]
     [compojure.route :as route]
+    [whitecity.util :as util]
     [taoensso.timbre :as timbre]
     [whitecity.cache :as cache]
     [noir.session :as session]
     [com.postspectacular.rotor :as rotor]))
 
-(defroutes app-routes$
+(defroutes app-routes
   (route/resources "/")
   (route/not-found "Not Found"))
 
 (defn user-access [request]
   (= (session/get :authed) (not (nil? (session/get :user_id)))))
+
+(defn moderator-access [req]
+  (not (:mod (util/current-user))))
+
+(defn vendor-access [req]
+  (not (:vendor (util/current-user))))
 
 (defn init
   "init will be called once when
@@ -82,7 +89,10 @@
    ;; add custom middleware here
    :middleware [wrap-gzip wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
-   :access-rules [user-access]
+   :access-rules [user-access
+                  {:uri "/market/moderator/*" :redirect "/market/" :rule moderator-access}
+                  {:uri "/market/sales*" :redirect "/market/" :rule vendor-access}
+                  {:uri "/market/listings*" :redirect "/market/" :rule vendor-access}]
    ;; I can only assume
    ;; serialize/deserialize the following data formats
    ;; available formats:
