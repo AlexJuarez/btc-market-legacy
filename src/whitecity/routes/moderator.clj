@@ -15,9 +15,10 @@
 
 (defn moderator-page [page]
   (let [page (or (util/parse-int page) 1)
-        orders (map #(assoc % :id (hashids/encrypt (:id %))) (order/moderate page per-page))
-        pagemax (util/page-max orders per-page)])
-  (layout/render "moderate/index.html" (set-info)))
+        ;;orders (map #(assoc % :id (hashids/encrypt (:id %))) (order/moderate page per-page))
+        ;;pagemax (util/page-max 10 per-page)
+        ]
+  (layout/render "moderate/index.html" (set-info))))
 
 (def-restricted-routes moderator-routes
   (GET "/market/moderate" [page] (moderator-page page)))
