@@ -12,7 +12,7 @@
   session-store/SessionStore
   (read-session [_ key] (or (when key (c/get conn key)) {}))
   (delete-session [_ key] (c/delete conn key) nil)
-  (write-session [_ key data] 
+  (write-session [_ key data]
     (let [key (or key (str (java.util.UUID/randomUUID)))]
       (c/set conn key (+ ttl-secs (rand-int ttl-secs)) data)
       key)))
@@ -22,20 +22,26 @@
   (->CouchBaseSessionStore ce (* 60 60 10)))
 
 (defn set [key value & ttl]
-  (c/set ce key (or (first ttl) (+ (* 60 10) (rand-int 600))) value)) ;;Prevent stampede
+  (try
+    (c/set ce key (or (first ttl) (+ (* 60 10) (rand-int 600))) value) ;;Prevent stampede
+    (catch Exception ex
+      nil)))
 
 (defn get [key]
-  (c/get ce key))
+  (try
+    (c/get ce key)
+    (catch Exception ex
+      nil)))
 
 (defn delete [key]
   (cache/invalidate! key)
   (c/delete ce key))
 
 (defmacro cache! [key & forms]
-  `(cache/cache! ~key 
-                 (let [value# (get ~key)] 
-                   (if (nil? value#) 
-                     (let [v# (do ~@forms)] 
+  `(cache/cache! ~key
+                 (let [value# (get ~key)]
+                   (if (nil? value#)
+                     (let [v# (do ~@forms)]
                        (set ~key v#)
-                       v#) 
+                       v#)
                      value#))))
