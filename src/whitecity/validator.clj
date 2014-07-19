@@ -49,7 +49,7 @@
 
 (v/defvalidator cart-validator
   [:address [:presence]]
-  [:total [:check-funds]]
+  [:total [:check-funds :numericality {:less-than-or-equal-to 2147483647}]]
   [:pin [:presence :pin-match]])
 
 ;;Bcypt only looks at the first 73 characters, and saves 60 of them
@@ -69,17 +69,17 @@
 
 (v/defvalidator user-withdrawal-validator
   [:address [:presence :validate-btc-address]]
-  [:amount [:presence :numericality {:greater-than-or-equal-to 0} :check-amount]]
+  [:amount [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 2147483647} :check-amount]]
   [:pin [:presence :pin-match]])
 
 (v/defvalidator listing-validator
   [:title [:presence :in-range {:start 4 :end 100}]]
-  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 2147483647}]]
   [:currency_id [:presence]]
-  [:quantity [:presence :numericality {:greater-than-or-equal-to 0}]])
+  [:quantity [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 2147483647}]])
 
 (v/defvalidator postage-validator
-  [:price [:presence :numericality {:greater-than-or-equal-to 0}]]
+  [:price [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 2147483647}]]
   [:title [:presence :in-range {:start 4 :end 100}]])
 
 (v/defvalidator message-validator

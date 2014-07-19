@@ -84,17 +84,15 @@
 
 (defn parse-int [s]
   (if (string? s)
-    (let [i (re-find #"\d+" s)]
-      (if-not (s/blank? i)
-        (Integer. i)))
+    (try (Integer/parseInt s)
+      (catch Exception ex))
     s))
 
 (defn parse-float [s]
   (if (string? s)
-    (let [f (re-find #"[0-9]*\.?[0-9]+" s)]
-      (if-not (s/blank? f)
-        (Float. f)
-        0.0))
+     (try (Float/parseFloat s)
+       (catch Exception ex
+         0.0))
     s))
 
 (defmacro update-session
