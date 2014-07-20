@@ -1,19 +1,20 @@
 (ns whitecity.validator
   (:use metis.core
-      [whitecity.db])
+        [whitecity.db])
   (:require
-    [metis.core :as v]
-    [whitecity.util.btc :as btc]
-    [whitecity.util :as util]
-    [korma.core :as sql]))
+   [metis.core :as v]
+   [clojure.string :as s]
+   [whitecity.util.btc :as btc]
+   [whitecity.util :as util]
+   [korma.core :as sql]))
 
 (defn get-by-login [login]
   (first (sql/select users
-    (sql/where (or {:alias login} {:login login})))))
+    (sql/where (or {:alias login} {:login (s/lower-case login)})))))
 
 (defn get-by-alias [alias]
   (first (sql/select users
-    (sql/where (and (or (= :alias alias) (= :login alias)) (not (= :id (util/user-id))))))))
+    (sql/where (and (or (= :alias alias) (= :login (s/lower-case alias))) (not (= :id (util/user-id))))))))
 
 (defn login-taken [map key _]
   (when-not (empty? (get-by-login (get map key)))

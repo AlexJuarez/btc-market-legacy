@@ -46,7 +46,7 @@
   (first
     (select users
       (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
-      (where {:login login}))))
+      (where {:login (s/lower-case login)}))))
 
 (defn track-login [{:keys [id last_attempted_login login_tries] :as user}]
   (if (or (= login_tries 0) (nil? last_attempted_login) (> (- (.getTime (java.util.Date.)) (.getTime last_attempted_login)) 86400000))
@@ -162,7 +162,7 @@
 (defn add! [{:keys [login pass confirm] :as user}]
   (let [check (valid-user? user)]
     (if (empty? check)
-      (-> {:login login :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
+      (-> {:login (s/lower-case login) :alias login :currency_id (:id (currency/find "BTC")) :pass pass :vendor true} (prep) (store!))
       {:errors check})))
 
 (defn last-login [id session]
