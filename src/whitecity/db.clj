@@ -61,6 +61,7 @@
   (table :order)
   (belongs-to sellers {:fk :seller_id})
   (belongs-to users)
+  (has-one escrow)
   (belongs-to currency)
   (belongs-to listings)
   (belongs-to postage))
@@ -84,7 +85,8 @@
   (belongs-to users)
   (belongs-to currency))
 
-(defentity escrow)
+(defentity escrow
+  (belongs-to order))
 
 (defentity feedback
   (belongs-to users))

@@ -182,7 +182,8 @@
 
 (defn moderate [page per-page]
   (select orders
-          (where {:status 2 :auto_finalize (> (raw "now()"))})
+          (with escrow (fields :btc_amount))
+          (where {:status 2 :auto_finalize [< (raw "now()")]})
           (offset (* (- page 1) per-page))
           (limit per-page)))
 

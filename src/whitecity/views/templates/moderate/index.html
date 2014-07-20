@@ -4,7 +4,7 @@
 <p class="well">On the moderaters landing page you can look at orders that need a resolution.
     Please use your best judgement to come up with a solution. The solutions will
     be voted upon by other moderators, and should you attempt to make biased moderations
-    you may been stripped of your moderating privileges.</p>
+    you may be stripped of your moderating privileges.</p>
 {% if not orders|empty? %}
 <table class="table normal">
   <thead>
@@ -13,7 +13,7 @@
       <th>item</th>
       <th>quantity</th>
       <th>price</th>
-      <th>age</th>
+      <th>freshness</th>
     </tr>
   </thead>
   <tbody>
@@ -22,8 +22,8 @@
     <td><a href="/market/moderate/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.quantity}}</td>
-    <td><strong>{{order.price}}</strong></td>
-    <td><em>{{order.age}}</em></td>
+    <td><strong>&#3647;{{order.btc_amount}}</strong></td>
+    <td><em>{{order.auto_finalize|freshness}}</em></td>
   </tr>
   {% endfor %}
   </tbody>
