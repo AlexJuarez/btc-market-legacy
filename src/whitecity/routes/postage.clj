@@ -38,7 +38,7 @@
 (defroutes postage-routes
   (wrap-restricted
    (context
-    "/vendor/postage/" []
+    "/vendor/postage" []
     (GET "/create" [] (postage-create))
     (POST "/create" {params :params} (postage-create params))
     (GET "/:id/edit" [id] (postage-edit id))
