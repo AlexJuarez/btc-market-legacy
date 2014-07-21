@@ -16,7 +16,7 @@
 
 (defn moderator-page [page]
   (let [page (or (util/parse-int page) 1)
-        orders (map #(assoc % :id (hashids/encrypt (:id %))) (order/moderate page per-page))
+        orders (-> (order/moderate page per-page) encrypt-ids)
         pagemax (util/page-max 10 per-page)
         ]
   (layout/render "moderate/index.html" (merge {:orders orders} (set-info)))))
@@ -26,10 +26,15 @@
         order (-> (order/moderate-order id) encrypt-id convert-order-price)
         past-orders (order/count-past (:user_id order))
         seller (user/get (:seller_id order))
-        buyer (user/get (:buyer_id order))
-        resolutions (resolution/all id (user-id))]
-    (layout/render "moderate/resolution.html" (merge {:resolutions resolutions :buyer buyer
-                                                      :seller seller :past_orders past-orders} order (set-info)))))
+        seller-resolutions (-> (order/past-resolutions (:seller_id order)) encrypt-ids)
+        buyer (user/get (:user_id order))
+        buyer-resolutions (-> (order/past-resolutions (:user_id order)) encrypt-ids)
+        resolutions (resolution/all id)]
+    (layout/render "moderate/resolution.html" (merge order {:resolutions resolutions
+                                                            :buyer buyer
+                                                            :buyer-resolutions buyer-resolutions
+                                                            :seller-resolutions seller-resolutions
+                                                            :seller seller :past_orders past-orders} (set-info)))))
 
 (def-restricted-routes moderator-routes
   (GET "/market/moderate" [page] (moderator-page page))

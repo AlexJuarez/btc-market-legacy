@@ -22,16 +22,14 @@
              (fn [x]
                (let [diff (/ (Math/abs (- (.getTime x) (.getTime (java.util.Date.)))) 1000)
                      day (* 24 60 60)
-                     days (mod diff day)
-                     months (mod diff (* days 30))]
+                     days (/ diff day)
+                     months (/ diff (* days 30))]
                  (cond
                   (< diff day) "today"
-                  (< diff (* 30 day)) (if (= days 1) "yesterday" (str days " days ago"))
-                  :else (if (= months 1) "1 month ago" (str months " months ago"))
+                  (< diff (* 30 day)) (if (= days 1) "yesterday" (str (int days) " days ago"))
+                  :else (if (= months 1) "1 month ago" (str (int months) " months ago"))
                   )
                  )))
-
-(.getTime (java.util.Date. ))
 
 (defn paginate [page maxpage]
   (loop [c 1 o [page]]

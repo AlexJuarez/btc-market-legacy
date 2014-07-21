@@ -8,11 +8,23 @@
 
 (def actions #{"refund" "extension"})
 
-(defn all [order-id user-id]
+(defn all
+  ([order-id]
+   (select resolutions
+           (where {:order_id (util/parse-int order-id)})
+           (order :created_on :ASC)))
+  ([order-id user-id]
+   (select resolutions
+           (with sellers
+                 (fields :alias))
+           (where {:order_id (util/parse-int order-id) :user_id user-id})
+           (order :created_on :ASC))))
+
+(defn all [order-id]
   (select resolutions
           (with sellers
-                (fields :alias))
-          (where {:order_id (util/parse-int order-id) :user_id user-id})
+                (fields [:alias :seller_alias]))
+          (where {:order_id (util/parse-int order-id)})
           (order :created_on :ASC)))
 
 (defn all-sales [order-id seller-id]

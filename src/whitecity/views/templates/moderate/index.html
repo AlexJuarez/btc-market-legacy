@@ -22,7 +22,7 @@
     <td><a href="/market/moderate/{{order.id}}">{{order.id}}</a></td>
     <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.quantity}}</td>
-    <td><strong>&#3647;{{order.btc_amount}}</strong></td>
+    <td><strong>&#3647;{{order.btc_amount|double-format:5}}</strong></td>
     <td><em>{{order.auto_finalize|freshness}}</em></td>
   </tr>
   {% endfor %}
