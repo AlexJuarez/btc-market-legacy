@@ -1,7 +1,7 @@
-{% extends "whitecity/views/templates/base.html" %}
+{% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <div id="wrap">
-	<div class="container">		
+	<div class="container">
     <h2>2 Step auth</h2>
 		{% if error %}
 		<h3 class="error">{{error}}</h3>
@@ -10,10 +10,10 @@
     <pre class="well p">{{decode}}</pre>
     <form method="POST">
     {% csrf-token %}
-    <textarea id="response" class="form-control" rows="4" name="response">{{user.pub_key}}</textarea>
-		<span class="submit">
+    <textarea id="response" class="form-control p" rows="4" name="response"></textarea>
+    <div class="submit">
 			<input type="submit" class="btn" value="login" />
-		</span>
+		</div>
     </form>
   </div>
 </div>

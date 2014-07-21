@@ -10,9 +10,13 @@
             [whitecity.util.pgp :as pgp]
             [whitecity.models.user :as users]))
 
+(def words ["the" "and" "for" "are" "but" "not" "can" "one" "day"
+            "get" "man" "new" "now" "old" "two" "boy" "put" "her" "dad" "zoo"
+            "tan" "saw" "mad" "jet" "far" "cat" "map" "key" "dog" "god" "bat"])
+
 (defn registration-page
   ([params]
-   (layout/render "register.html" {:captcha (util/gen-captcha)}))
+   (layout/render "register.html" (merge {:captcha (util/gen-captcha)} (set-info))))
   ([login pass confirm captcha]
    (if (= (:text (session/flash-get :captcha)) captcha)
      (let [user (users/add! {:login login :pass pass :confirm confirm})]
@@ -20,14 +24,13 @@
          (do
            (session/flash-put! :success {:success "User has been created"})
            (resp/redirect "/"))
-         (layout/render "register.html" (conj user {:login login :captcha (util/gen-captcha)}))))
-     (layout/render "register.html" (conj {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}} {:login login :pass pass :confirm confirm} )))))
-
-
+         (layout/render "register.html" (merge (set-info) user {:login login :captcha (util/gen-captcha)}))))
+     (layout/render "register.html" (merge {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}
+                                            :login login :pass pass :confirm confirm} (set-info) )))))
 ;;if you change the session name change it here too
 (defn login-page
   ([]
-    (layout/render "login.html" (session/flash-get :success)))
+    (layout/render "login.html" (merge {:success (session/flash-get :success)} (set-info))))
   ([login pass cookies]
     (let [user (users/login! {:login login :pass pass :session (:value (cookies "session"))})]
       (if (nil? (:error user))
@@ -40,15 +43,15 @@
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))
             (if (session/get :authed) (resp/redirect "/") (resp/redirect "/login/auth"))))
-        (layout/render "login.html" user)))))
+        (layout/render "login.html" (merge (set-info) user))))))
 
 (defn auth-page
   ([]
-   (let [k "testermctest"
+   (let [k (reduce str (map #(if (or true %) (str (get words (rand-int 32)))) (range 6)))
          user (session/get :user)]
      (when user
        (session/flash-put! :key k)
-       (layout/render "auth.html" {:error (session/flash-get :error) :decode (pgp/encode (:pub_key user) k)}))))
+       (layout/render "auth.html" (merge {:error (session/flash-get :error) :decode (pgp/encode (:pub_key user) k)} (set-info))))))
   ([{response :response}]
    (if (= (session/flash-get :key) response)
      (do (session/put! :authed true)

@@ -72,7 +72,7 @@
 (defn set-info []
   (merge
    {:cart-count (count (session/get :cart))}
-   (if (and (not (nil? (session/get :user_id))) (session/get :authed))
+   (if (= (not (nil? (session/get :user_id))) (session/get :authed))
      (let [{:keys [id vendor] :as user} (util/current-user)]
        {:user
         (merge user
@@ -83,6 +83,5 @@
                {:orders (util/session! :orders (order/count id))
                 :messages (util/session! :messages (message/count id))})})
      {:user {:currency_symbol "$"
-           :conversion (util/convert-price 1 26 1)
-           :currency_id 26}}
-     )))
+             :conversion (util/convert-price 1 26 1)
+             :currency_id 26}})))
