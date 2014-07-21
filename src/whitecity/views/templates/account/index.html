@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/account/account.html" %}
 {% block section %}
-<form action="/market/account" enctype="multipart/form-data" method="POST">
+<form action="/account" enctype="multipart/form-data" method="POST">
   {% csrf-token %}
   <div class="form-group {% if errors.alias %}has-error{% endif %}">
     <label for="alias">Alias:

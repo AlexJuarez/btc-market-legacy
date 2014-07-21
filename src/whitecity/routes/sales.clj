@@ -1,8 +1,8 @@
 (ns whitecity.routes.sales
   (:use
-    [compojure.core :only [GET POST]]
+    [compojure.core :only [GET POST defroutes context]]
     [environ.core :only [env]]
-    [noir.util.route :only (def-restricted-routes)]
+    [noir.util.route :only (wrap-restricted)]
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.order :as order]
@@ -45,26 +45,26 @@
 
 (defn sales-new
   [page]
-  (sales "sales/new.html" "/market/sales/new" 0 page))
+  (sales "sales/new.html" "/vendor/sales/new" 0 page))
 
 (defn sales-shipped
   [page]
-  (sales "sales/shipped.html" "/market/sales/shipped" 1 page))
+  (sales "sales/shipped.html" "/vendor/sales/shipped" 1 page))
 
 (defn sales-disputed
   [page]
-  (sales "sales/disputed.html" "/market/sales/resolutions" 2 page))
+  (sales "sales/disputed.html" "/vendor/sales/resolutions" 2 page))
 
 (defn sales-finailized
   [page]
-  (sales "sales/finailized.html" "/market/sales/past" 3 page))
+  (sales "sales/finailized.html" "/vendor/sales/past" 3 page))
 
 (defn sales-overview
   [page]
   (let [page (or (util/parse-int page) 1)
         pagemax (util/page-max (get-sales :total) sales-per-page)
         sales (-> (order/sold (user-id) page sales-per-page) encrypt-ids arbitration)]
-     (layout/render "sales/overview.html" (merge {:sales sales :page {:page page :max pagemax :url "/market/sales"}} (set-info)))))
+     (layout/render "sales/overview.html" (merge {:sales sales :page {:page page :max pagemax :url "/vendor/sales"}} (set-info)))))
 
 (defn sales-view
   ([hashid]
@@ -86,15 +86,22 @@
   ([{:keys [submit check] :as slug}]
    (let [sales (map #(-> % name hashids/decrypt util/parse-int) (keys check))]
      (if (= submit "accept")
-       (do (order/update-sales sales (user-id) 1) (resp/redirect "/market/sales"))
-       (do (order/reject-sales sales (user-id)) (resp/redirect "/market/sales"))))))
+       (do (order/update-sales sales (user-id) 1) (resp/redirect "/vendor/sales"))
+       (do (order/reject-sales sales (user-id)) (resp/redirect "/vendor/sales"))))))
 
-(def-restricted-routes sales-routes
-    (GET "/market/sales" {{page :page} :params} (sales-overview page))
-    (GET "/market/sales/new" {{page :page} :params} (sales-new page))
-    (GET "/market/sales/shipped" {{page :page} :params} (sales-shipped page))
-    (GET "/market/sales/resolutions" {{page :page} :params} (sales-disputed page))
-    (GET "/market/sales/past" {{page :page} :params} (sales-finailized page))
-    (POST "/market/sales/new" {params :params} (sales-page params))
-    (GET "/market/sale/:id" [id] (sales-view id))
-    (POST "/market/sale/:id" {params :params} (sales-view params true)))
+(defroutes sales-routes
+  (wrap-restricted
+   (context
+    "/sales" []
+    (GET "/" {{page :page} :params} (sales-overview page))
+    (GET "/new" {{page :page} :params} (sales-new page))
+    (GET "/shipped" {{page :page} :params} (sales-shipped page))
+    (GET "/resolutions" {{page :page} :params} (sales-disputed page))
+    (GET "/past" {{page :page} :params} (sales-finailized page))
+    (POST "/new" {params :params} (sales-page params))
+    ))
+  (wrap-restricted
+   (context
+    "/sale/:id" [id]
+    (GET "/" [id] (sales-view id))
+    (POST "/" {params :params} (sales-view params true)))))

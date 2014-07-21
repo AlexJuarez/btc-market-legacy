@@ -26,12 +26,12 @@
   <tbody>
   {% for review in reviews %}
     <tr>
-      <td><a href="/market/listing/{{review.listing_id}}">{{review.title}}</a></td>
+      <td><a href="/listing/{{review.listing_id}}">{{review.title}}</a></td>
       <td>{{review.content}}</td>
       <td>{{review.rating}}</td>
       <td>{% if review.shipped %}yes{% else %}no{% endif %}</td>
       <td><strong class="pretty-time" data-time="{{review.created_on|date:fullDateTime}}">{{review.created_on|date:shortDate}}</strong></td>
-      <td><a href="/market/review/{{review.id}}/edit">edit</a></td>
+      <td><a href="/review/{{review.id}}/edit">edit</a></td>
     </tr>
   {% endfor %}
   </tbody>

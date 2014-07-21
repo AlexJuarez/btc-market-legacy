@@ -3,10 +3,10 @@
 <div class="images">
   <h1 class="jumbo">my images</h1>
   <nav class="nav p">
-    <a href="/market/account/images">my images</a> - <a href="/market/account/images/upload">upload</a> - <strong>edit</strong>
+    <a href="/vendor/images">my images</a> - <a href="/vendor/images/upload">upload</a> - <strong>edit</strong>
   </nav>
   {% if not images|empty? %}
-  <form action="/market/account/images/edit" enctype="multipart/form-data" method="POST">
+  <form enctype="multipart/form-data" method="POST">
   {% csrf-token %}
   <table class="table normal p">
     <thead>
@@ -28,7 +28,7 @@
           </span>
         </td>
         <td>
-          <a href="/market/image/{{image.id}}/delete">delete</a>
+          <a href="/vendor/image/{{image.id}}/delete">delete</a>
         </td>
       </tr>
       {% endfor %}

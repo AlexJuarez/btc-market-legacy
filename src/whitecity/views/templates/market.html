@@ -12,11 +12,11 @@
         <div class="row">
           <div class="cell header">
             <header id="header">
-              <div id="banner"><a href="/market/">Grand Trunk<br><span class="bar"></span></a></div>
+              <div id="banner"><a href="/">Grand Trunk<br><span class="bar"></span></a></div>
               <div class="account-cart">
                 <div class="account">
                   {% if user.logged_in %}
-                  Hi, <a href="/market/account">{{user.alias}}</a>
+                  Hi, <a href="/account">{{user.alias}}</a>
                   | <a href="/logout">logout</a>
                   {% else %}
                   <a href="/login">login</a> |
@@ -24,7 +24,7 @@
                   {% endif %}
                 </div>
                 <div class="cart">
-                  <a href="/market/cart">
+                  <a href="/cart">
                     <strong><span class="cart-icon">Cart</span> {{cart-count}}</strong>
                   </a>
                 </div>
@@ -32,19 +32,19 @@
               <div class="nav-search">
                 {% if user.logged_in %}
                 <nav class="links">
-                  <a href="/market/messages">messages <strong>{{user.messages}}</strong></a>
-                  | <a href="/market/orders">orders <strong>{{user.orders}}</strong></a>
-                  | <a href="/market/account/wallet">wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</strong></a>
+                  <a href="/messages">messages <strong>{{user.messages}}</strong></a>
+                  | <a href="/orders">orders <strong>{{user.orders}}</strong></a>
+                  | <a href="/account/wallet">wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</strong></a>
                   {% if user.vendor %}
-                  | <a href="/market/sales">my sales <strong>{{user.sales.total}}</strong></a>
-                  | <a href="/market/listings">my listings <strong>{{user.listings}}</strong></a>
+                  | <a href="/vendor/sales">my sales <strong>{{user.sales.total}}</strong></a>
+                  | <a href="/vendor/listings">my listings <strong>{{user.listings}}</strong></a>
                   {% endif %}
                   {% if user.mod %}
-                  | <a href="/market/moderate">moderate</a>
+                  | <a href="/moderate">moderate</a>
                   {% endif %}
                 </nav>
                 {% endif %}
-                <form action="/market/search" method="GET" class="search">
+                <form action="/search" method="GET" class="search">
                   <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
                   <button type="submit">GO</button>
                 </form>
@@ -63,7 +63,7 @@
         <div class="row">
           <div class="cell">
             <footer id="footer">
-              &#3647;1 BTC ~= {{user.currency_symbol|safe}}{{user.conversion|double-format:4}} | <!-- <a href="/market/support">support</a>  | --><a href="/market/feedback">feedback</a> | <a href="/market/about">about</a>
+              &#3647;1 BTC ~= {{user.currency_symbol|safe}}{{user.conversion|double-format:4}} | <!-- <a href="/support">support</a>  | --><a href="/feedback">feedback</a> | <a href="/about">about</a>
             </footer>
           </div>
         </div>

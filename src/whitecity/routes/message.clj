@@ -31,7 +31,7 @@
 
 (defn message-delete [id]
   (message/remove! id (user-id))
-  (resp/redirect "/market/messages"))
+  (resp/redirect "/messages"))
 
 (defn messages-thread
   ([receiver-id]
@@ -43,8 +43,8 @@
                                                   {:user_id (:id slug) :messages (message/all (user-id) (:id slug))} message)))))
 
 (def-restricted-routes message-routes
-    (GET "/market/message/:id/delete" [id] (message-delete id))
-    (GET "/market/messages" [page] (messages-page page))
-    (GET "/market/messages/sent" [] (messages-sent))
-    (GET "/market/messages/:id" [id] (messages-thread id))
-    (POST "/market/messages/:id" {params :params} (messages-thread params true)))
+    (GET "/message/:id/delete" [id] (message-delete id))
+    (GET "/messages" [page] (messages-page page))
+    (GET "/messages/sent" [] (messages-sent))
+    (GET "/messages/:id" [id] (messages-thread id))
+    (POST "/messages/:id" {params :params} (messages-thread params true)))

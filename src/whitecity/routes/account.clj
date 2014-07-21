@@ -1,7 +1,7 @@
 (ns whitecity.routes.account
   (:use
-    [compojure.core :only [GET POST]]
-    [noir.util.route :only (def-restricted-routes)]
+    [compojure.core :only [GET POST context defroutes]]
+    [noir.util.route :only (wrap-restricted)]
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
@@ -55,7 +55,7 @@
 
 (defn wallet-new []
   (user/update-btc-address! (user-id))
-  (resp/redirect "/market/account/wallet"))
+  (resp/redirect "/account/wallet"))
 
 (defn favorites-page []
   (let [bookmarks (map #(assoc % :price (util/convert-currency %)) (bookmark/all (user-id)))
@@ -68,7 +68,7 @@
          reviews (review/for-user (user-id) page reviews-per-page)
          success (session/flash-get :success)
          pagemax (util/page-max (:reviewed (util/current-user)) reviews-per-page)]
-     (layout/render "account/reviews.html" (conj (set-info) {:success success :reviews reviews :page {:page page :max pagemax :url "/market/account/reviews"}})))))
+     (layout/render "account/reviews.html" (conj (set-info) {:success success :reviews reviews :page {:page page :max pagemax :url "/account/reviews"}})))))
 
 (defn review-edit
   ([id]
@@ -77,7 +77,7 @@
   ([id slug]
    (review/update! id slug (user-id))
    (session/flash-put! :success "review updated")
-   (resp/redirect "/market/account/reviews")))
+   (resp/redirect "/account/reviews")))
 
 (defn images-page []
   (let [images (image/get (user-id)) success (session/flash-get :success)]
@@ -89,12 +89,12 @@
   ([{image :image}]
    (parse-image nil image)
    (session/flash-put! :success "image uploaded")
-   (resp/redirect "/market/account/images")))
+   (resp/redirect "/account/images")))
 
 (defn image-delete [id]
   (image/remove! id (user-id))
   (session/flash-put! :success "image deleted")
-  (resp/redirect "/market/account/images"))
+  (resp/redirect "/account/images"))
 
 (defn password-page
   ([]
@@ -115,29 +115,44 @@
 (defn user-follow [id]
   (if-let [follower (:errors (follower/add! id (user-id)))]
     (session/flash-put! :follower follower))
-  (resp/redirect (str "/market/user/" id)))
+  (resp/redirect (str "/user/" id)))
 
 (defn user-unfollow [id referer]
   (follower/remove! id (user-id))
   (resp/redirect referer))
 
-(def-restricted-routes account-routes
-  (GET "/market/account" [] (account-page))
-  (GET "/market/account/password" [] (password-page))
-  (POST "/market/account/password" {params :params} (password-page params))
-  (POST "/market/account" {params :params} (account-update params))
-  (GET "/market/review/:id/edit" [id] (review-edit id))
-  (POST "/market/review/:id/edit" {params :params} (review-edit (:id params) params))
-  (GET "/market/account/wallet" [] (wallet-page))
-  (POST "/market/account/wallet" {params :params} (wallet-page params))
-  (GET "/market/account/wallet/new" [] (wallet-new))
-  (GET "/market/account/images" [] (images-page))
-  (GET "/market/account/favorites" [] (favorites-page))
-  (GET "/market/account/reviews" [page] (reviews-page page))
-  (POST "/market/account/images/edit" {params :params} (images-edit params))
-  (GET "/market/account/images/edit" [] (images-edit))
-  (POST "/market/account/images/upload" {params :params} (images-upload params))
-  (GET "/market/account/images/upload" [] (images-upload))
-  (GET "/market/image/:id/delete" [id] (image-delete id))
-  (GET "/market/user/:id/follow" [id] (user-follow id))
-  (GET "/market/user/:id/unfollow" {{id :id} :params {referer "referer"} :headers} (user-unfollow id referer)))
+(defroutes account-routes
+  (wrap-restricted
+   (context
+    "/account" []
+    (GET "/" [] (account-page))
+    (POST "/" {params :params} (account-update params))
+    (GET "/password" [] (password-page))
+    (POST "/password" {params :params} (password-page params))
+    (GET "/wallet" [] (wallet-page))
+    (POST "/wallet" {params :params} (wallet-page params))
+    (GET "/wallet/new" [] (wallet-new))
+    (GET "/favorites" [] (favorites-page))
+    (GET "/reviews" [page] (reviews-page page))
+    ))
+  (wrap-restricted
+   (context
+    "/vendor" []
+    (GET "/images" [] (images-page))
+    (POST "/images/edit" {params :params} (images-edit params))
+    (GET "/images/edit" [] (images-edit))
+    (GET "/image/:id/delete" [id] (image-delete id))
+    (POST "/images/upload" {params :params} (images-upload params))
+    (GET "/images/upload" [] (images-upload))))
+
+  (wrap-restricted
+   (context
+    "/review/:id" [id]
+    (GET "/edit" [] (review-edit id))
+    (POST "/edit" {params :params} (review-edit (:id params) params))))
+  (wrap-restricted
+   (context
+    "/user/:id" [id]
+    (GET "/follow" [] (user-follow id))
+    (GET "/unfollow" {{referer "referer"} :headers} (user-unfollow id referer))
+    )))

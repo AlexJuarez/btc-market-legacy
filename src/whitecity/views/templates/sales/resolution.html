@@ -4,7 +4,7 @@
 Sale not found
 {% else %}
 <h1 class="jumbo">Sale Information</h1>
-<span>Transaction #<a href="/market/sale/{{id}}">{{id}}</a></span>
+<span>Transaction #<a href="/vendor/sale/{{id}}">{{id}}</a></span>
 <div class="well">
   <table class="fact-table">
     <tbody>
@@ -12,7 +12,7 @@ Sale not found
       <td>status:</td><td>{{status|status}}</td>
     </tr>
     <tr>
-      <td>buyer:</td><td><a href="/market/user/{{user_id}}">{{alias}}</a></td>
+      <td>buyer:</td><td><a href="/user/{{user_id}}">{{alias}}</a></td>
     </tr>
     <tr>
       <td>seller:</td><td>{{user.alias}}</td>
@@ -21,7 +21,7 @@ Sale not found
       <td>contract:</td><td>~</td>
     </tr>
     <tr>
-      <td>item:</td><td><a href="/market/listing/{{listing_id}}">{{title}}</a></td>
+      <td>item:</td><td><a href="/listing/{{listing_id}}">{{title}}</a></td>
     </tr>
     <tr>
       <td>shipping:</td><td>{{postage_title}}</td>
@@ -63,7 +63,7 @@ Sale not found
         {% ifequal resolution.from user.id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
-          <a href="/market/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
+          <a href="/user/{{resolution.user_id}}" class="sender">{{resolution.alias}}</a>
         {% endifequal %}
       </td>
       <td>
@@ -80,7 +80,7 @@ Sale not found
       <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>
         {% if not resolution.seller_accepted %}
-          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+          <a href="/resolution/{{resolution.id}}/accept">accept</a>
         {% endif %}
       </td>
     </tr>
@@ -89,7 +89,7 @@ Sale not found
 </table>
 {% endif %}
 {% if not arbitration %}
-<form class="well" action="/market/sale/{{id}}" method="POST">
+<form class="well" action="/vendor/sale/{{id}}" method="POST">
   Propose a resolution:
   <ul class="list-unstyled">
     <li>

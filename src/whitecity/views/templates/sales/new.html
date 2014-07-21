@@ -2,7 +2,7 @@
 {% block section %}
 {% if not sales|empty? %}
 <h1>New sales</h1>
-<form action="/market/sales/new" method="POST">
+<form action="/vendor/sales/new" method="POST">
   {% csrf-token %}
   <input type="submit" name="submit" value="accept" />
   <input type="submit" name="submit" value="reject" />
@@ -31,11 +31,11 @@
     {% for order in sales %}
     <tr>
       <td><input type="checkbox" name="check[{{order.id}}]" /></td>
-      <td><a href="/market/sale/{{order.id}}">{{order.id}}</a></td>
-      <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
+      <td><a href="/vendor/sale/{{order.id}}">{{order.id}}</a></td>
+      <td><a href="/listing/{{order.listing_id}}">{{order.title}}</a></td>
       <td>{{order.postage_title}}</td>
       <td>{{order.quantity}}</td>
-      <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
+      <td><a href="/user/{{order.user_id}}">{{order.alias}}</a></td>
       <td>{{user.currency_symbol|safe}}{{order.amount|double-format:5}}</td>
       <td>{{user.currency_symbol|safe}}{{order.fee|double-format:5}}</td>
       <td><em>{{order.address}}</em></td>

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="inbox">
   <h1 class="jumbo">my messages</h1>
-  <nav class="nav"><em><a href="/market/messages">inbox <strong>{{user.messages}}</strong></a></em> - <a href="/market/messages/sent">sent</a></nav>
+  <nav class="nav"><em><a href="/messages">inbox <strong>{{user.messages}}</strong></a></em> - <a href="/messages/sent">sent</a></nav>
 </div>
 {% if not messages|empty? %}
 <table class="table normal messages">
@@ -31,13 +31,13 @@
       <td><span data-time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
       <td>
         {% if message.read %}
-        <span class="subject"><a href="/market/messages/{{message.sender_id}}">read</a></span>
+        <span class="subject"><a href="/messages/{{message.sender_id}}">read</a></span>
         {% else %}
         <span class="subject">
-          <strong><a href="/market/messages/{{message.sender_id}}">read</a></strong>
+          <strong><a href="/messages/{{message.sender_id}}">read</a></strong>
         </span>
         {% endif %}
-         | <a href="/market/message/{{message.id}}/delete">delete</a>
+         | <a href="/message/{{message.id}}/delete">delete</a>
       </td>
     </tr>
   {% endfor %}

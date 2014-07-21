@@ -8,7 +8,7 @@
     {% endif %}
     <p>Decode this message using your private key, and then copy the result into the text area.</p>
     <pre class="well p">{{decode}}</pre>
-    <form action="/auth" method="POST">
+    <form method="POST">
     {% csrf-token %}
     <textarea id="response" class="form-control" rows="4" name="response">{{user.pub_key}}</textarea>
 		<span class="submit">

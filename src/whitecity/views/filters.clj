@@ -58,10 +58,10 @@
   (let [children (:children tree)]
     (if-not (empty? children)
       [:li
-       [:a.category {:href (str "/market/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]
+       [:a.category {:href (str "/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]
        [:ul (map #(render-tree % params) children)]]
       [:li
-       [:a.category {:href (str "/market/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]])))
+       [:a.category {:href (str "/category/" (:id tree) params)} (:name tree)] " " [:span.count (:count tree)]])))
 
 (add-filter! :render-tree
              (fn [x]

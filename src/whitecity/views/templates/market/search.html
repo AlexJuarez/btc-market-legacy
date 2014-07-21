@@ -18,7 +18,7 @@
   <tbody>
   {% for user in users %}
   <tr>
-    <td><a href="/market/user/{{user.id}}">{{user.alias}}</a></td>
+    <td><a href="/user/{{user.id}}">{{user.alias}}</a></td>
     <td>{{user.rating}}</td>
     <td><span data-time="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
     </td>
@@ -31,7 +31,7 @@
     <h3>Categories</h3>
     <ul>
       {% for category in categories %}
-      <li><a href="/market/category/{{category.id}}">{{category.name}}</a></li>
+      <li><a href="/category/{{category.id}}">{{category.name}}</a></li>
       {% endfor %}
     </ul>
 {% endif %}
@@ -51,12 +51,12 @@
   <tbody>
   {% for listing in listings %}
     <tr>
-      <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
-      <td><a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
+      <td><a href="/listing/{{listing.id}}">{{listing.title}}</a></td>
+      <td><a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
       <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
       <td>{% if listing.to = 1 %} Worldwide {% else %} {{listing.to|region}} {% endif %}</td>
       <td>{{listing.from|region}}</td>
-      <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
+      <td><a href="/cart/add/{{listing.id}}">add to cart</a></td>
     </tr>
   {% endfor %}
   </tbody>

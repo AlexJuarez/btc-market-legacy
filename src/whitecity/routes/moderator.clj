@@ -37,5 +37,5 @@
                                                             :seller seller :past_orders past-orders} (set-info)))))
 
 (def-restricted-routes moderator-routes
-  (GET "/market/moderate" [page] (moderator-page page))
-  (GET "/market/moderate/:id" [id] (moderator-view id)))
+  (GET "/moderate" [page] (moderator-page page))
+  (GET "/moderate/:id" [id] (moderator-view id)))

@@ -39,8 +39,7 @@
             (session/put! :user user)
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))
-            (session/put! :cart {})
-            (if (session/get :authed) (resp/redirect "/market/") (resp/redirect "/auth"))))
+            (if (session/get :authed) (resp/redirect "/") (resp/redirect "/login/auth"))))
         (layout/render "login.html" user)))))
 
 (defn auth-page
@@ -53,14 +52,17 @@
   ([{response :response}]
    (if (= (session/flash-get :key) response)
      (do (session/put! :authed true)
-       (resp/redirect "/market/"))
+       (resp/redirect "/"))
      (do (session/flash-put! :error "incorrect key") (auth-page)))))
 
 (defroutes auth-routes
-  (GET "/"          [] (login-page))
-  (POST "/"         {{login :login pass :pass} :params cookies :cookies} (login-page login pass cookies))
-  (GET "/auth"      [] (auth-page))
-  (POST "/auth"      {params :params} (auth-page params))
+  (context
+   "/login" []
+   (GET "/"          [] (login-page))
+   (POST "/"         {{login :login pass :pass} :params cookies :cookies} (login-page login pass cookies))
+   (GET "/auth"      [] (auth-page))
+   (POST "/auth"     {params :params} (auth-page params)))
+
   (GET "/register"  {params :params} (registration-page params))
   (POST "/register" [login pass confirm captcha] (registration-page login pass confirm captcha))
   (GET "/logout"    []

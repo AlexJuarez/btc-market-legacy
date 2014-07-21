@@ -14,26 +14,26 @@
   <h1>{{title}}</h1>
   <p>
     <span class="price">{{user.currency_symbol|safe}}{{price|double-format:4}}</span>
-    <a href="/market/cart/add/{{lid}}">add to cart</a>
+    <a href="/cart/add/{{lid}}">add to cart</a>
   </p>
   <p>
     {% if reported %}
-    <a href="/market/listing/{{lid}}/unreport">remove my report</a>
+    <a href="/listing/{{lid}}/unreport">remove my report</a>
     {% else %}
-    <a href="/market/listing/{{lid}}/report">report this listing</a>
+    <a href="/listing/{{lid}}/report">report this listing</a>
     {% endif %}
   </p>
   <div class="well info">
     <ul>
-      <li>seller: <a href="/market/user/{{user_id}}" class="seller">{{user_alias}}</a></li>
+      <li>seller: <a href="/user/{{user_id}}" class="seller">{{user_alias}}</a></li>
       <li>ships from: {{from|region}}</li>
       <li>ships to: {% if to = 1 %}Worldwide{% else %}{{to|region}}{% endif %}</li>
-      <li>category: <a href="/market/category/{{category_id}}">{{category_name}}</a></li>
+      <li>category: <a href="/category/{{category_id}}">{{category_name}}</a></li>
       <li>bookmarked {{bookmarks}} {% ifequal bookmarks "1" %}time{% else %}times{% endifequal %}
       {% if bookmarked %}
-        <a href="/market/listing/{{lid}}/unbookmark">unbookmark this item</a></li>
+        <a href="/listing/{{lid}}/unbookmark">unbookmark this item</a></li>
       {% else %}
-        <a href="/market/listing/{{lid}}/bookmark">bookmark this item</a></li>
+        <a href="/listing/{{lid}}/bookmark">bookmark this item</a></li>
       {% endif %}
     </ul>
   </div>

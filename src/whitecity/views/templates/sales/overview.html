@@ -24,11 +24,11 @@
   <tbody>
   {% for order in sales %}
   <tr>
-    <td><a href="/market/sale/{{order.id}}">{{order.id}}</a></td>
-    <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
+    <td><a href="/vendor/sale/{{order.id}}">{{order.id}}</a></td>
+    <td><a href="/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.postage_title}}</td>
     <td>{{order.quantity}}</td>
-    <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
+    <td><a href="/user/{{order.user_id}}">{{order.alias}}</a></td>
     <td>
       {% if order.updated_on %}
         <span class="pretty-time" data-time="{{listing.updated_on|date:fullDateTime}}">
@@ -45,7 +45,7 @@
       <em>awaiting arbitration</em>
       {% else %}
         {% ifequal order.status "2" %}
-          <a href="/market/sale/{{order.id}}">
+          <a href="/vendor/sale/{{order.id}}">
             {{order.status|status}}
           </a>
         {% else %}

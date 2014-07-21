@@ -15,8 +15,8 @@
     <tbody>
       {% for order in pending-review %}
       <tr>
-        <td><a href="/market/order/{{order.id}}">{{order.title}}</a></td>
-        <td><a href="/market/user/{{order.seller_id}}">{{order.alias}}</a></td>
+        <td><a href="/order/{{order.id}}">{{order.title}}</a></td>
+        <td><a href="/user/{{order.seller_id}}">{{order.alias}}</a></td>
         <td>
           <label><input type="radio" name="rating[{{order.id}}]" value="1" /> 1</label>
           <label><input type="radio" name="rating[{{order.id}}]" value="2" /> 2</label>
@@ -59,10 +59,10 @@
   <tbody>
   {% for order in orders %}
   <tr>
-    <td><a href="/market/order/{{order.id}}">{{order.id}}</a></td>
-    <td><a href="/market/listing/{{order.listing_id}}">{{order.title}}</a></td>
+    <td><a href="/order/{{order.id}}">{{order.id}}</a></td>
+    <td><a href="/listing/{{order.listing_id}}">{{order.title}}</a></td>
     <td>{{order.quantity}}</td>
-    <td><a href="/market/user/{{order.seller_id}}">{{order.alias}}</a></td>
+    <td><a href="/user/{{order.seller_id}}">{{order.alias}}</a></td>
     <td><em>{{order.status|status}}</em></td>
     <td>{% if order.hedged %}hedged{% else %}unhedged{% endif %}</td>
     <td>
@@ -76,12 +76,12 @@
       {% if order.arbitration %}
         <em>awaiting arbitration</em>
       {% else %}
-        {% if order.status = 2 %}<a href="/market/order/{{order.id}}">resolution page</a>{% else %}
+        {% if order.status = 2 %}<a href="/order/{{order.id}}">resolution page</a>{% else %}
           {% if order.status = 0 %}
-            <a href="/market/order/{{order.id}}/cancel">cancel</a>
+            <a href="/order/{{order.id}}/cancel">cancel</a>
           {% else %}
             {% if order.resolve %}
-            <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
+            <a href="/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/order/{{order.id}}/finalize">finalize<a>
             {% endif %}
         {% endif %}
       {% endif %}

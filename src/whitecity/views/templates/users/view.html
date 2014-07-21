@@ -4,7 +4,7 @@
 <p>User not found</p>
 {% else %}
 <h1 class="jumbo">{{alias}}</h1>
-<a href="/market/messages/{{id}}">send a message</a>
+<a href="/messages/{{id}}">send a message</a>
 <p class="well">
   has been a member since: <strong>{{created_on|date:shortDate}}</strong>
   <br />
@@ -15,13 +15,13 @@
   {% endif %}
   {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
-  has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/market/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/market/user/{{id}}/follow">follow</a>{% endif %}
+  has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/user/{{id}}/follow">follow</a>{% endif %}
 </p>
 <p class="well">
   {% if reported %}
-    <a href="/market/user/{{id}}/unreport">remove my report</a>
+    <a href="/user/{{id}}/unreport">remove my report</a>
   {% else %}
-    <a href="/market/user/{{id}}/report">report this vendor</a>
+    <a href="/user/{{id}}/report">report this vendor</a>
   {% endif %}
 </p>
 {% if vendor %}
@@ -58,12 +58,12 @@
   <tbody>
 {% for listing in listings-all %}
   <tr>
-    <td><a href="/market/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
-    <td><a href="/market/listing/{{listing.id}}">{{listing.title}}</a></td>
+    <td><a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
+    <td><a href="/listing/{{listing.id}}">{{listing.title}}</a></td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
     <td>{{listing.to|region}}</td>
     <td>{{listing.from|region}}</td>
-    <td><a href="/market/cart/add/{{listing.id}}">add to cart</a></td>
+    <td><a href="/cart/add/{{listing.id}}">add to cart</a></td>
   </tr>
 {% endfor %}
   </tbody>
@@ -88,7 +88,7 @@
       {% for r in review %}
       <tr>
         <td>{{r.rating}} of 5</td>
-        <td class="item-title"><a href="/market/listing/{{r.listing_id}}">{{r.title}}</a></td>
+        <td class="item-title"><a href="/listing/{{r.listing_id}}">{{r.title}}</a></td>
         <td>{{r.content}}</td>
         <td data-time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
         <td>{% if r.shipped %}received{% else %}no{% endif %}</td>

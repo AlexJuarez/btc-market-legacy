@@ -5,7 +5,7 @@
   {% if success %}
   <div class="success">{{success}}</div>
   {% endif %}
-  <form action="/" method="POST">
+  <form method="POST">
   {% csrf-token %}
     <div {% if error %}class="has-error"{% endif %}>
       {{error}}

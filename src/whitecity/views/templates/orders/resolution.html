@@ -4,7 +4,7 @@
 Order not found
 {% else %}
 <h1 class="jumbo">Order Information</h1>
-<span>Transaction #<a href="/market/order/{{id}}">{{id}}</a></span>
+<span>Transaction #<a href="/order/{{id}}">{{id}}</a></span>
 <div class="well">
   <table class="fact-table">
     <tbody>
@@ -15,10 +15,10 @@ Order not found
         <td>buyer:</td><td>{{user.alias}}</td>
       </tr>
       <tr>
-        <td>seller:</td><td><a href="/market/user/{{seller_id}}">{{alias}}</a></td>
+        <td>seller:</td><td><a href="/user/{{seller_id}}">{{alias}}</a></td>
       </tr>
       <tr>
-        <td>item:</td><td><a href="/market/listing/{{listing_id}}">{{title}}</a></td>
+        <td>item:</td><td><a href="/listing/{{listing_id}}">{{title}}</a></td>
       </tr>
       <tr>
         <td>shipping:</td><td>{{postage_title}}</td>
@@ -43,9 +43,9 @@ Order not found
   <!--- <ul>
     <li>status: {{status|status}}</li>
     <li>buyer: {{user.alias}}</li>
-    <li>seller: <a href="/market/user/{{seller_id}}">{{alias}}</a></li>
+    <li>seller: <a href="/user/{{seller_id}}">{{alias}}</a></li>
     <li>contract: ~</li>
-    <li>item: <a href="/market/listing/{{listing_id}}">{{title}}</a></li>
+    <li>item: <a href="/listing/{{listing_id}}">{{title}}</a></li>
     <li>shipping: {{postage_title}}</li>
     <li>postage: {{postage_price}}</li>
     <li>total price: {{price}}</li>
@@ -72,7 +72,7 @@ Order not found
         {% ifequal resolution.from user.id %}
           <span class="sender">{{user.alias}}</span>
         {% else %}
-          <a href="/market/user/{{resolution.seller_id}}" class="sender">{{resolution.alias}}</a>
+          <a href="/user/{{resolution.seller_id}}" class="sender">{{resolution.alias}}</a>
         {% endifequal %}
       </td>
       <td>
@@ -89,7 +89,7 @@ Order not found
       <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
       <td>
         {% if not resolution.user_accepted %}
-          <a href="/market/resolution/{{resolution.id}}/accept">accept</a>
+          <a href="/resolution/{{resolution.id}}/accept">accept</a>
         {% endif %}
       </td>
     </tr>
@@ -98,7 +98,7 @@ Order not found
 </table>
 {% endif %}
 {% if not arbitration %}
-<form class="well" action="/market/order/{{id}}" method="POST">
+<form class="well" action="/order/{{id}}" method="POST">
   <p>
     Propose a resolution:
   </p>

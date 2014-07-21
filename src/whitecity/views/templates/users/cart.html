@@ -1,7 +1,7 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
 <h1 class="jumbo">Shopping Cart</h1>
-<a href="/market/cart/empty">empty cart</a>
+<a href="/cart/empty">empty cart</a>
 {% if listings %}
 <form class="my-cart" method="post">
 {% csrf-token %}
@@ -37,7 +37,7 @@
     </td>
     <td>{{user.currency_symbol|safe}}{{listing.total|double-format:5}}</td>
     <td>{% if listing.hedged %}hedged{% else %}unhedged{% endif %}</td>
-    <td><a href="/market/cart/{{listing.lid}}/remove">remove</a></td>
+    <td><a href="/cart/{{listing.lid}}/remove">remove</a></td>
   </tr>
   {% endfor %}
   </tbody>

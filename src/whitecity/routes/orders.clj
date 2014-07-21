@@ -1,7 +1,7 @@
 (ns whitecity.routes.orders
   (:use
-    [compojure.core :only [GET POST]]
-    [noir.util.route :only (def-restricted-routes)]
+    [compojure.core :only [GET POST context defroutes]]
+    [noir.util.route :only (def-restricted-routes wrap-restricted)]
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.order :as order]
@@ -25,12 +25,12 @@
    (let [prep (map #(let [id (key %) value (val %)] {:order_id (hashids/decrypt id) :rating value :shipped (shipped id) :content (content id)}) rating)
          order-ids (map #(util/parse-int (hashids/decrypt (key %))) rating)
          reviews (review/add! prep (user-id) order-ids)]
-    (resp/redirect "/market/orders"))))
+    (resp/redirect "/orders"))))
 
 (defn order-finalize [id]
   (let [id (hashids/decrypt id)]
     (order/finalize id (user-id))
-    (resp/redirect "/market/orders")))
+    (resp/redirect "/orders")))
 
 (defn estimate-refund [resolutions {:keys [total]}]
   (map #(if (= (:action %) "refund")
@@ -41,7 +41,7 @@
 (defn order-cancel [id]
   (let [id (hashids/decrypt id)]
     (order/cancel! id (user-id))
-    (resp/redirect (str "/market/orders"))))
+    (resp/redirect (str "/orders"))))
 
 (defn order-view
   ([id]
@@ -60,13 +60,19 @@
 (defn order-resolve [hashid]
   (let [id (hashids/decrypt hashid)]
     (order/resolution id (user-id))
-    (resp/redirect (str "/market/order/" hashid))))
+    (resp/redirect (str "/order/" hashid))))
 
-(def-restricted-routes order-routes
-    (GET "/market/orders" [] (orders-page))
-    (POST "/market/orders" {params :params} (orders-page params))
-    (GET "/market/order/:id/resolve" [id] (order-resolve id))
-    (GET "/market/order/:id/cancel" [id] (order-cancel id))
-    (GET "/market/order/:id" [id] (order-view id))
-    (POST "/market/order/:id" {params :params} (order-view params true))
-    (GET "/market/order/:id/finalize" [id] (order-finalize id)))
+(defroutes order-routes
+  (wrap-restricted
+   (context
+    "/orders" []
+    (GET "/" [] (orders-page))
+    (POST "/" {params :params} (orders-page params))))
+  (wrap-restricted
+   (context
+    "/order/:id" [id]
+    (GET "/resolve" [id] (order-resolve id))
+    (GET "/cancel" [id] (order-cancel id))
+    (GET "/" [id] (order-view id))
+    (POST "/" {params :params} (order-view params true))
+    (GET "/finalize" [id] (order-finalize id)))))

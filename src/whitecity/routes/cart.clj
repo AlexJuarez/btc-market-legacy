@@ -1,8 +1,8 @@
 (ns whitecity.routes.cart
   (:use
-    [compojure.core :only [GET POST]]
-    [noir.util.route :only (def-restricted-routes)]
-    [whitecity.helpers.route])
+   [compojure.core :only [GET POST defroutes context]]
+   [noir.util.route :only (restricted)]
+   [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.postage :as postage]
             [whitecity.models.listing :as listing]
@@ -22,13 +22,13 @@
     (when (< (count cart) cart-limit) ;;limit the size of the cart... aka they should only be able to have like 100 items
       (session/put! :cart (assoc cart id {:quantity (if-let [item (cart id)] (inc (:quantity item)) 1)
                                                            :postage (if-let [item (cart id)] (:postage item))})))
-  (resp/redirect "/market/cart")))
+  (resp/redirect "/cart")))
 
 (defn cart-remove
   [id]
   (let [cart (session/get :cart)]
     (session/put! :cart (dissoc cart (util/parse-int id))))
-  (resp/redirect "/market/cart"))
+  (resp/redirect "/cart"))
 
 (defn cart-get
   [id key]
@@ -42,7 +42,7 @@
 
 (defn cart-empty []
   (session/put! :cart {})
-  (resp/redirect "/market/cart"))
+  (resp/redirect "/cart"))
 
 (defn cart-view []
   (let [ls (listing/get-in (keys (session/get :cart)))
@@ -69,12 +69,14 @@
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]
       (if (empty? (:errors order))
-        (resp/redirect "/market/orders")
+        (resp/redirect "/orders")
         (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} order (set-info)))))))
 
-(def-restricted-routes cart-routes
-    (GET "/market/cart" [] (cart-view))
-    (GET "/market/cart/empty" [] (cart-empty))
-    (POST "/market/cart" {params :params} (cart-update params))
-    (GET "/market/cart/add/:id" [id] (cart-add id))
-    (GET "/market/cart/:id/remove" [id] (cart-remove id)))
+(defroutes cart-routes
+  (context
+   "/cart" []
+   (GET "/" [] (cart-view))
+   (POST "/" {params :params} (restricted (cart-update params)))
+   (GET "/empty" [] (cart-empty))
+   (GET "/add/:id" [id] (cart-add id))
+   (GET "/:id/remove" [id] (cart-remove id))))

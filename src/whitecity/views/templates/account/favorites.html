@@ -24,13 +24,13 @@ You don't currently have any users or listings favorited.
   <tbody>
     {% for bookmark in bookmarks %}
     <tr>
-      <td><a href="/market/listing/{{bookmark.listing_id}}">{{bookmark.title}}</a></td>
-      <td><a href="/market/category/{{bookmark.category_id}}">{{bookmark.category_name}}</a></td>
+      <td><a href="/listing/{{bookmark.listing_id}}">{{bookmark.title}}</a></td>
+      <td><a href="/category/{{bookmark.category_id}}">{{bookmark.category_name}}</a></td>
       <td>{{bookmark.quantity}}</td>
-      <td><a href="/market/user/{{bookmark.user_id}}">{{bookmark.user_alias}}</a></td>
+      <td><a href="/user/{{bookmark.user_id}}">{{bookmark.user_alias}}</a></td>
       <td>{{user.currency_symbol|safe}}{{bookmark.price}}</td>
       <td>{{bookmark.hedged}}</td>
-      <td><a href="/market/listing/{{bookmark.id}}/unbookmark">unbookmark</a></td>
+      <td><a href="/listing/{{bookmark.id}}/unbookmark">unbookmark</a></td>
     </tr>
     {% endfor %}
   </tbody>
@@ -51,11 +51,11 @@ You don't currently have any users or listings favorited.
   <tbody>
     {% for favorite in favorites %}
     <tr>
-      <td><a href="/market/user/{{favorite.user_id}}">{{favorite.alias}}</td>
+      <td><a href="/user/{{favorite.user_id}}">{{favorite.alias}}</td>
       <td>{{favorite.rating}}</td>
       <td>{{favorite.listings}}</td>
       <td data-time="{{favorite.last_login|date:fullDateTime}}" class="pretty-time">{{favorite.last_login|date:shortDate}}</td>
-      <td><a href="/market/user/{{favorite.id}}/unfollow">unfollow</a></td>
+      <td><a href="/user/{{favorite.id}}/unfollow">unfollow</a></td>
     </tr>
     {% endfor %}
   </tbody>

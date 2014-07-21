@@ -3,7 +3,7 @@
 <div class="images">
   <h1 class="jumbo">my images</h1>
   <nav class="nav p">
-    <strong>my images</strong> - <a href="/market/account/images/upload">upload</a> - <a href="/market/account/images/edit">edit</a>
+    <strong>my images</strong> - <a href="/vendor/images/upload">upload</a> - <a href="/vendor/images/edit">edit</a>
   </nav>
   {% if success %}
     <h2 class="success">{{success}}</h2>
@@ -29,7 +29,7 @@
           </span>
         </td>
         <td>
-          <a href="/market/image/{{image.id}}/delete">delete</a>
+          <a href="/vendor/image/{{image.id}}/delete">delete</a>
         </td>
       </tr>
       {% endfor %}

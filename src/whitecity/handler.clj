@@ -11,6 +11,7 @@
     [whitecity.routes.cart :refer [cart-routes]]
     [whitecity.routes.orders :refer [order-routes]]
     [whitecity.routes.listings :refer [listing-routes]]
+    [whitecity.routes.postage :refer [postage-routes]]
     [environ.core :refer [env]]
     [compojure.core :refer [defroutes]]
     [whitecity.models.schema :as schema]
@@ -30,7 +31,7 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
-(defn user-access [request]
+(defn user-access [req]
   (= (session/get :authed) (not (nil? (session/get :user_id)))))
 
 (defn moderator-access [req]
@@ -74,14 +75,15 @@
   (app-handler
    ;; add your application routes here
    [auth-routes
+    cart-routes
     market-routes
     account-routes
     sales-routes
-    cart-routes
     order-routes
     listing-routes
     message-routes
     moderator-routes
+    postage-routes
     app-routes]
    :session-options {:cookie-attrs {:http-only true
                                     :max-age (* 60 60 10)}
@@ -91,10 +93,9 @@
    ;; add custom middleware here
    :middleware [wrap-gzip wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
-   :access-rules [;;{:url "/market/" :rule user-access}
-                  {:uri "/market/moderate*" :redirect "/market/" :rule moderator-access}
-                  {:uri "/market/sales*" :redirect "/market/" :rule vendor-access}
-                  {:uri "/market/listings*" :redirect "/market/" :rule vendor-access}]
+   :access-rules [{:rule user-access :redirect "/login"}
+                  {:uri "/moderate/*" :redirect "/" :rule moderator-access}
+                  {:uri "/vendor/*" :redirect "/" :rule vendor-access}]
    ;; I can only assume
    ;; serialize/deserialize the following data formats
    ;; available formats:
