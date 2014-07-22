@@ -30,7 +30,13 @@
     <td>{{order.quantity}}</td>
     <td><a href="/market/user/{{order.user_id}}">{{order.alias}}</a></td>
     <td><em>{{order.address}}</em></td>
-    <td><a href="/market/sale/{{order.id}}">resolution page</a></td>
+    <td>
+      {% if order.arbitration %}
+        <em>awaiting arbitration</em>
+      {% else %}
+        <a href="/market/sale/{{order.id}}">resolution page</a>
+      {% endif %}
+    </td>
   </tr>
   {% endfor %}
   </tbody>

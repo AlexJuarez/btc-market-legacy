@@ -38,6 +38,7 @@
                (integer :transactions (default 0))
                (float :rating (default 5.0))
                (integer :ranking)
+               (integer :resolutions (default 0))
                (integer :reviewed (default 0))
                (integer :login_tries (default 0))
                (timestamp :last_attempted_login);;Last attempted login

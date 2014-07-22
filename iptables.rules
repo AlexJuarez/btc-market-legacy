@@ -12,7 +12,7 @@ COMMIT
 -A INPUT -i lo -j ACCEPT
 
 ## allow incoming SSH, change port here:
--A INPUT -p tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp --dport 233 -j ACCEPT
 ## only allow on one of our IPs:
 #-A INPUT -p tcp -d 123.456.789.01 --dport 23942 -j ACCEPT
 
@@ -23,7 +23,7 @@ COMMIT
 -A INPUT -p tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp --dport 443 -j ACCEPT
 
-## Allow several ICMP types 
+## Allow several ICMP types
 ## http://www.oregontechsupport.com/articles/icmp.txt
 -A INPUT -p icmp -m icmp --icmp-type host-unreachable -j ACCEPT
 -A INPUT -p icmp -m icmp --icmp-type port-unreachable -j ACCEPT

@@ -18,8 +18,13 @@
             [noir.session :as session]
             [whitecity.util :as util]))
 
-(defn messages-page []
-  (layout/render "messages/index.html" (conj (set-info) {:messages (message/all (user-id))})))
+(defonce per-page 25)
+
+(defn messages-page [page]
+  (let [page (or (util/parse-int page) 1)
+        pagemax (util/page-max (message/count-all (user-id)) per-page)]
+    (layout/render "messages/index.html" (conj (set-info) {:page {:page page :max pagemax}
+                                                           :messages (message/all (user-id) page per-page)}))))
 
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
@@ -39,7 +44,7 @@
 
 (def-restricted-routes message-routes
     (GET "/market/message/:id/delete" [id] (message-delete id))
-    (GET "/market/messages" [] (messages-page))
+    (GET "/market/messages" [page] (messages-page page))
     (GET "/market/messages/sent" [] (messages-sent))
     (GET "/market/messages/:id" [id] (messages-thread id))
     (POST "/market/messages/:id" {params :params} (messages-thread params true)))

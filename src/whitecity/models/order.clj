@@ -33,23 +33,27 @@
 (defn all [id]
   (select orders
     (with sellers (fields :login :alias))
-    (where (and (= :user_id id) (or (< :status 3) (not :reviewed))))))
+    (where (and (= :user_id id)
+                (or (< :status 3) (not :reviewed))))
+    (order :created_on :desc)))
 
 (defn sold
   ([id page per-page]
    (select orders
-    (with users (fields :login :alias))
-    (with postage (fields [:title :postage_title]))
-    (where {:seller_id id})
-    (offset (* (- page 1) per-page))
-    (limit per-page)))
+           (with users (fields :login :alias))
+           (with postage (fields [:title :postage_title]))
+           (where {:seller_id id})
+           (offset (* (- page 1) per-page))
+           (limit per-page)
+           (order :created_on :desc)))
  ([status id page per-page]
   (select orders
-    (with users (fields :login :alias))
-    (with postage (fields [:title :postage_title]))
-    (where {:seller_id id :status status})
-    (offset (* (- page 1) per-page))
-    (limit per-page))))
+          (with users (fields :login :alias))
+          (with postage (fields [:title :postage_title]))
+          (where {:seller_id id :status status})
+          (offset (* (- page 1) per-page))
+          (limit per-page)
+          (order :created_on :desc))))
 
 (defn check-item [item]
   (let [id (key item)
@@ -187,13 +191,21 @@
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)
-  (transaction
-   (insert order-audit
-           (values {:user_id user-id :order_id id :status 2}))
-   (update orders
-          (set-fields {:status 2 :updated_on (raw "now()")})
-          (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)}))))
-
+  (let [order (update orders
+                      (set-fields {:status 2 :updated_on (raw "now()")})
+                      (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")]
+                              :user_id user-id :id (util/parse-int id)}))]
+    (transaction
+     (insert order-audit
+             (values {:user_id user-id :order_id id :status 2}))
+     (update users
+             (set-fields {:resolutions (raw "resolutions + 1")})
+             (where {id {:user_id user-id}}))
+     (update users
+             (set-fields {:resolutions (raw "resolutions + 1")})
+             (where {id {:user_id (:seller_id order)}})))
+    
+    order))
 
 (defn moderate [page per-page]
   (select orders
@@ -201,6 +213,11 @@
           (where {:status 2 :auto_finalize [< (raw "now()")]})
           (offset (* (- page 1) per-page))
           (limit per-page)))
+
+(defn moderate-order [id]
+  (first (select orders
+                 (with sellers (fields :login :alias))
+                 (where {:id (util/parse-int id) :status 2 :auto_finalize [< (raw "now()")]}))))
 
 ;;cancel button does not work
 ;;make sure to separate logic here
@@ -214,6 +231,11 @@
   (:cnt (first (select orders
     (aggregate (count :*) :cnt)
     (where {:user_id id :status [in (list 0 1 2)]})))))
+
+(defn count-past [id]
+  (:cnt (first (select orders
+    (aggregate (count :*) :cnt)
+    (where {:user_id id :status 3})))))
 
 ;;map this into vector of status cnt's into a hash
 (defn count-sales

@@ -19,8 +19,13 @@
 
 (def per-page 10)
 
-(defn listings-page []
-  (layout/render "listings/index.html" (conj (set-info) {:postages (postage/all (user-id)) :listings (listing/all (user-id))})))
+(defn listings-page [page]
+  (let [listing-count (:listings (util/current-user))
+        page (or (util/parse-int page) 1)
+        pagemax (util/page-max listing-count per-page)]
+  (layout/render "listings/index.html" (conj (set-info) {:page {:page page :max pagemax}
+                                                         :postages (postage/all (user-id))
+                                                         :listings (listing/all (user-id) page per-page)}))))
 
 (defn listing-remove [id]
   (let [record (listing/remove! id (user-id))]
@@ -70,7 +75,7 @@
   (resp/redirect referer))
 
 (def-restricted-routes listing-routes
-    (GET "/market/listings" [] (listings-page))
+    (GET "/market/listings" [page] (listings-page page))
     (GET "/market/listings/create" [] (listing-create))
     (GET "/market/listing/:id/bookmark" [id] (listing-bookmark id))
     (GET "/market/listing/:id/unbookmark" {{id :id} :params {referer "referer"} :headers} (listing-unbookmark id referer))

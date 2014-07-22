@@ -17,19 +17,24 @@
 (defn get-sales [k]
   ((util/session! :sales (order/count-sales (user-id))) k))
 
+(defn arbitration [sales]
+  (map #(let [arbitration (and (= (:status %) 2)
+                               (<= (.getTime (:auto_finalize %)) (.getTime (java.util.Date.))))]
+          (assoc % :arbitration arbitration)) sales))
+
 (defn calculate-amount [sales]
   (map #(let [price (util/convert-currency (:currency_id %) (:price %))
               postage-price (util/convert-currency (:postage_currency %) (:postage_price %))
               percent (if (:hedged %) (:hedge_fee %) (env :fee))
               amount (+ (* price (:quantity %)) postage-price)
               fee (* amount percent)]
-          (assoc % :amount amount :fee fee)) sales))
+          (assoc % :arbitration arbitration :amount amount :fee fee)) sales))
 
 (defn sales [template url status page]
   (let [page (or (util/parse-int page) 1)
         state ([:new :ship :resolution :finalize] status)
         pagemax (util/page-max (get-sales state) sales-per-page)
-        sales (calculate-amount (encrypt-ids (order/sold status (user-id) page sales-per-page)))]
+        sales (-> (order/sold status (user-id) page sales-per-page) encrypt-ids calculate-amount arbitration)]
      (layout/render template (merge {:sales sales :page {:page page :max pagemax :url url}} (set-info)))))
 
 (defn estimate-refund [resolutions {:keys [total]}]
@@ -58,15 +63,17 @@
   [page]
   (let [page (or (util/parse-int page) 1)
         pagemax (util/page-max (get-sales :total) sales-per-page)
-        sales (encrypt-ids (order/sold (user-id) page sales-per-page))]
+        sales (-> (order/sold (user-id) page sales-per-page) encrypt-ids arbitration)]
      (layout/render "sales/overview.html" (merge {:sales sales :page {:page page :max pagemax :url "/market/sales"}} (set-info)))))
 
 (defn sales-view
   ([hashid]
     (let [id (hashids/decrypt hashid)
           order (-> (order/get-sale id (user-id)) encrypt-id convert-order-price)
+          arbitration (and (= (:status order) 2) (<= (.getTime (:auto_finalize order)) (.getTime (java.util.Date.))))
           resolutions (estimate-refund (resolution/all-sales id (user-id)) order)]
-      (layout/render "sales/resolution.html" (merge {:errors {} :action "extension" :resolutions resolutions} order (set-info)))))
+      (layout/render "sales/resolution.html" (merge {:errors {} :arbitration arbitration
+                                                     :action "extension" :resolutions resolutions} order (set-info)))))
   ([slug post]
     (let [id (hashids/decrypt (:id slug))
           res (resolution/add! slug id (user-id))

@@ -73,13 +73,17 @@
       {% endif %}
     </td>
     <td>
-      {% if order.status = 2 %}<a href="/market/order/{{order.id}}">resolution page</a>{% else %}
-        {% if order.status = 0 %}
-          <a href="/market/order/{{order.id}}/cancel">cancel</a>
-        {% else %}
-          {% if order.resolve %}
-          <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
-          {% endif %}
+      {% if order.arbitration %}
+        <em>awaiting arbitration</em>
+      {% else %}
+        {% if order.status = 2 %}<a href="/market/order/{{order.id}}">resolution page</a>{% else %}
+          {% if order.status = 0 %}
+            <a href="/market/order/{{order.id}}/cancel">cancel</a>
+          {% else %}
+            {% if order.resolve %}
+            <a href="/market/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/market/order/{{order.id}}/finalize">finalize<a>
+            {% endif %}
+        {% endif %}
       {% endif %}
     </td>
   </tr>
