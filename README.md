@@ -26,3 +26,14 @@ To start a web server for the application, run:
 ## License
 
 Copyright © 2013 FIXME
+
+Future Enhancements
+•	Implement Bitmessage Address field, and add bitmessage server.
+•	Verified Vendor fee.
+•	Permalinks for vendors, /user/alias
+•	http://directory4iisquf.onion add verified vendor directory, for pgp keys.
+•	Contract support – send message
+•	Allow Vendors to post to followers.
+•	Add latest posts to user page.
+•	Add an option to encrypt all messages to a user.
+ 
