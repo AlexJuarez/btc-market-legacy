@@ -11,7 +11,14 @@
 
 (defdb db db-spec)
 
-(declare audits fee users withdrawals wallets senders feedback resolutions orders messages listings postage images category region currency exchange bookmarks fans reviews escrow)
+(declare audits fee users
+         withdrawals wallets senders
+         feedback order-audit resolutions
+         orders messages listings
+         postage images category
+         region currency exchange
+         bookmarks fans reviews
+         escrow)
 
 (defentity audits
   (table :audit)
@@ -23,8 +30,12 @@
 
 (defentity withdrawals
   (table :withdrawal)
+  (belongs-to users))
+
+(defentity order-audit
+  (table :order-audit)
   (belongs-to users)
-  )
+  (belongs-to orders))
 
 (defentity users
   (table :user)

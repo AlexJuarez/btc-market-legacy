@@ -47,7 +47,8 @@
         (insert audits (values [user-audit seller-audit]))
         (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
         (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
-        (update orders (set-fields {:status 3 :updated_on (raw "now()")})
+        (insert order-audit (values {:status 5 :order_id order_id :user_id user_id}))
+        (update orders (set-fields {:status 5 :updated_on (raw "now()")})
                 (where {:user_id user_id :id order_id}))))))
 
 (defn accept [id user-id]

@@ -166,6 +166,14 @@
                 (smallint :status))))
   (down [] (drop (table :order))))
 
+(defmigration add-orders-audit-table
+  (up [] (create
+          (tbl :order-audit
+               (refer-to :order)
+               (refer-to :user)
+               (smallint :status))))
+  (down [] (drop (table :order-audit))))
+
 (defmigration add-escrow-table
   (up [] (create
            (tbl :escrow

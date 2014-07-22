@@ -16,6 +16,8 @@
 ;;1 - shipping
 ;;2 - resolution
 ;;3 - finalized
+;;4 - canceled
+;;5 - refunded
 
 (def statuses [:new :ship :resolution :finalize])
 
@@ -85,7 +87,9 @@
       (if (and lp (<= (- lq quantity) 0)) (update category (set-fields {:count (raw "count - 1")}) (where {:id cat_id})))
       (insert orders (values order)))]
       (if (not (empty? order));;TODO: what does korma return when it errors out?
-      (insert escrow (values (assoc escr :order_id (:id order))))))))
+      (transaction
+       (insert order-audit (values {:status 0 :order_id (:id order) :user_id user-id}))
+       (insert escrow (values (assoc escr :order_id (:id order)))))))))
 
 (defn cancel!
   ([{:keys [id seller_id user_id listing_id quantity] :as order}]
@@ -99,9 +103,10 @@
        (transaction
         (insert audits (values {:user_id user_id :role "refund" :amount (:btc_amount escr)}))
         (update users (set-fields {:btc (raw (str "btc + " (:btc_amount escr)))}) (where {:id user_id}))
+        (insert order-audit (values {:user_id user_id :status 4 :order_id id}))
         (if (and (:public listing) (<= (- (:quantity listing) quantity) 0))
           (update category (set-fields {:count (raw "count + 1")}) (where {:id (:category_id listing)})))
-        (update orders (set-fields {:status 3 :reviewed true}) (where {:id id}))))))
+        (update orders (set-fields {:status 4 :reviewed true}) (where {:id id}))))))
   ([id user-id]
    (let [order (first (select orders (where {:id id :status 0})))]
      (if (or (= (:seller_id order) user-id)
@@ -146,13 +151,19 @@
         (doall (map #(store! (prep % address user-id) user-id pin) cart)))
       {:address address :errors errors})))
 
+(defn add-audit [user-id id status]
+  (insert order-audit
+          (values {:user_id user-id :order_id id})))
+
 (defn update-sales [sales seller-id status]
   (if (= status 1) (util/update-session seller-id :sales :orders))
   (let [values {:status status :updated_on (raw "(now())")}
         values (if (= status 1) (assoc values :auto_finalize (raw "(now() + interval '17 days')")) values)]
-  (update orders
-          (set-fields values)
-          (where {:seller_id seller-id :id [in sales]}))))
+     (update orders
+             (set-fields values)
+             (where {:seller_id seller-id :id [in sales]}))
+     (doall (map #(insert order-audit
+                       (values {:user_id seller-id :order_id % :status status})) sales))))
 
 ;;use update instead of select... genius
 (defn finalize [id user-id]
@@ -169,15 +180,19 @@
       (transaction
         (insert fees (values fee))
         (insert audits (values audit))
+        (insert order-audit (values {:user_id user-id :status 3 :order_id id}))
         (update users (set-fields {:btc (raw (str "btc + " (- amount fee_amount)))}) (where {:id seller_id}))
         (update listings (set-fields {:sold (raw "sold + 1") :updated_on (raw "now()")}) (where {:id listing_id})))
       (util/update-session seller_id))))
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)
-  (update orders
+  (transaction
+   (insert order-audit
+           (values {:user_id user-id :order_id id :status 2}))
+   (update orders
           (set-fields {:status 2 :updated_on (raw "now()")})
-          (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)})))
+          (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")] :user_id user-id :id (util/parse-int id)}))))
 
 
 (defn moderate [page per-page]
