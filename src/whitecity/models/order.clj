@@ -161,13 +161,15 @@
 
 (defn update-sales [sales seller-id status]
   (if (= status 1) (util/update-session seller-id :sales :orders))
-  (let [values {:status status :updated_on (raw "(now())")}
-        values (if (= status 1) (assoc values :auto_finalize (raw "(now() + interval '17 days')")) values)]
+  (let [statuses {:status status :updated_on (raw "(now())")}
+        statuses (if (= status 1) (assoc statuses :auto_finalize (raw "(now() + interval '17 days')")) statuses)
+        audits (map #(hash-map :user_id seller-id :order_id % :status status) sales)]
+    (transaction
      (update orders
-             (set-fields values)
+             (set-fields statuses)
              (where {:seller_id seller-id :id [in sales]}))
-     (doall (map #(insert order-audit
-                       (values {:user_id seller-id :order_id % :status status})) sales))))
+     (insert order-audit
+             (values audits)))))
 
 ;;use update instead of select... genius
 (defn finalize [id user-id]
@@ -191,20 +193,18 @@
 
 (defn resolution [id user-id]
   (util/update-session user-id :orders :sales)
-  (let [order (update orders
-                      (set-fields {:status 2 :updated_on (raw "now()")})
-                      (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")]
-                              :user_id user-id :id (util/parse-int id)}))]
+  (let [{:keys [seller_id] :as order}
+        (update orders
+                (set-fields {:status 2 :updated_on (raw "now()")})
+                (where {:status 1 :auto_finalize [< (raw "(now() + interval '5 days')")]
+                        :user_id user-id :id (util/parse-int id)}))]
     (transaction
      (insert order-audit
              (values {:user_id user-id :order_id id :status 2}))
      (update users
              (set-fields {:resolutions (raw "resolutions + 1")})
-             (where {id {:user_id user-id}}))
-     (update users
-             (set-fields {:resolutions (raw "resolutions + 1")})
-             (where {id {:user_id (:seller_id order)}})))
-    
+             (where {:id [in [user-id seller_id]]})))
+
     order))
 
 (defn moderate [page per-page]
@@ -218,6 +218,13 @@
   (first (select orders
                  (with sellers (fields :login :alias))
                  (where {:id (util/parse-int id) :status 2 :auto_finalize [< (raw "now()")]}))))
+
+(defn past-resolutions [user-id]
+  (select orders
+          (with escrow (fields :btc_amount))
+          (where {:status 5 :user_id user-id})
+          (order :auto_finalize :DESC)
+          (limit 10)))
 
 ;;cancel button does not work
 ;;make sure to separate logic here

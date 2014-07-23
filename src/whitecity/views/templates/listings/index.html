@@ -2,7 +2,7 @@
 {% block content %}
 <h1 class="jumbo">my listings</h1>
 <nav class="nav p">
-    <a href="/market/listings/create">Create a new listing</a> - <a href="/market/postage/create">add postage</a> - <a href="/market/account/images">manage images</a>
+    {% if not postages|empty? %} <a href="/market/listings/create">Create a new listing</a> {% else %} <em title="you need to create postage first">Create a new listing</em> {% endif %} - <a href="/market/postage/create">add postage</a> - <a href="/market/account/images">manage images</a>
 </nav>
 <div class="postage">
 {% if not postages|empty? %}

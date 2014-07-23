@@ -169,7 +169,7 @@
 
 (defmigration add-orders-audit-table
   (up [] (create
-          (tbl :order-audit
+          (tbl :orderaudit
                (refer-to :order)
                (refer-to :user)
                (smallint :status))))
