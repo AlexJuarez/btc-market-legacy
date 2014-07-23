@@ -20,12 +20,14 @@
                 <option {% ifequal sort_by "newest" %}selected {% endifequal %}value="newest">newest</option>
               </select>
             </label>
+            {% if user.logged_in %}
             <label>
               <input type="checkbox" name="ships_to" value="true"{% if ships_to %} checked="checked"{% endif %}> ships to my region
             </label>
             <label>
               <input type="checkbox" name="ships_from" value="true"{% if ships_from %} checked="checked"{% endif %}> ships from my region
             </label>
+            {% endif %}
           </span>
           <button type="submit" class="btn">update</button>
         </form>

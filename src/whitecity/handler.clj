@@ -91,7 +91,7 @@
    ;; add custom middleware here
    :middleware [wrap-gzip wrap-anti-forgery middleware/error-page middleware/template-error-page middleware/log-request]
    ;; add access rules here
-   :access-rules [user-access
+   :access-rules [;;{:url "/market/" :rule user-access}
                   {:uri "/market/moderate*" :redirect "/market/" :rule moderator-access}
                   {:uri "/market/sales*" :redirect "/market/" :rule vendor-access}
                   {:uri "/market/listings*" :redirect "/market/" :rule vendor-access}]
