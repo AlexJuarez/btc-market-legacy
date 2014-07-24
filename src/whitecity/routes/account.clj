@@ -150,9 +150,9 @@
     "/review/:id" [id]
     (GET "/edit" [] (review-edit id))
     (POST "/edit" {params :params} (review-edit (:id params) params))))
+
   (wrap-restricted
    (context
     "/user/:id" [id]
     (GET "/follow" [] (user-follow id))
-    (GET "/unfollow" {{referer "referer"} :headers} (user-unfollow id referer))
-    )))
+    (GET "/unfollow" {{referer "referer"} :headers} (user-unfollow id referer)))))

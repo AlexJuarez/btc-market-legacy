@@ -21,6 +21,9 @@
         ]
   (layout/render "moderate/index.html" (merge {:orders orders} (set-info)))))
 
+(defn moderator-add-resolution [slug]
+  )
+
 (defn moderator-view [id]
   (let [id (hashids/decrypt id)
         order (-> (order/moderate-order id) encrypt-id convert-order-price)
@@ -38,4 +41,5 @@
 
 (def-restricted-routes moderator-routes
   (GET "/moderate" [page] (moderator-page page))
-  (GET "/moderate/:id" [id] (moderator-view id)))
+  (GET "/moderate/:id" [id] (moderator-view id))
+  (POST "/moderate/:id" {params :params} (moderator-add-resolution params)))

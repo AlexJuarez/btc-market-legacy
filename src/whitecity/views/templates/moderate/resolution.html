@@ -152,31 +152,16 @@ Order not found
   <p>
     Propose a resolution:
   </p>
-  <ul class="list-unstyled">
-    <li>
-      <label>
-        <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
-        Extension:</label>
-      <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
-      days
-      {% ifequal action "extension" %}
-      {% if errors.value %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
-      {% endif %}
-      {% endifequal %}
-    </li>
-    <li>
-      <label title="This is the percentage of the total that you will receive"><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
-        Refund:</label>
-      <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
+  <p>
+    <label>
+      Refund:
+      <input name="percent" class="text-input input-3" maxlength="3" type="text" value="{{percent}}" />
       %
-      {% ifequal action "refund" %}
-      {% if errors.value %}
-      <strong class="error">{{errors.value|join:", "}}</strong>
-      {% endif %}
-      {% endifequal %}
-    </li>
-  </ul>
+    </label>
+    {% if errors.percent %}
+    <strong class="error">{{errors.percent|join:", "}}</strong>
+    {% endif %}
+  </p>
   <p>
     <label for="message">Message:</label>
     <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
