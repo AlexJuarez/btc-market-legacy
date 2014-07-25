@@ -245,7 +245,7 @@
                (integer :buyer_id [:refer :user :id :on-delete :set-null])
                (integer :seller_id [:refer :user :id :on-delete :set-null])
                (refer-to :order)
-               (integer :votes)
+               (integer :votes (default 0))
                (boolean :applied)
                (integer :percent)
                (check :percent (>= :percent 0))

@@ -7,6 +7,7 @@
             [whitecity.models.order :as order]
             [whitecity.models.review :as review]
             [whitecity.util.hashids :as hashids]
+            [whitecity.models.moderate :as moderate]
             [whitecity.models.resolution :as resolution]
             [whitecity.models.user :as user]
             [noir.response :as resp]
@@ -22,7 +23,8 @@
   (layout/render "moderate/index.html" (merge {:orders orders} (set-info)))))
 
 (defn moderator-add-resolution [slug]
-  )
+  (let [res (moderate/add! slug)]
+    ))
 
 (defn moderator-view [id]
   (let [id (hashids/decrypt id)

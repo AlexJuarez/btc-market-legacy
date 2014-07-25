@@ -92,7 +92,7 @@
 (defroutes sales-routes
   (wrap-restricted
    (context
-    "/sales" []
+    "/vendor/sales" []
     (GET "/" {{page :page} :params} (sales-overview page))
     (GET "/new" {{page :page} :params} (sales-new page))
     (GET "/shipped" {{page :page} :params} (sales-shipped page))
@@ -102,6 +102,6 @@
     ))
   (wrap-restricted
    (context
-    "/sale/:id" [id]
+    "/vendor/sale/:id" [id]
     (GET "/" [id] (sales-view id))
     (POST "/" {params :params} (sales-view params true)))))

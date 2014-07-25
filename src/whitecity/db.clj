@@ -18,10 +18,14 @@
          postage images category
          region currency exchange
          bookmarks fans reviews
-         escrow)
+         escrow modresolutions)
 
 (defentity audits
   (table :audit)
+  (belongs-to users))
+
+(defentity modresolutions
+  (table :modresolution)
   (belongs-to users))
 
 (defentity wallets

@@ -110,11 +110,12 @@
   (GET "/feedback" [] (feedback-page))
   (POST "/feedback" {params :params} (feedback-page params))
 
-  (GET "/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (restricted (resolution-accept id referer)))
   ;;public routes
   (GET "/user/:id" {{id :id page :page} :params} (user-view id page))
   (GET "/listing/:id" {{id :id page :page} :params} (listing-view id page))
 
+  ;;restricted routes
+  (GET "/resolution/:id/accept" {{id :id} :params {referer "referer"} :headers} (restricted (resolution-accept id referer)))
 
   (wrap-restricted
    (context

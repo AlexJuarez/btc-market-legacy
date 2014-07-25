@@ -91,3 +91,6 @@
 
 (v/defvalidator resolution-extension-validator
   [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 30}]])
+
+(v/defvalidator modresolution-validator
+  [:percent [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
