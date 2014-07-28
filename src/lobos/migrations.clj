@@ -303,3 +303,12 @@
                   (varchar :subject 100)
                   (refer-to :user))))
   (down [] (drop (table :messages))))
+
+
+(defmigration add-pgpkeyid-to-users
+  (up [] (alter :add
+                (table :user
+                       (varchar :pub_key_id 8))))
+  (down [] (alter :drop
+                  (table :user
+                         (varchar :pub_key_id)))))

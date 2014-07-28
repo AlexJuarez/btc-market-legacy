@@ -21,10 +21,7 @@
 (def ^:private salt-byte-size 24)
 
 ;; Gets
-(defn get [id]
-  (-> (select users
-              (where {:id (util/parse-int id)}))
-    first (dissoc :salt :pass)))
+
 
 (defn search [query]
   (select users
@@ -62,10 +59,24 @@
   (first (select users
           (where {:alias a}))))
 
+(defn get [i]
+  (let [id (util/parse-int i)]
+    (if (not (nil? id))
+      (-> (select users
+                  (where {:id (util/parse-int id)}))
+        first (dissoc :salt :pass))
+      (dissoc (get-by-alias i) :salt :pass)
+      )))
+
 (defn get-with-pin [id pin]
   (first (select users
           (fields :login)
           (where {:id id :pin (util/parse-int pin)}))))
+
+(defn vendor-list []
+  (select users
+          (fields [:pub_key_id :PGPKeyID] :alias [:created_on :joined] :transactions :rating)
+          (where {:vendor true :pub_key_id [not= nil]})))
 
 ;; Mutations and Checks
 
@@ -83,6 +94,7 @@
 (defn clean [{:keys [alias region_id auth currency_id pub_key description]}]
   {:auth (= auth "true")
    :pub_key (if (empty? pub_key) nil (clojure.string/trim pub_key))
+   :pub_key_id (if (empty? pub_key) nil (pgp/get-id pub_key))
    :currency_id (util/parse-int currency_id)
    :region_id (util/parse-int region_id)
    :description (hc/escape-html description)

@@ -25,6 +25,11 @@
 (def ^:private buffer-size 4096)
 (def ^:private algorithm PGPEncryptedData/AES_256)
 
+(defn get-id [asc]
+  (.toUpperCase (apply str
+         (take-last 8
+               (-> (get-key-ring asc) (get-encryption-key) (.getKeyID) (java.lang.Long/toHexString))))))
+
 (defn encode [asc secret]
   (try
     (java.security.Security/addProvider (BouncyCastleProvider.))

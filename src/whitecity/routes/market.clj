@@ -5,6 +5,7 @@
    [whitecity.helpers.route])
   (:require
    [whitecity.views.layout :as layout]
+   [ring.util.response :refer [content-type response]]
    [whitecity.models.user :as user]
    [whitecity.models.feedback :as feedback]
    [whitecity.models.listing :as listing]
@@ -57,6 +58,7 @@
 
 (defn user-view [id page]
   (let [user (user/get id)
+        id (:id user)
         page (or (util/parse-int page) 1)
         description (util/md->html (:description user))
         listings (:listings user)
@@ -80,13 +82,16 @@
     (layout/render "market/search.html" (conj {:message "Your query is too short it needs to be longers than three characters and less than 100."} (set-info)))
     ))
 
-(defn feedback-page
+(defn support-page
   ([]
-   (layout/render "feedback.html" (set-info)))
+   (layout/render "support.html" (set-info)))
   ([slug]
    (let [post (feedback/add! slug (user-id))])
-   (layout/render "feedback.html" (conj {:message "thank you for your feedback"} (set-info)) )
+   (layout/render "support.html" (conj {:message "thank you for your feedback"} (set-info)) )
    ))
+
+(defn vendor-list [api_key]
+  (-> (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list)) response (content-type "text/json")))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)
@@ -107,8 +112,10 @@
 
   (GET "/category/:cid" {params :params} (category-page params))
   (GET "/about" [] (about-page))
-  (GET "/feedback" [] (feedback-page))
-  (POST "/feedback" {params :params} (feedback-page params))
+  (GET "/support" [] (support-page))
+  (POST "/support" {params :params} (support-page params))
+
+  (GET "/api/vendors" [api_key] (vendor-list api_key))
 
   ;;public routes
   (GET "/user/:id" {{id :id page :page} :params} (user-view id page))
