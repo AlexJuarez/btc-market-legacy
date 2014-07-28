@@ -26,7 +26,7 @@
                      months (/ diff (* days 30))]
                  (cond
                   (< diff day) "today"
-                  (< diff (* 30 day)) (if (= days 1) "yesterday" (str (int days) " days ago"))
+                  (< diff (* 30 day)) (if (= (int days) 1) "yesterday" (str (int days) " days ago"))
                   :else (if (= months 1) "1 month ago" (str (int months) " months ago"))
                   )
                  )))
