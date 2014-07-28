@@ -9,7 +9,8 @@
 (defn all []
   (select feedback
           (with users
-                (fields :alias))))
+                (fields :alias))
+          (where {:read false})))
 
 (defn prep [{:keys [subject content]} user-id]
   {:subject subject

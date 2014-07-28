@@ -16,15 +16,16 @@
 
 (def per-page 25)
 
+(defn encrypt-ticket-ids [tickets]
+  (map #(assoc % :id (hashids/encrypt-ticket-id (:id %))) tickets))
+
 (defn moderator-page [page]
   (let [page (or (util/parse-int page) 1)
         orders (-> (order/moderate page per-page) encrypt-ids)
         pagemax (util/page-max 10 per-page)
-        support (feedback/all)
-
-        ]
+        support (encrypt-ticket-ids (feedback/all))]
   (layout/render "moderate/index.html" (merge {:orders orders
-                                               :support support
+                                               :tickets support
                                                } (set-info)))))
 
 (defn moderator-add-resolution [slug]

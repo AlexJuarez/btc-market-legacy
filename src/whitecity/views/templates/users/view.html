@@ -16,6 +16,10 @@
   {{feedback-rating}}% positive feedback from more than {{transactions}} tranactions
   <br />
   has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/user/{{id}}/follow">follow</a>{% endif %}
+  {% if pub_key_id %}
+  <br />
+  <a href="http://lbnugoq5na3mzkgv.onion/key/{{pub_key_id}}">vendor directory lookup</a>
+  {% endif %}
 </p>
 <p class="well">
   {% if reported %}
@@ -31,9 +35,11 @@
   </div>
   {% endif %}
   {% if not pub_key|empty? %}
-    <pre class="well p">
-      {{pub_key}}
-    </pre>
+    <div class="well p">
+      <pre id="pgp-key">{{pub_key}}</pre>
+      <p><a href="/user/{{id}}/key">Download Key</a> as ASC file</p>
+    </div>
+
   {% endif %}
 {% endif %}
 {% if not listings-all|empty? %}

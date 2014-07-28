@@ -5,8 +5,33 @@
     Please use your best judgement to come up with a solution. The solutions will
     be voted upon by other moderators, and should you attempt to make biased moderations
     you may be stripped of your moderating privileges.</p>
-{{support}}
+{% if not tickets|empty? %}
+<h1>Tickets</h1>
+<table class="table normal">
+  <thead>
+  <tr>
+    <th>txid</th>
+    <th>User</th>
+    <th>subject</th>
+    <th>message...</th>
+    <th>freshness</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for ticket in tickets %}
+  <tr>
+    <td><a href="/moderate/support/{{ticket.id}}">{{ticket.id}}</a></td>
+    <td><a href="/user/ticket.user_id}}">{{ticket.alias}}</a></td>
+    <td>{{ticket.subject}}</td>
+    <td>{{ticket.content}}</td>
+    <td><em>{{ticket.created_on|freshness}}</em></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 {% if not orders|empty? %}
+<h2>Orders</h2>
 <table class="table normal">
   <thead>
     <tr>

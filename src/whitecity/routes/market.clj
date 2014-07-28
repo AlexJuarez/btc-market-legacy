@@ -5,7 +5,7 @@
    [whitecity.helpers.route])
   (:require
    [whitecity.views.layout :as layout]
-   [ring.util.response :refer [content-type response]]
+   [ring.util.response :as r :refer [content-type response]]
    [whitecity.models.user :as user]
    [whitecity.models.feedback :as feedback]
    [whitecity.models.listing :as listing]
@@ -56,6 +56,12 @@
 (defn about-page []
   (layout/render "about.html" (set-info)))
 
+(defn user-key [id]
+  (let [user (user/get id)]
+    (-> (response (:pub_key user))
+        (content-type "text/plain")
+        (r/header "Content-Disposition" (str "attachment;filename=" (:pub_key_id user) ".ASC")))))
+
 (defn user-view [id page]
   (let [user (user/get id)
         id (:id user)
@@ -90,7 +96,7 @@
    (layout/render "support.html" (conj {:message "Your request for support has been recieved."} (set-info)) )))
 
 (defn vendor-list [api_key]
-  (-> (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list)) response (content-type "text/json")))
+  (resp/json (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list))))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)
@@ -118,6 +124,7 @@
 
   ;;public routes
   (GET "/user/:id" {{id :id page :page} :params} (user-view id page))
+  (GET "/user/:id/key" [id] (user-key id))
   (GET "/listing/:id" {{id :id page :page} :params} (listing-view id page))
 
   ;;restricted routes
