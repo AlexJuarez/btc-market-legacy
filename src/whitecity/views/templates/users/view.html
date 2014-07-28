@@ -18,7 +18,7 @@
   has {{fans}} {% ifequal fans "1" %}follower{% else %}followers{% endifequal %} - {% if followed %}<a href="/user/{{id}}/unfollow">unfollow</a>{% else %}<a href="/user/{{id}}/follow">follow</a>{% endif %}
   {% if pub_key_id %}
   <br />
-  <a href="http://lbnugoq5na3mzkgv.onion/key/{{pub_key_id}}">vendor directory lookup</a>
+  <a target="_blank" href="http://lbnugoq5na3mzkgv.onion/key/{{pub_key_id|lower}}">vendor directory lookup</a>
   {% endif %}
 </p>
 <p class="well">
