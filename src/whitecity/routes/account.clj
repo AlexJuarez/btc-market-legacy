@@ -10,6 +10,7 @@
             [whitecity.models.currency :as currency]
             [whitecity.models.review :as review]
             [whitecity.models.bookmark :as bookmark]
+            [whitecity.models.post :as post]
             [whitecity.models.image :as image]
             [whitecity.models.region :as region]
             [noir.response :as resp]
@@ -121,6 +122,16 @@
   (follower/remove! id (user-id))
   (resp/redirect referer))
 
+(defn news-page []
+  (layout/render "news/index.html" (merge (set-info))))
+
+(defn news-create
+  ([]
+   (layout/render "news/create.html" (merge (set-info))))
+  ([slug]
+   (let [post (post/add! slug (user-id))]
+     (layout/render "news/create.html" (merge (set-info) post)))))
+
 (defroutes account-routes
   (wrap-restricted
    (context
@@ -133,11 +144,14 @@
     (POST "/wallet" {params :params} (wallet-page params))
     (GET "/wallet/new" [] (wallet-new))
     (GET "/favorites" [] (favorites-page))
-    (GET "/reviews" [page] (reviews-page page))
-    ))
+    (GET "/reviews" [page] (reviews-page page))))
+
   (wrap-restricted
    (context
     "/vendor" []
+    (GET "/news" [] (news-page))
+    (GET "/news/create" [] (news-create))
+    (POST "/news/create" {params :params} (news-create params))
     (GET "/images" [] (images-page))
     (POST "/images/edit" {params :params} (images-edit params))
     (GET "/images/edit" [] (images-edit))

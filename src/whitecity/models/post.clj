@@ -1,0 +1,24 @@
+(ns whitecity.models.post
+  (:refer-clojure :exclude [get])
+  (:use [korma.db :only (transaction)]
+        [korma.core]
+        [whitecity.db])
+  (:require
+   [whitecity.validator :as v]
+   [whitecity.util :as util]))
+
+
+(defn store! [slug]
+  (insert posts (values slug)))
+
+(defn prep [user-id {:keys [title content public]}]
+  {:title title
+   :content content
+   :user_id user-id
+   :public (= public "true")})
+
+(defn add! [slug user-id]
+  (let [check (v/news-validator slug)]
+    (if (empty? check)
+      (-> slug (prep user-id) store!)
+      (conj {:errors check} slug))))

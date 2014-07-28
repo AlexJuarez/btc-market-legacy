@@ -43,7 +43,8 @@
 {% endif %}
 <form class="well" action="/messages/{{user_id}}" method="POST">
   <p>
-    <label for="subject">Subject:</label>
+
+    <label for="subject">Subject:{% if errors.title %}{{errors.title|join:", "}}{% endif %}</label>
     <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
   </p>
   {% if errors.content %}

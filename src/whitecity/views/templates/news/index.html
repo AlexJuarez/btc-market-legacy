@@ -1,0 +1,52 @@
+{% extends "whitecity/views/templates/market.html" %}
+{% block content %}
+<div class="inbox">
+  <h1 class="jumbo">my followers</h1>
+  <nav class="nav"><em>overview</em> - <a href="/vendor/news/create">create a new post</a></nav>
+</div>
+<div class="p">
+  you have {{user.fans}} follower{{user.fans|pluralize:"":"s"}}
+</div>
+{% if not messages|empty? %}
+<table class="table normal messages">
+  <thead>
+  <tr>
+    <th>from</th>
+    <th>subject</th>
+    <th>freshness</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <td colspan="4">
+      {{page|pagination}}
+    </td>
+  </tr>
+  </tfoot>
+  <tbody>
+  {% for message in messages %}
+  <tr class="message">
+    <td>
+      <span class="sender">{{message.user_alias}}</span>
+    </td>
+    <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
+    <td><span data-time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
+    <td>
+      {% if message.read %}
+      <span class="subject"><a href="/messages/{{message.sender_id}}">read</a></span>
+      {% else %}
+        <span class="subject">
+          <strong><a href="/messages/{{message.sender_id}}">read</a></strong>
+        </span>
+      {% endif %}
+      | <a href="/message/{{message.id}}/delete">delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="well">You have not posted any news yet.</div>
+{% endif %}
+{% endblock %}

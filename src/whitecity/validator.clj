@@ -84,7 +84,13 @@
   [:title [:presence :in-range {:start 4 :end 100}]])
 
 (v/defvalidator message-validator
-  [:content [:presence]])
+  [:content [:presence :length {:is-not-greater-than 6000}]]
+  [:title :length {:is-not-greater-than 100}])
+
+(v/defvalidator news-validator
+  [:content [:presence :length {:is-not-greater-than 6000}]]
+  [:title :length {:is-not-greater-than 100}]
+  [:public :accept "true"])
 
 (v/defvalidator resolution-refund-validator
   [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
