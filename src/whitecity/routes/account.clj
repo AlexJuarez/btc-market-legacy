@@ -131,7 +131,9 @@
    (layout/render "news/create.html" (merge (set-info))))
   ([slug]
    (let [post (post/add! slug (user-id))]
-     (layout/render "news/create.html" (merge (set-info) post)))))
+     (if (empty? (:errors post))
+       (resp/redirect ("/vendor/news/" (:id post) "/edit"))
+       (layout/render "news/create.html" (merge (set-info) post))))))
 
 (defn news-item [id]
   (let [id (util/parse-int id)
@@ -139,7 +141,18 @@
         content (util/md->html (:content article))]
     (layout/render "news/view.html" (merge article {:content content} (set-info)))))
 
-(defn news-edit [] )
+(defn news-edit
+  ([id]
+   (let [id (util/parse-int id)
+         article (post/get id)
+         content (util/md->html (:content article))]
+     (layout/render "news/create.html" (merge article {:preview content} (set-info)))))
+  ([id slug]
+   (let [id (util/parse-int id)
+         article (post/update! slug (user-id))
+         content (util/md->html (:content article))]
+     (layout/render "news/create.html" (merge article {:preview content} (set-info))))
+   ))
 
 (defroutes account-routes
   (wrap-restricted
@@ -162,6 +175,7 @@
     (GET "/news/create" [] (news-create))
     (POST "/news/create" {params :params} (news-create params))
     (GET "/news/:id/edit" [id] (news-edit id))
+    (POST "/news/:id/edit" {id :id params :params} (news-edit id params))
     (GET "/images" [] (images-page))
     (POST "/images/edit" {params :params} (images-edit params))
     (GET "/images/edit" [] (images-edit))

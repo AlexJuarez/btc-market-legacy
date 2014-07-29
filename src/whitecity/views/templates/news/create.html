@@ -4,6 +4,7 @@
   <h1 class="jumbo">my followers</h1>
   <nav class="nav"><a href="/vendor/news">overview</a> - <em>create a new post</em></nav>
 </div>
+{{preview|safe}}
 <form class="well" method="POST">
   <p>
     <label for="subject">Subject: {% if errors.subject %}<p>{{errors.subject|join:", "}}</p>{% endif %}</label>
