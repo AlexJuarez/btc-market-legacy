@@ -7,6 +7,7 @@
   (:require
         [whitecity.validator :as v]
         [whitecity.models.category :as cat]
+        [hiccup.util :as hc]
         [whitecity.util :as util]))
 
 (defn convert-post [postage]
@@ -22,7 +23,7 @@
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
   (merge {:title title
-          :description description
+          :description (hc/escape-html description)
           :from (util/parse-int from)
           :to (util/parse-int to)
           :public (= public "true")

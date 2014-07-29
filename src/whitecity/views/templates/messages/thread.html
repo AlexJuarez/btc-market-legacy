@@ -2,7 +2,7 @@
 {% block content %}
 <div class="inbox">
   <h1 class="jumbo">my messages</h1>
-  <nav class="nav"><a href="/messages">inbox <strong>{{user.messages}}</strong></a> - <a href="/messages/sent">sent</a></nav>
+  <nav class="nav"><a href="/messages">inbox <strong>{{user.messages.unread}}</strong></a> - <a href="/messages/sent">sent</a></nav>
 </div>
 {% if not messages|empty? %}
 <table class="table thread">
@@ -42,8 +42,8 @@
 </table>
 {% endif %}
 <form class="well" action="/messages/{{user_id}}" method="POST">
+  <p>Compose a message to: <strong>{{alias}}</strong></p>
   <p>
-
     <label for="subject">Subject:{% if errors.title %}{{errors.title|join:", "}}{% endif %}</label>
     <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
   </p>

@@ -6,6 +6,9 @@
 
 (def ^:private address "127.0.0.1:11211")
 
+(defn init []
+  (cache/set-timeout! 600))
+
 (defonce ce (c/text-connection address))
 
 (defrecord CouchBaseSessionStore [conn ttl-secs]

@@ -32,7 +32,7 @@
               <div class="nav-search">
                 {% if user.logged_in %}
                 <nav class="links">
-                  <a href="/messages">messages <strong>{{user.messages}}</strong></a>
+                  <a href="/messages">messages <strong>{{user.messages.unread}}</strong></a>
                   | <a href="/orders">orders <strong>{{user.orders}}</strong></a>
                   | <a href="/account/wallet">wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</strong></a>
                   {% if user.vendor %}

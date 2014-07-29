@@ -119,7 +119,7 @@
   </div>
   <div class="form-group">
     <label for="description">Description:</label>
-    <textarea id="description" class="form-control" rows="4" name="description">{{description}}</textarea>
+    <textarea id="description" class="form-control" rows="4" name="description">{{description|safe}}</textarea>
   </div>
   <div class="form-group">
     <button type="submit" class="btn">{% if id %}update{% else %}create{% endif %}</button>

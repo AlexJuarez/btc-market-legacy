@@ -13,6 +13,7 @@
             [whitecity.models.review :as review]
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
+            [whitecity.models.post :as post]
             [whitecity.models.currency :as currency]
             [noir.response :as resp]
             [noir.session :as session]
@@ -22,10 +23,12 @@
 
 (defn messages-page [page]
   (let [page (or (util/parse-int page) 1)
-        pagemax (util/page-max (message/count-all (user-id)) per-page)
-        ]
+        pagemax (util/page-max (:total (util/session! :messages (message/count (user-id)))) per-page)
+        news (post/get-news (user-id)) ;;TODO: add pagination
+        messages (message/all (user-id) page per-page)]
     (layout/render "messages/index.html" (conj (set-info) {:page {:page page :max pagemax}
-                                                           :messages (message/all (user-id) page per-page)}))))
+                                                           :news news
+                                                           :messages messages}))))
 
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
@@ -37,7 +40,7 @@
 (defn messages-thread
   ([receiver-id]
    (layout/render "messages/thread.html" (merge (set-info)
-                                                {:user_id receiver-id :messages (message/all (user-id) receiver-id)})))
+                                                {:user_id receiver-id :alias (:alias (user/get receiver-id)) :messages (message/all (user-id) receiver-id)})))
   ([slug & options]
    (let [message (message/add! slug (user-id) (:id slug))]
      (layout/render "messages/thread.html" (merge (set-info)

@@ -55,6 +55,7 @@
   (has-many wallets)
   (has-many postage)
   (has-many fans)
+  (has-many posts)
   (has-many bookmarks)
   (belongs-to currency))
 

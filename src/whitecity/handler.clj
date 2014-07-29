@@ -60,6 +60,8 @@
 
   (if (env :dev) (parser/cache-off!))
 
+  (cache/init) ;;sets up the noir local caching options
+
   (if-not (schema/actualized?)
     (do (schema/actualize) (schema/load-fixtures)))
 

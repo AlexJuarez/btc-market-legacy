@@ -5,15 +5,29 @@
         [whitecity.db])
   (:require
    [whitecity.validator :as v]
+   [hiccup.util :as hc]
    [whitecity.util :as util]))
 
+(def per-page 25)
 
 (defn all [user-id]
   (select posts
           (where {:user_id user-id})))
 
+(defn get-news [user-id]
+  (select fans
+          (fields :leader_id :post.id :post.subject :post.created_on)
+          (with users
+                (fields :alias))
+          (join posts (= :post.user_id :leader_id))
+          (order :post.created_on :asc)
+          (where {:user_id user-id :post.published true})
+          (limit per-page)))
+
 (defn get [id]
   (first (select posts
+                 (with users
+                       (fields :alias))
                  (where {:id (util/parse-int id)}))))
 
 (defn store! [slug]
@@ -21,7 +35,7 @@
 
 (defn prep [{:keys [subject content public published]}]
   {:subject subject
-   :content content
+   :content (hc/escape-html content)
    :published (= published "true")
    :public (= public "true")})
 
@@ -42,10 +56,9 @@
 
 (defn update! [slug user-id]
   (let [check (v/news-validator slug)
-        post (-> slug prep)]
+        post (-> slug prep (assoc :updated_on (raw "now()")))]
     (if (empty? check)
       (update posts
               (set-fields post)
               (where {:user_id user-id :id (util/parse-int (:id slug))}))
-      (conj {:errors check} slug)
-      )))
+      (conj {:errors check} slug))))

@@ -1,7 +1,7 @@
 (ns whitecity.routes.account
   (:use
     [compojure.core :only [GET POST context defroutes]]
-    [noir.util.route :only (wrap-restricted)]
+    [noir.util.route :only (wrap-restricted restricted)]
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
@@ -143,17 +143,23 @@
   (post/remove! id (user-id))
   (resp/redirect "/vendor/news"))
 
+(defn news-view [id]
+  (let [article (post/get id)
+        content (util/md->html (:content article))]
+    (layout/render "news/view.html" (merge (set-info) article {:content content}))
+  ))
+
 (defn news-edit
   ([id]
    (let [id (util/parse-int id)
          article (post/get id)
          content (util/md->html (:content article))]
-     (layout/render "news/create.html" (merge article {:preview content} (set-info)))))
+     (layout/render "news/create.html" (merge (set-info) article {:preview content}))))
   ([id slug]
    (let [id (util/parse-int id)
          article (post/update! slug (user-id))
          content (util/md->html (:content article))]
-     (layout/render "news/create.html" (merge article {:preview content} (set-info))))))
+     (layout/render "news/create.html" (merge (set-info) article {:preview content})))))
 
 (defroutes account-routes
   (wrap-restricted
@@ -168,6 +174,8 @@
     (GET "/wallet/new" [] (wallet-new))
     (GET "/favorites" [] (favorites-page))
     (GET "/reviews" [page] (reviews-page page))))
+
+  (GET "/news/:id" [id] (restricted (news-view id)))
 
   (wrap-restricted
    (context

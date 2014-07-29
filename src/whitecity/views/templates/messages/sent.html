@@ -2,7 +2,7 @@
 {% block content %}
 <div class="inbox">
   <h1 class="jumbo">my messages</h1>
-  <nav class="nav"><a href="/messages">inbox <strong>{{user.messages}}</strong></a> - <em><a href="/messages/sent">sent</a></em></nav>
+  <nav class="nav"><a href="/messages">inbox <strong>{{user.messages.unread}}</strong></a> - <em><a href="/messages/sent">sent</a></em></nav>
 </div>
 {% if not messages|empty? %}
 <table class="table normal messages">

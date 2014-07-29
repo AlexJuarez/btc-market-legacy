@@ -10,14 +10,13 @@
 
 ;;Gets
 (defn count [id]
-  (:cnt (first (select messages
-    (aggregate (count :*) :cnt)
-    (where (and {:read false } {:user_id id}))))))
-
-(defn count-all [id]
-  (:cnt (first (select messages
-    (aggregate (count :*) :cnt)
-    (where {:user_id id})))))
+  (let [counts (select messages
+                       (aggregate (count :*) :cnt)
+                       (fields :read)
+                       (group :read)
+                       (where {:user_id id}))]
+    {:unread (or (:cnt (first (filter #(= false (:read %)) counts))) 0)
+     :total (reduce + (map #(:cnt %) counts))}))
 
 (defn update! [id receiver-id]
   (update messages
