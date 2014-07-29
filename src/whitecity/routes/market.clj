@@ -87,8 +87,7 @@
    (layout/render "support.html" (set-info)))
   ([slug]
    (let [post (feedback/add! slug (user-id))])
-   (layout/render "support.html" (conj {:message "thank you for your feedback"} (set-info)) )
-   ))
+   (layout/render "support.html" (conj {:message "Your request for support has been recieved."} (set-info)) )))
 
 (defn vendor-list [api_key]
   (-> (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list)) response (content-type "text/json")))

@@ -9,6 +9,7 @@
             [whitecity.util.hashids :as hashids]
             [whitecity.models.moderate :as moderate]
             [whitecity.models.resolution :as resolution]
+            [whitecity.models.feedback :as feedback]
             [whitecity.models.user :as user]
             [noir.response :as resp]
             [whitecity.util :as util]))
@@ -19,8 +20,12 @@
   (let [page (or (util/parse-int page) 1)
         orders (-> (order/moderate page per-page) encrypt-ids)
         pagemax (util/page-max 10 per-page)
+        support (feedback/all)
+
         ]
-  (layout/render "moderate/index.html" (merge {:orders orders} (set-info)))))
+  (layout/render "moderate/index.html" (merge {:orders orders
+                                               :support support
+                                               } (set-info)))))
 
 (defn moderator-add-resolution [slug]
   (let [res (moderate/add! slug)]

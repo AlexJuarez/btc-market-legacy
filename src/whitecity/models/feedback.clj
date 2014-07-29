@@ -3,8 +3,13 @@
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
-  (:require 
+  (:require
         [whitecity.util :as util]))
+
+(defn all []
+  (select feedback
+          (with users
+                (fields :alias))))
 
 (defn prep [{:keys [subject content]} user-id]
   {:subject subject
@@ -13,4 +18,3 @@
 
 (defn add! [message user-id]
   (insert feedback (values (prep message user-id))))
-
