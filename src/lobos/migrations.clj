@@ -312,3 +312,12 @@
   (down [] (alter :drop
                   (table :user
                          (varchar :pub_key_id)))))
+
+(defmigration add-posts-table
+  (up [] (create
+          (tbl :posts
+               (text :content)
+               (boolean :published (default false))
+               (boolean :public (default true))
+               (refer-to :user))))
+  (down [] (drop (table :posts))))
