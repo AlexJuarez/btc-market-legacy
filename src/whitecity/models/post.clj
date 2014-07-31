@@ -8,11 +8,19 @@
    [whitecity.util :as util]))
 
 
+(defn all [user-id]
+  (select posts
+          (where {:user_id user-id})))
+
+(defn get [id]
+  (first (select posts
+                 (where {:id (util/parse-int id)}))))
+
 (defn store! [slug]
   (insert posts (values slug)))
 
-(defn prep [user-id {:keys [title content public]}]
-  {:title title
+(defn prep [{:keys [subject content public]} user-id]
+  {:subject subject
    :content content
    :user_id user-id
    :public (= public "true")})

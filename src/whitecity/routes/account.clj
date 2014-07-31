@@ -123,7 +123,8 @@
   (resp/redirect referer))
 
 (defn news-page []
-  (layout/render "news/index.html" (merge (set-info))))
+  (let [posts (post/all (user-id))]
+      (layout/render "news/index.html" (merge {:posts posts} (set-info)))))
 
 (defn news-create
   ([]
@@ -131,6 +132,14 @@
   ([slug]
    (let [post (post/add! slug (user-id))]
      (layout/render "news/create.html" (merge (set-info) post)))))
+
+(defn news-item [id]
+  (let [id (util/parse-int id)
+        article (post/get id)
+        content (util/md->html (:content article))]
+    (layout/render "news/view.html" (merge article {:content content} (set-info)))))
+
+(defn news-edit [] )
 
 (defroutes account-routes
   (wrap-restricted
@@ -152,6 +161,7 @@
     (GET "/news" [] (news-page))
     (GET "/news/create" [] (news-create))
     (POST "/news/create" {params :params} (news-create params))
+    (GET "/news/:id/edit" [id] (news-edit id))
     (GET "/images" [] (images-page))
     (POST "/images/edit" {params :params} (images-edit params))
     (GET "/images/edit" [] (images-edit))
