@@ -22,7 +22,8 @@
 
 (defn messages-page [page]
   (let [page (or (util/parse-int page) 1)
-        pagemax (util/page-max (message/count-all (user-id)) per-page)]
+        pagemax (util/page-max (message/count-all (user-id)) per-page)
+        ]
     (layout/render "messages/index.html" (conj (set-info) {:page {:page page :max pagemax}
                                                            :messages (message/all (user-id) page per-page)}))))
 

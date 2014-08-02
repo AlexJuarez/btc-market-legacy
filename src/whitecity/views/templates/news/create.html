@@ -11,8 +11,12 @@
     <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
   </p>
   <p>
-    <label>Public: <input type="checkbox" name="public" checked="checked" value="true" /></label>
+    <label>Public: <input type="checkbox" name="public" {% if public %}checked{% endif %} value="true" /></label>
     should this be visible on your profile?
+  </p>
+  <p>
+    <label>Published: <input type="checkbox" name="published" {% if published %}checked{% endif %} value="true" /></label>
+    you can always publish an article at a later date.
   </p>
   {% if errors.content %}
   <p>{{errors.content|join:", "}}</p>
@@ -21,7 +25,7 @@
     <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
   </p>
   <span class="submit">
-    <button type="submit" class="btn">Preview</button>
+    <button type="submit" class="btn">{% if preview %}Update{% else %}Create{% endif %}</button>
   </span>
   {% csrf-token %}
 </form>

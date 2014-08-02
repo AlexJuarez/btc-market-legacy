@@ -19,16 +19,26 @@
 (defn store! [slug]
   (insert posts (values slug)))
 
-(defn prep [{:keys [subject content public]}]
+(defn prep [{:keys [subject content public published]}]
   {:subject subject
    :content content
+   :published (= published "true")
    :public (= public "true")})
+
+(defn remove! [id user-id]
+  (delete posts
+          (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn add! [slug user-id]
   (let [check (v/news-validator slug)]
     (if (empty? check)
       (-> slug prep (assoc :user_id user-id) store!)
       (conj {:errors check} slug))))
+
+(defn publish! [id user-id]
+  (update posts
+          (set-fields {:published true})
+          (where {:user_id user-id :id (util/parse-int id)})))
 
 (defn update! [slug user-id]
   (let [check (v/news-validator slug)

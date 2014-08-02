@@ -90,7 +90,8 @@
 (v/defvalidator news-validator
   [:content [:presence :length {:is-not-greater-than 6000}]]
   [:subject :length {:is-not-greater-than 100}]
-  [:public :accept "true"])
+  [:public :accept "true"]
+  [:published :accept "true"])
 
 (v/defvalidator resolution-refund-validator
   [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])

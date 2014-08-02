@@ -28,8 +28,8 @@
     <td>{% if post.published %} published {% else %} false {% endif %}</td>
     <td>{{post.created_on|freshness}}</td>
     <td>
-      <a href="/vendor/news/">publish</a>
-      | <a href="/message/{{post.id}}/delete">delete</a>
+      {% if not post.published %}<a href="/vendor/news/{{post.id}}/publish">publish</a>
+      | {% endif %}<a href="/vendor/news/{{post.id}}/delete">delete</a>
     </td>
   </tr>
   {% endfor %}
