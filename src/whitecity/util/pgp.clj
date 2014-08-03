@@ -47,7 +47,7 @@
                             PGPLiteralData/CONSOLE
                             (count secret)
                             (java.util.Date.))]
-        (do (.write finalout secret) (.close finalout) (.close encryptedout) (.close armored-output) (.close output) output)))
+        (do (.write finalout secret) (.close finalout) (.close encryptedout) (.close armored-output) (.close output) (str output))))
   (catch Exception ex
-    (error "Encoding failed")
+    (error ex "Encoding failed")
     "the encoding has failed")))

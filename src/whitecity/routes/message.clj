@@ -5,6 +5,7 @@
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [whitecity.models.user :as user]
+            [ring.util.response :as r :refer [content-type response]]
             [whitecity.models.message :as message]
             [whitecity.models.listing :as listing]
             [whitecity.models.category :as category]
@@ -14,6 +15,7 @@
             [whitecity.models.fan :as follower]
             [whitecity.models.postage :as postage]
             [whitecity.models.post :as post]
+            [clojure.string :as string]
             [whitecity.models.currency :as currency]
             [noir.response :as resp]
             [noir.session :as session]
@@ -33,21 +35,35 @@
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
 
-(defn message-delete [id]
+(defn message-delete [id referer]
   (message/remove! id (user-id))
-  (resp/redirect "/messages"))
+  (resp/redirect referer))
+
+(defn messages-download [receiver-id]
+  (let [messages (string/join "\n" (map #(str "\"" (:user_alias %) "\",\""
+                                              (string/replace (:content %) #"[\"]" "&quot;") "\"") (message/all (user-id) receiver-id)))]
+    (-> (response messages)
+        (content-type "text/plain")
+        (r/header "Content-Disposition" (str "attachment;filename=converstion.csv")))))
 
 (defn messages-thread
   ([receiver-id]
-   (layout/render "messages/thread.html" (merge (set-info)
-                                                {:user_id receiver-id :alias (:alias (user/get receiver-id)) :messages (message/all (user-id) receiver-id)})))
-  ([slug & options]
-   (let [message (message/add! slug (user-id) (:id slug))]
+   (let [receiver (user/get receiver-id)]
      (layout/render "messages/thread.html" (merge (set-info)
-                                                  {:user_id (:id slug) :messages (message/all (user-id) (:id slug))} message)))))
+                                                  {:has_pub_key (not (nil? (:pub_key receiver)))
+                                                   :user_id receiver-id :alias (:alias receiver)
+                                                   :messages (message/all (user-id) receiver-id)}))))
+  ([slug & options]
+   (let [message (message/add! slug (user-id) (:id slug))
+         receiver (user/get (:id slug))]
+     (layout/render "messages/thread.html" (merge (set-info)
+                                                  {:has_pub_key (not (nil? (:pub_key receiver)))
+                                                   :alias (:alias receiver)
+                                                   :user_id (:id slug) :messages (message/all (user-id) (:id slug))} message)))))
 
 (def-restricted-routes message-routes
-    (GET "/message/:id/delete" [id] (message-delete id))
+    (GET "/message/:id/delete" {{id :id} :params {referer "referer"} :headers} (message-delete id referer))
+    (GET "/messages/:id/download" [id] (messages-download id))
     (GET "/messages" [page] (messages-page page))
     (GET "/messages/sent" [] (messages-sent))
     (GET "/messages/:id" [id] (messages-thread id))

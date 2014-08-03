@@ -60,7 +60,7 @@
   (let [user (user/get id)]
     (-> (response (:pub_key user))
         (content-type "text/plain")
-        (r/header "Content-Disposition" (str "attachment;filename=" (:pub_key_id user) ".ASC")))))
+        (r/header "Content-Disposition" (str "attachment;filename=" (:pub_key_id user) ".asc")))))
 
 (defn user-view [id page]
   (let [user (user/get id)

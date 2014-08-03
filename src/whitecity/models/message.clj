@@ -6,6 +6,7 @@
   (:require
         [whitecity.validator :as v]
         [whitecity.cache :as cache]
+        [whitecity.util.pgp :as pgp]
         [whitecity.util :as util]))
 
 ;;Gets
@@ -45,15 +46,18 @@
        (when (not (empty? (update! id rid))) (util/update-session id :messages))
        (select messages
                (fields :id :subject :content :created_on :user_id :sender_id :read)
-               (with senders (fields [:login :user_login] [:alias :user_alias]))
+               (with senders (fields [:alias :user_alias]))
                (where (or {:sender_id id :user_id rid} {:sender_id rid :user_id id}))
                (order :created_on :ASC))))))
 
-(defn prep [{:keys [subject content sender_id user_id]}]
-  {:subject subject
-   :content content
-   :user_id (util/parse-int user_id)
-   :sender_id sender_id})
+(defn prep [{:keys [encrypt subject content sender_id user_id]}]
+  (let [recipient (first (select users (fields :pub_key) (where {:id (util/parse-int user_id)})))]
+    {:subject subject
+     :content (if (and (= "true" encrypt) (not (nil? (:pub_key recipient)))) (pgp/encode (:pub_key recipient) content) content)
+     :user_id (util/parse-int user_id)
+     :sender_id sender_id }
+    )
+  )
 
 (defn store! [message user-id receiver-id]
   (util/update-session receiver-id :messages)

@@ -5,6 +5,7 @@
   <nav class="nav"><a href="/messages">inbox <strong>{{user.messages.unread}}</strong></a> - <a href="/messages/sent">sent</a></nav>
 </div>
 {% if not messages|empty? %}
+<a class="right" href="/messages/{{user_id}}/download">download thread</a>
 <table class="table thread">
   <thead>
     <tr>
@@ -30,9 +31,7 @@
             <strong class="subject">Subject: {{message.subject}}</strong>
           </div>
         {% endif %}
-        <div class="content">
-          {{message.content}}
-        </div>
+        <pre class="content">{{message.content}}</pre>
       </td>
       <td><span data-time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
       <td>{% ifequal message.user_id user.id %}<a href="/message/{{message.id}}/delete">delete</a>{% endifequal %}</td>
@@ -46,6 +45,7 @@
   <p>
     <label for="subject">Subject:{% if errors.title %}{{errors.title|join:", "}}{% endif %}</label>
     <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
+    {% if has_pub_key %}<label><input type="checkbox" value="true" name="encrypt" />Encrypt?</label>{% endif %}
   </p>
   {% if errors.content %}
   <p>{{errors.content|join:", "}}</p>
