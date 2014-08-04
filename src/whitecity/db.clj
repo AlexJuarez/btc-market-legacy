@@ -18,6 +18,7 @@
          postage images category
          region currency exchange
          bookmarks fans reviews
+         ships-to
          escrow modresolutions posts)
 
 (defentity audits
@@ -69,8 +70,14 @@
   (belongs-to order)
   (table :fee))
 
+(defentity ships-to
+  (belongs-to region)
+  (belongs-to listings)
+  (table :ships_to))
+
 (defentity listings
   (table :listing)
+  (has-many ships-to)
   (belongs-to users)
   (belongs-to category)
   (belongs-to currency)

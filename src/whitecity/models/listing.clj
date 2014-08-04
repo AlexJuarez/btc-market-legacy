@@ -174,11 +174,18 @@
             (offset (* (- page 1) per-page))
             (limit per-page)))))
 
-(defn all [id page per-page]
-  (select listings
-          (with category (fields [:name :category_name]))
-          (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
-          (where {:user_id id})
-          (offset (* (- page 1) per-page))
-          (limit per-page)
-          (order :title :asc)))
+(defn all
+  ([id page per-page]
+   (select listings
+           (with category (fields [:name :category_name]))
+           (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
+           (where {:user_id id})
+           (offset (* (- page 1) per-page))
+           (limit per-page)
+           (order :title :asc)))
+  ([page per-page]
+   (select listings
+           (with users (fields :alias)) ;;for the grams market api
+           (limit per-page)
+           (offset (* (- page 1) per-page))
+           (order :created_on :asc))))

@@ -1,5 +1,5 @@
 (ns whitecity.models.schema
-  (:use [lobos.core :only (defcommand migrate)])
+  (:use [lobos.core :only (defcommand migrate rollback)])
   (:require [noir.io :as io]
             [cheshire.core :as jr]
             [taoensso.timbre :as timbre]

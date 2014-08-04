@@ -40,7 +40,10 @@
   (resp/redirect referer))
 
 (defn messages-download [receiver-id]
-  (let [messages (string/join "\n" (map #(str "\"" (:user_alias %) "\",\""
+  (let [user_id (user-id)
+        my-name (:alias (util/current-user))
+        messages (string/join "\n" (map #(str "\"" (if (= (:sender_id %) user_id) my-name (:user_alias %)) "\",\""
+                                              (:created_on %) "\",\""
                                               (string/replace (:content %) #"[\"]" "&quot;") "\"") (message/all (user-id) receiver-id)))]
     (-> (response messages)
         (content-type "text/plain")

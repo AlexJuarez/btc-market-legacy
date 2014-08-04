@@ -322,3 +322,18 @@
                (boolean :public (default true))
                (refer-to :user))))
   (down [] (drop (table :posts))))
+
+(defmigration add-rating-to-listings
+  (up [] (alter :add
+                (table :listing
+                       (float :rating (default 5.0)))))
+  (down [] (alter :drop
+                  (table :listing
+                         (float :rating)))))
+
+(defmigration add-shipping-table
+  (up [] (create
+          (table :ships_to
+               (refer-to :listing)
+               (refer-to :region))))
+  (down [] (drop (table :ships_to))))

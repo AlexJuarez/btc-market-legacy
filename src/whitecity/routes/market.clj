@@ -95,8 +95,11 @@
    (let [post (feedback/add! slug (user-id))])
    (layout/render "support.html" (conj {:message "Your request for support has been recieved."} (set-info)) )))
 
-(defn vendor-list [api_key]
+(defn api-vendors [api_key]
   (resp/json (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list))))
+
+(defn api-listings [params sign]
+  )
 
 (defn listing-view [id page]
   (let [listing (listing/view id)
@@ -120,7 +123,8 @@
   (GET "/support" [] (support-page))
   (POST "/support" {params :params} (support-page params))
 
-  (GET "/api/vendors" [api_key] (vendor-list api_key))
+  (GET "/api/vendors" [api_key] (api-vendors api_key))
+  (GET "/api/listings" {params :params {sign "sign"} :headers} (api-listings params sign))
 
   ;;public routes
   (GET "/user/:id" {{id :id page :page} :params} (user-view id page))

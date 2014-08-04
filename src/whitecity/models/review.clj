@@ -59,7 +59,7 @@
                 (set-fields {:reviewed true})
                 (where {:id order_id}))
         (update listings
-                (set-fields {:reviews (raw "reviews + 1")})
+                (set-fields {:reviews (raw "reviews + 1") :rating (raw (str "(1.0*rating*reviews)/(reviews+1) + (" rating "*1.0)/(reviews+1)"))})
                 (where {:id listing_id}))
         (update users
                 (set-fields {:transactions (raw "transactions + 1") :rating (raw (str "(1.0*rating*transactions)/(transactions+1) + (" rating "*1.0)/(transactions+1)"))})
