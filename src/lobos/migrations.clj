@@ -117,7 +117,6 @@
                 (boolean :public (default false))
                 (boolean :hedged (default false))
                 (varchar :title 100)
-                (integer :to [:refer :region :id])
                 (integer :from [:refer :region :id])
                 (refer-to :user)
                 (refer-to :image)

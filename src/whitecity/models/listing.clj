@@ -7,6 +7,7 @@
   (:require
         [whitecity.validator :as v]
         [whitecity.models.category :as cat]
+        [clojure.string :as string]
         [hiccup.util :as hc]
         [whitecity.util :as util]))
 
@@ -37,9 +38,11 @@
   ([id]
     (first (select listings
                    (with currency (fields :hedge_fee))
+                   (with ships-to)
       (where {:id (util/parse-int id)}))))
   ([id user-id]
     (first (select listings
+      (with ships-to)
       (where {:id (util/parse-int id) :user_id user-id})))))
 
 (defn search [query]
@@ -63,7 +66,9 @@
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
   (first (convert
    (select listings
-    (fields [:id :lid] :bookmarks :user_id :image_id :from :to :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
+    (fields [:id :lid] :bookmarks :user_id :image_id :from :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
+
+    (with ships-to)
     (with users
           (fields [:id])
           (with postage))
@@ -86,13 +91,15 @@
           (where {:id (util/parse-int id) :user_id user-id}))))))
 
 (defn store! [{:keys [category_id public quantity] :as listing} user-id]
-  (let [category-id (util/parse-int (:category_id listing))]
+  (let [category-id (util/parse-int (:category_id listing))
+        listing (prep listing)
+        listing-values (dissoc (assoc listing :user_id user-id) :to)]
     (util/update-session user-id)
-    (let [listing (transaction
+    (let [l (transaction
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
-      (insert listings (values (assoc (prep listing) :user_id user-id))))]
-      (insert ships-to (values (map #(hash :region_id % :listing_id (:id listing))))))))
+      (insert listings (values listing-values)))]
+      (insert ships-to (values (map #(hash :region_id % :listing_id (:id l)) (:to listing)))))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]
@@ -105,7 +112,9 @@
         check (v/listing-validator listing)]
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
-              {:keys [category_id public quantity] :as listing} (prep listing)]
+              {:keys [category_id public quantity] :as listing} (prep listing)
+              ships (map #(hash-map :region_id % :listing_id id) (:to listing))
+              listing (dissoc listing :to)]
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
                 (do
@@ -118,10 +127,11 @@
                           (and (<= quantity 0) public_old (> quantity_old 0)))
                     (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
               (delete ships-to (where {:listing_id id}))
-              (insert ships-to (values (map #(hash :region_id % :listing_id id) (:to listing))))
+              (insert ships-to (values ships))
               (update listings
                 (set-fields listing)
-                (where {:id id :user_id user-id})))))
+                (where {:id id :user_id user-id})))
+          ))
       (conj {:errors check} listing)))
 
 (defn- sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
@@ -145,7 +155,8 @@
   (->
    (select* listings)
    (with users)
-   (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
+   (fields :title :user.alias :user_id :user.login :image_id :from :price :id :currency_id :category_id)
+   (with ships-to)
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
@@ -167,7 +178,8 @@
   ([user-id page per-page]
    (convert
     (select listings
-            (fields  :title :from :to :price :id :currency_id :image_id :category_id)
+            (fields  :title :from :price :id :currency_id :image_id :category_id)
+            (with ships-to)
             (with category (fields [:name :category_name]))
             (with currency (fields [:name :currency_name] [:key :currency_key]))
             (where (and

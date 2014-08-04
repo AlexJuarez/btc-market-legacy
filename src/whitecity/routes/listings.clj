@@ -58,12 +58,11 @@
         success (session/flash-get :success)]
     (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success success :id id
-                                                  :images (image/get (user-id)) :listing listing
+                                                  :images (image/get (user-id))
                                                   :categories (create-categories (category/all))
                                                   :currencies (currency/all)} (set-info) listing))))
 
 (defn listing-save [{:keys [id image image_id] :as slug}]
-  (println slug)
   (let [listing (listing/update! (assoc slug :image_id (parse-image image_id image)) id (user-id))]
     (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success "updated" :id id
