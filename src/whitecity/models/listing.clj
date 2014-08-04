@@ -38,11 +38,11 @@
   ([id]
     (first (select listings
                    (with currency (fields :hedge_fee))
-                   (with ships-to)
+                   (with ships-to (fields :region_id))
       (where {:id (util/parse-int id)}))))
   ([id user-id]
     (first (select listings
-      (with ships-to)
+                   (with ships-to (fields :region_id))
       (where {:id (util/parse-int id) :user_id user-id})))))
 
 (defn search [query]
@@ -67,8 +67,7 @@
   (first (convert
    (select listings
     (fields [:id :lid] :bookmarks :user_id :image_id :from :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
-
-    (with ships-to)
+    (with ships-to (fields :region_id))
     (with users
           (fields [:id])
           (with postage))
@@ -156,7 +155,7 @@
    (select* listings)
    (with users)
    (fields :title :user.alias :user_id :user.login :image_id :from :price :id :currency_id :category_id)
-   (with ships-to)
+   (with ships-to (fields :region_id))
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
@@ -179,7 +178,7 @@
    (convert
     (select listings
             (fields  :title :from :price :id :currency_id :image_id :category_id)
-            (with ships-to)
+            (with ships-to (fields :region_id))
             (with category (fields [:name :category_name]))
             (with currency (fields [:name :currency_name] [:key :currency_key]))
             (where (and
@@ -193,6 +192,7 @@
 (defn all
   ([id page per-page]
    (select listings
+           (with ships-to (fields :region_id))
            (with category (fields [:name :category_name]))
            (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
            (where {:user_id id})
@@ -202,6 +202,7 @@
   ([page per-page]
    (select listings
            (with users (fields :alias)) ;;for the grams market api
+           (with ships-to (fields :region_id))
            (limit per-page)
            (offset (* (- page 1) per-page))
            (order :created_on :asc))))
