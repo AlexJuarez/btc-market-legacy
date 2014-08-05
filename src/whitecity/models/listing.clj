@@ -25,7 +25,7 @@
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (util/parse-int to)
+          :to (map util/parse-int to)
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
@@ -88,10 +88,11 @@
 (defn store! [{:keys [category_id public quantity] :as listing} user-id]
   (let [category-id (util/parse-int (:category_id listing))]
     (util/update-session user-id)
-    (transaction
+    (let [listing (transaction
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
-      (insert listings (values (assoc (prep listing) :user_id user-id))))))
+      (insert listings (values (assoc (prep listing) :user_id user-id))))]
+      (insert ships-to (values (map #(hash :region_id % :listing_id (:id listing))))))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]
@@ -100,7 +101,8 @@
       (conj {:errors check} listing))))
 
 (defn update! [listing id user-id]
-  (let [check (v/listing-validator listing)]
+  (let [id (util/parse-int id)
+        check (v/listing-validator listing)]
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)]
@@ -115,9 +117,11 @@
                   (if (or (and (not public) public_old (> quantity_old 0))
                           (and (<= quantity 0) public_old (> quantity_old 0)))
                     (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
+              (delete ships-to (where {:listing_id id}))
+              (insert ships-to (values (map #(hash :region_id % :listing_id id) (:to listing))))
               (update listings
                 (set-fields listing)
-                (where {:id (util/parse-int id) :user_id user-id})))))
+                (where {:id id :user_id user-id})))))
       (conj {:errors check} listing)))
 
 (defn- sortby [query page per-page {:keys [sort_by ships_to ships_from]}]

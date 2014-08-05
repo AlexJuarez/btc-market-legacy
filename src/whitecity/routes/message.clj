@@ -44,7 +44,7 @@
         my-name (:alias (util/current-user))
         messages (string/join "\n" (map #(str "\"" (if (= (:sender_id %) user_id) my-name (:user_alias %)) "\",\""
                                               (:created_on %) "\",\""
-                                              (string/replace (:content %) #"[\"]" "&quot;") "\"") (message/all (user-id) receiver-id)))]
+                                              (string/replace (:content %) #"[\"]" "\"\"") "\"") (message/all (user-id) receiver-id)))]
     (-> (response messages)
         (content-type "text/plain")
         (r/header "Content-Disposition" (str "attachment;filename=converstion.csv")))))
