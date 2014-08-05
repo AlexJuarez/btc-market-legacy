@@ -70,7 +70,7 @@
     <td><a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
     <td><a href="/listing/{{listing.id}}">{{listing.title}}</a></td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
-    <td>{{listing.to|region}}</td>
+    <td>{{listing.ships_to|regions}}</td>
     <td>{{listing.from|region}}</td>
     <td><a href="/cart/add/{{listing.id}}">add to cart</a></td>
   </tr>

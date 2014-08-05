@@ -1,5 +1,5 @@
 (ns whitecity.views.tags
-  (:require [selmer.parser :refer [add-tag!]]
+  (:require [selmer.parser :refer [render add-tag!]]
             [noir.io :as noirio]
             [whitecity.cache :as cache]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
@@ -15,6 +15,14 @@
   (map #(get-in context-map (parse-args %)) args))
 
 (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
+
+(add-tag! :ifcontains (fn [args context-map content]
+                        (let [args (computed-args args context-map)]
+                          (if (some #(= (second args) (:region_id %)) (first args))
+                            (render (get-in content [:ifcontains :content]) context-map)
+                            "")
+                          ))
+          :endifcontains)
 
 (add-tag! :image (fn [args context-map]
   (let [id (first (computed-args args context-map))]

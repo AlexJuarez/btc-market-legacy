@@ -27,7 +27,7 @@
     <ul>
       <li>seller: <a href="/user/{{user_id}}" class="seller">{{user_alias}}</a></li>
       <li>ships from: {{from|region}}</li>
-      <li>ships to: {% if to = 1 %}Worldwide{% else %}{{to|region}}{% endif %}</li>
+      <li>ships to: {% if to = 1 %}Worldwide{% else %}{{ships_to|regions}}{% endif %}</li>
       <li>category: <a href="/category/{{category_id}}">{{category_name}}</a></li>
       <li>bookmarked {{bookmarks}} {% ifequal bookmarks "1" %}time{% else %}times{% endifequal %}
       {% if bookmarked %}

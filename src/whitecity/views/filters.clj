@@ -74,7 +74,11 @@
                (let [status ["processing" "shipping" "in resolution" "finalized" "canceled" "refunded"]]
                  (status x))))
 
-(add-filter! :region
-             (fn [x]
-               (let [regions (cache/cache! "regions_map" (into {} (map #(vector (:id %) (:name %)) (regions/all))))]
-                 (regions x))))
+(defn region [region_id]
+  (let [regions (cache/cache! "regions_map" (into {} (map #(vector (:id %) (:name %)) (regions/all))))]
+                 (regions region_id)))
+
+(add-filter! :region region)
+
+(add-filter! :regions (fn [regions]
+                        (s/join ", " (map #(region (:region_id %)) regions))))
