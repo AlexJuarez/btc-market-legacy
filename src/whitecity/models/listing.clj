@@ -21,6 +21,10 @@
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
+(defn shipping [id]
+  (select ships-to
+          (where {:listing_id (util/parse-int id)})))
+
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
   (merge {:title title
@@ -129,7 +133,8 @@
               (insert ships-to (values ships))
               (update listings
                 (set-fields listing)
-                (where {:id id :user_id user-id})))
+                (where {:id id :user_id user-id}))
+           )
           ))
       (conj {:errors check} listing)))
 
