@@ -30,7 +30,7 @@
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (map util/parse-int to)
+          :to (if (empty? to) [1] (map util/parse-int to))
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
