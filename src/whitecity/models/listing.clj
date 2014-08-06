@@ -1,6 +1,6 @@
 (ns whitecity.models.listing
   (:refer-clojure :exclude [get get-in count])
-  (:use [korma.db :only (transaction)]
+  (:use [korma.db :only (get-connection transaction)]
         [whitecity.models.predicates]
         [korma.core]
         [whitecity.db])
@@ -15,7 +15,9 @@
   (map #(assoc % :price (util/convert-currency %)) postage))
 
 (defn convert-shipping [listing]
-  (vec (.getArray (:to listing))))
+  (if (nil? (:to listing))
+    [1]
+    (vec (.getArray (:to listing)))))
 
 (defn convert [listings]
   (map #(assoc % :to (convert-shipping %) :price (util/convert-currency %) :postage (convert-post (:postage %))) listings))
@@ -127,9 +129,10 @@
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)
               ships (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id id) to)]
-          (println (sql-only (update listings
+          (println prep)
+          (sql-only (update listings
                 (set-fields listing)
-                (where {:id id :user_id user-id}))))
+                (where {:id id :user_id user-id})))
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
                 (do

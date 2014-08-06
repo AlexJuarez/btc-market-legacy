@@ -118,6 +118,7 @@
                 (boolean :hedged (default false))
                 (varchar :title 100)
                 (integer :from [:refer :region :id])
+                (column :to (data-type "integer[]"))
                 (refer-to :user)
                 (refer-to :image)
                 (float :price :not-null)
