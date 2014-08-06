@@ -16,6 +16,19 @@
 
 (add-tag! :csrf-token (fn [_ _] (anti-forgery-field)))
 
+(add-tag! :shipping-selectors
+          (fn [args context-map]
+            (let [args (computed-args args context-map)
+                  regions (first args)
+                  select (second args)
+                  common [13 243 40]]
+              [:option {:value (:region_id (first regions))} (:name (first regions))]
+              [:optgroup {:label "Common Countries"}
+               (map )
+               ]
+
+              )))
+
 (add-tag! :ifcontains (fn [args context-map content]
                         (let [args (computed-args args context-map)]
                           (if (some #(= (second args) (:region_id %)) (first args))
