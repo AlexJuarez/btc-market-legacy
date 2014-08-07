@@ -109,13 +109,7 @@
   <div class="form-group">
     <label for="ships_to">Ships to:</label>
     <select id="ships_to" name="to[]" size="10" multiple>
-      {% for region in regions %}
-        {% if region.id = 1 %}
-          <option value="{{region.id}}">Worldwide</option>
-        {% else %}
-          <option value="{{region.id}}" {% ifcontains ships_to region.id %}selected="selected"{% endifcontains %}>{{region.name}}</option>
-        {% endif %}
-      {% endfor %}
+      {% shipping-selectors regions ships_to %}
     </select>
   </div>
   <div class="form-group">

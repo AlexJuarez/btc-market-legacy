@@ -18,16 +18,19 @@
 
 (add-tag! :shipping-selectors
           (fn [args context-map]
-            (let [args (computed-args args context-map)
-                  regions (first args)
-                  select (second args)
-                  common [13 243 40]]
-              [:option {:value (:region_id (first regions))} (:name (first regions))]
-              [:optgroup {:label "Common Countries"}
-               (map )
-               ]
 
-              )))
+            (let [args (computed-args args context-map)
+                  regions (dissoc (apply merge (map #(hash-map (:id %) (:name %)) (first args))) 1);;remove undelared
+                  select (map #(:region_id %) (second args))
+                  common [13 243 40]]
+              (str (html [:option (merge {:value 1} (if (some #{1} select) {:selected "selected"})) "Worldwide"])
+              (html [:optgroup {:label "Common Countries"}
+               (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) common)
+               ])
+              (html [:optgroup {:label "All Countries"}
+               (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) (range 2 (- (count regions) 1)))
+               ])
+              ))))
 
 (add-tag! :ifcontains (fn [args context-map content]
                         (let [args (computed-args args context-map)]
