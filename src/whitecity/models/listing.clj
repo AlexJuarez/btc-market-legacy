@@ -25,6 +25,10 @@
   (select ships-to
           (where {:listing_id (util/parse-int id)})))
 
+(defn recent-shipping [user-id]
+  (select ships-to
+          (where {:user_id user-id})))
+
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
   (merge {:title title
@@ -102,7 +106,7 @@
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
       (insert listings (values listing-values)))]
-      (insert ships-to (values (map #(hash :region_id % :listing_id (:id l)) (:to listing)))))))
+      (insert ships-to (values (map #(hash :user_id user-id :region_id % :listing_id (:id l)) (:to listing)))))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]
@@ -116,7 +120,7 @@
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)
-              ships (map #(hash-map :region_id % :listing_id id) (:to listing))
+              ships (map #(hash-map :user_id user-id :region_id % :listing_id id) (:to listing))
               listing (dissoc listing :to)]
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
@@ -150,7 +154,7 @@
           (= sort_by "newest") (-> query (order :created_on :desc))
           :else (-> query (order :sold :desc)))
           query (if (and (= (not (:region_id (util/current-user))) 1) ships_to)
-                  (-> query (where {:to (:region_id (util/current-user))})) query)
+                  (-> query (where {:ships_to.region_id (:region_id (util/current-user))})) query)
           query (if (and (= (not (:region_id (util/current-user))) 1) ships_from)
                   (-> query (where {:from (:region_id (util/current-user))})) query)]
     query))

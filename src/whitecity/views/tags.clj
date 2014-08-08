@@ -22,7 +22,7 @@
             (let [args (computed-args args context-map)
                   regions (dissoc (apply merge (map #(hash-map (:id %) (:name %)) (first args))) 1);;remove undelared
                   select (map #(:region_id %) (second args))
-                  common [13 243 40]]
+                  common [13 243 40 258]]
               (str (html [:option (merge {:value 1} (if (some #{1} select) {:selected "selected"})) "Worldwide"])
               (html [:optgroup {:label "Common Countries"}
                (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) common)

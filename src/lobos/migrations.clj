@@ -334,5 +334,6 @@
   (up [] (create
           (table :ships_to
                (refer-to :listing)
+               (refer-to :user)
                (refer-to :region))))
   (down [] (drop (table :ships_to))))
