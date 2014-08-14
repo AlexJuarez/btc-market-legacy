@@ -1,5 +1,5 @@
 (ns whitecity.models.predicates
-  (:require 
+  (:require
         [korma.sql.engine :as eng]))
 
 (defn ilike [k v]

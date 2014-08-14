@@ -4,6 +4,7 @@
             [whitecity.cache :as cache]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [whitecity.util.image :as image]
+            [whitecity.util :as util]
             [environ.core :refer [env]])
   (:use selmer.filters
         hiccup.core))
@@ -20,15 +21,22 @@
           (fn [args context-map]
 
             (let [args (computed-args args context-map)
-                  regions (dissoc (apply merge (map #(hash-map (:id %) (:name %)) (first args))) 1);;remove undelared
-                  select (second args)
-                  common [13 243 40 258]]
-              (str (html [:option (merge {:value 1} (if (some #{1} select) {:selected "selected"})) "Worldwide"])
-              (html [:optgroup {:label "Common Countries"}
+                  select (map util/parse-int (second args))
+                  recent (map #(:region_id %) (last args))
+                  common [13 243 40 258]
+                  regions (apply merge (map #(hash-map (:id %) (:name %)) (first args))) ;;remove undelared
+                  regions-remaining (sort (keys (apply dissoc regions (concat [1] common recent))))
+                  ]
+              (str
+               (html [:option (merge {:value 1} (if (some #{1} select) {:selected "selected"})) "Worldwide"])
+               (html [:optgroup {:label "Recent"}
+                      (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) recent)
+                      ])
+               (html [:optgroup {:label "Common Countries"}
                (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) common)
                ])
               (html [:optgroup {:label "All Countries"}
-               (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) (range 2 (- (count regions) 1)))
+               (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) regions-remaining)
                ])
               ))))
 

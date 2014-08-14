@@ -26,6 +26,7 @@
    [clj-btc "0.1.1"]
    [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
+   [com.mchange/c3p0 "0.9.5-pre8"]
    [korma "0.3.0-beta11"];;dbl
    [lobos "1.0.0-beta1"]
    [org.bouncycastle/bcpg-jdk15on "1.50"]

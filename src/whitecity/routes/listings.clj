@@ -58,6 +58,7 @@
         success (session/flash-get :success)]
     (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success success :id id
+                                                  :recent (listing/recent-shipping (user-id))
                                                   :images (image/get (user-id))
                                                   :categories (create-categories (category/all))
                                                   :currencies (currency/all)} (set-info) listing))))
@@ -67,6 +68,7 @@
     (layout/render "listings/create.html" (merge (set-info) listing
                                                  {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success "updated" :id id
+                                                  :recent (listing/recent-shipping (user-id))
                                                   :images (image/get (user-id))
                                                   :categories (create-categories (category/all))
                                                   :currencies (currency/all)}))))
@@ -76,6 +78,7 @@
   ([]
    (layout/render "listings/create.html" (conj {:regions (region/all)
                                                 :images (image/get (user-id))
+                                                :recent (listing/recent-shipping (user-id))
                                                 :categories (create-categories (category/all))
                                                 :currencies (currency/all)} (set-info))))
   ([{:keys [image image_id] :as slug}]
@@ -86,6 +89,7 @@
         (resp/redirect (str "/vendor/listing/" (:id listing) "/edit")))
       (layout/render "listings/create.html" (merge {:regions (region/all)
                                                     :images (image/get (user-id))
+                                                    :recent (listing/recent-shipping (user-id))
                                                     :categories (create-categories (category/all))
                                                     :currencies (currency/all)} (set-info) listing))))))
 

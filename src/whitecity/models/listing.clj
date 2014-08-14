@@ -36,14 +36,19 @@
 
 (defn recent-shipping [user-id]
   (select ships-to
+          (fields :region_id)
+          (group :region_id)
           (where {:user_id user-id})))
+
+(defn vec->array [v]
+  (.createArrayOf (.getConnection (:datasource (get-connection db))) "integer" (object-array v)))
 
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (if (empty? to) (raw "{1}") (int-array (map util/parse-int to)))
+          :to (if (empty? to) nil (vec->array (distinct (map util/parse-int to))))
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
@@ -129,10 +134,6 @@
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)
               ships (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id id) to)]
-          (println prep)
-          (sql-only (update listings
-                (set-fields listing)
-                (where {:id id :user_id user-id})))
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
                 (do
@@ -148,8 +149,7 @@
               (insert ships-to (values ships))
               (update listings
                 (set-fields listing)
-                (where {:id id :user_id user-id}))
-           )
+                (where {:id id :user_id user-id})))
           ))
       (conj {:errors check} listing)))
 
@@ -164,9 +164,9 @@
           (= sort_by "title") (-> query (order :title :asc))
           (= sort_by "newest") (-> query (order :created_on :desc))
           :else (-> query (order :sold :desc)))
-          query (if (and (= (not (:region_id (util/current-user))) 1) ships_to)
-                  (-> query (where {:ships_to.region_id (:region_id (util/current-user))})) query)
-          query (if (and (= (not (:region_id (util/current-user))) 1) ships_from)
+          query (if (and (not (= (:region_id (util/current-user)) 1)) ships_to)
+                  (-> query (where (raw (str (:region_id (util/current-user)) " = any (\"listing\".\"to\")")))) query)
+          query (if (and (not (= (:region_id (util/current-user)) 1)) ships_from)
                   (-> query (where {:from (:region_id (util/current-user))})) query)]
     query))
 
