@@ -14,13 +14,20 @@
 (defn convert-post [postage]
   (map #(assoc % :price (util/convert-currency %)) postage))
 
+(defn convert-shipping [listing]
+  (vec (.getArray (:to listing))))
+
 (defn convert [listings]
-  (map #(assoc % :price (util/convert-currency %) :postage (convert-post (:postage %))) listings))
+  (map #(assoc % :to (convert-shipping %) :price (util/convert-currency %) :postage (convert-post (:postage %))) listings))
+
+(defn add-shipping [listing]
+  (assoc listing :to (convert-shipping listing)))
 
 (defn check-field [map key]
   (if-not (nil? (key map))
     {key (util/parse-int (key map))}))
 
+;;remove this function
 (defn shipping [id]
   (select ships-to
           (where {:listing_id (util/parse-int id)})))
@@ -34,7 +41,7 @@
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (if (empty? to) [1] (map util/parse-int to))
+          :to (if (empty? to) (raw "{1}") (int-array (map util/parse-int to)))
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
@@ -44,14 +51,14 @@
 
 (defn get
   ([id]
-    (first (select listings
+    (add-shipping
+     (first (select listings
                    (with currency (fields :hedge_fee))
-                   (with ships-to (fields :region_id))
-      (where {:id (util/parse-int id)}))))
+      (where {:id (util/parse-int id)})))))
   ([id user-id]
-    (first (select listings
-                   (with ships-to (fields :region_id))
-      (where {:id (util/parse-int id) :user_id user-id})))))
+   (add-shipping
+     (first (select listings
+        (where {:id (util/parse-int id) :user_id user-id}))))))
 
 (defn search [query]
   (convert (select listings
@@ -72,10 +79,9 @@
 (defn view [id]
    (update listings
     (set-fields {:views (raw "views + 1")}) (where {:id (util/parse-int id)}))
-  (first (convert
+   (first (convert
    (select listings
-    (fields [:id :lid] :bookmarks :user_id :image_id :from :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
-    (with ships-to (fields :region_id))
+    (fields [:id :lid] :bookmarks :user_id :image_id :from :to :reviews :hedged :quantity :title :price [:category.name :category_name] :category_id :currency_id :description [:user.alias :user_alias])
     (with users
           (fields [:id])
           (with postage))
@@ -97,16 +103,16 @@
         (delete listings
           (where {:id (util/parse-int id) :user_id user-id}))))))
 
-(defn store! [{:keys [category_id public quantity] :as listing} user-id]
+(defn store! [{:keys [category_id public to quantity] :as listing} user-id]
   (let [category-id (util/parse-int (:category_id listing))
         listing (prep listing)
-        listing-values (dissoc (assoc listing :user_id user-id) :to)]
+        listing-values (assoc listing :user_id user-id)]
     (util/update-session user-id)
     (let [l (transaction
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
       (insert listings (values listing-values)))]
-      (insert ships-to (values (map #(hash :user_id user-id :region_id % :listing_id (:id l)) (:to listing)))))))
+      (insert ships-to (values (map #(hash :user_id user-id :region_id (util/parse-int %) :listing_id (:id l)) (map util/parse-int to)))))))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]
@@ -114,14 +120,16 @@
       (store! listing user-id)
       (conj {:errors check} listing))))
 
-(defn update! [listing id user-id]
+(defn update! [{:keys [to] :as listing} id user-id]
   (let [id (util/parse-int id)
         check (v/listing-validator listing)]
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)
-              ships (map #(hash-map :user_id user-id :region_id % :listing_id id) (:to listing))
-              listing (dissoc listing :to)]
+              ships (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id id) to)]
+          (println (sql-only (update listings
+                (set-fields listing)
+                (where {:id id :user_id user-id}))))
           (transaction
               (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
                 (do
@@ -163,8 +171,7 @@
   (->
    (select* listings)
    (with users)
-   (fields :title :user.alias :user_id :user.login :image_id :from :price :id :currency_id :category_id)
-   (with ships-to (fields :region_id))
+   (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
@@ -186,8 +193,7 @@
   ([user-id page per-page]
    (convert
     (select listings
-            (fields  :title :from :price :id :currency_id :image_id :category_id)
-            (with ships-to (fields :region_id))
+            (fields  :title :from :to :price :id :currency_id :image_id :category_id)
             (with category (fields [:name :category_name]))
             (with currency (fields [:name :currency_name] [:key :currency_key]))
             (where (and
@@ -200,14 +206,14 @@
 
 (defn all
   ([id page per-page]
-   (select listings
-           (with ships-to (fields :region_id))
+   (map add-shipping
+        (select listings
            (with category (fields [:name :category_name]))
            (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
            (where {:user_id id})
            (offset (* (- page 1) per-page))
            (limit per-page)
-           (order :title :asc)))
+           (order :title :asc))))
   ([page per-page]
    (select listings
            (with users (fields :alias)) ;;for the grams market api

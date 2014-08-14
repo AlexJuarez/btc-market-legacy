@@ -2,7 +2,6 @@
 {% block content %}
 <h1 class="jumbo">{% if edit %}Listing Edit{% else %}Listing Create{% endif %} {% if success %}- {% endif %}<span class="success">{{success}}</span></h1>
 <hr>
-    {{listing}}
 <form enctype="multipart/form-data" method="post">
   {% csrf-token %}
   <div class="image">
@@ -109,7 +108,7 @@
   <div class="form-group">
     <label for="ships_to">Ships to:</label>
     <select id="ships_to" name="to[]" size="10" multiple>
-      {% shipping-selectors regions ships_to %}
+      {% shipping-selectors regions to %}
     </select>
   </div>
   <div class="form-group">

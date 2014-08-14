@@ -67,7 +67,7 @@
         <br />
         <span class="ships-from">ships from: {{listing.from|region}}</span>
         <br />
-        <span class="ships-to">ships to: {% if listing.to = 1 %}Worldwide{% else %}{{listing.ships_to|regions}}{% endif %}</span>
+        <span class="ships-to">ships to: {{listing.to|regions}}</span>
         <br />
         <span class="category">Category: <a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
       </p>

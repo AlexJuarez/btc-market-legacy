@@ -54,7 +54,7 @@
         (recur (rest cats) curr (conj output (assoc c :name (string/join " > " (map first curr)))))))))
 
 (defn listing-edit [id]
-  (let [listing (listing/get id)
+  (let [listing (listing/get id (user-id))
         success (session/flash-get :success)]
     (layout/render "listings/create.html" (merge {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success success :id id
@@ -67,7 +67,6 @@
     (layout/render "listings/create.html" (merge (set-info) listing
                                                  {:regions (region/all) :min-price (util/convert-currency 1 0.01)
                                                   :edit true :success "updated" :id id
-                                                  :ships_to (listing/shipping id)
                                                   :images (image/get (user-id))
                                                   :categories (create-categories (category/all))
                                                   :currencies (currency/all)}))))

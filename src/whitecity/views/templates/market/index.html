@@ -54,7 +54,7 @@
         <ul>
           <li>seller: <a href="/user/{{listing.user_id}}">{{listing.alias}}</a></li>
           <li>ships from: {{listing.from|region}}</li>
-          <li>ships to: {% if listing.to = 1 %}Worldwide{% else %}{{listing.ships_to|regions}}{% endif %}</li>
+          <li>ships to: {{listing.to|regions}}</li>
         </ul>
       </div>
       {% endfor %}

@@ -81,4 +81,4 @@
 (add-filter! :region region)
 
 (add-filter! :regions (fn [regions]
-                        (s/join ", " (map #(region (:region_id %)) regions))))
+                        (s/join ", " (map #(region %) regions))))
