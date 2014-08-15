@@ -45,16 +45,18 @@
 
 ;;TODO 26 is usd find a better way to set up this var
 (defn prep [{:keys [title description from to public price hedged currency_id] :as listing}]
+  (let [to (map util/parse-int to)
+        to (if (some #{1} to) [1] to)]
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (if (empty? to) nil (vec->array (sort (distinct (map util/parse-int to)))))
+          :to (if (empty? to) nil (vec->array (sort (distinct to))))
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
           :converted_price (util/convert-price (util/parse-int currency_id) 26 (util/parse-float price))
           :updated_on (raw "now()")}
-         (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id])))
+         (mapcat #(check-field listing %) [:quantity :image_id :currency_id :category_id]))))
 
 (defn get
   ([id]
@@ -134,25 +136,25 @@
       (if (empty? check)
         (let [{category_id_old :category_id public_old :public quantity_old :quantity} (first (select listings (fields :category_id :public :quantity) (where {:id (util/parse-int id) :user_id user-id})))
               {:keys [category_id public quantity] :as listing} (prep listing)
-              ships (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id id) to)]
-          (transaction
-              (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
-                (do
-                  (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
-                  (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id_old})))
-                (if (or (and public (> quantity 0) (not public_old))
-                        (and public (> quantity 0) (<= quantity_old 0)))
-                  (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
-                  (if (or (and (not public) public_old (> quantity_old 0))
-                          (and (<= quantity 0) public_old (> quantity_old 0)))
-                    (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
-              (delete ships-to (where {:listing_id id}))
-              (insert ships-to (values ships))
-              (update listings
-                (set-fields listing)
-                (where {:id id :user_id user-id})))
-          ))
-      (conj {:errors check} listing)))
+              ships (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id id) (if (some #{"1"} to) [1] to))]
+          (add-shipping
+           (transaction
+            (if (and (not (= category_id category_id_old)) public_old public (> quantity 0) (> quantity_old 0))
+              (do
+                (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
+                (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id_old})))
+              (if (or (and public (> quantity 0) (not public_old))
+                      (and public (> quantity 0) (<= quantity_old 0)))
+                (update category (set-fields {:count (raw "count + 1")}) (where {:id category_id}))
+                (if (or (and (not public) public_old (> quantity_old 0))
+                        (and (<= quantity 0) public_old (> quantity_old 0)))
+                  (update category (set-fields {:count (raw "count - 1")}) (where {:id category_id})))))
+            (delete ships-to (where {:listing_id id}))
+            (insert ships-to (values ships))
+            (update listings
+                    (set-fields listing)
+                    (where {:id id :user_id user-id})))))
+          (conj {:errors check} listing))))
 
 (defn- sortby [query page per-page {:keys [sort_by ships_to ships_from]}]
   (let [query (-> query

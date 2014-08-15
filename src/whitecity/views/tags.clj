@@ -19,22 +19,23 @@
 
 (add-tag! :shipping-selectors
           (fn [args context-map]
-
             (let [args (computed-args args context-map)
                   select (map util/parse-int (second args))
-                  recent (sort (map #(:region_id %) (last args)))
-                  common [13 40 243 258]
+                  recent (remove #{1} (sort (map #(:region_id %) (last args))))
+                  common (remove (into #{} recent) [13 40 243 258])
                   regions (apply merge (map #(hash-map (:id %) (:name %)) (first args))) ;;remove undelared
                   regions-remaining (sort (keys (apply dissoc regions (concat [1] common recent))))
                   ]
               (str
                (html [:option (merge {:value 1} (if (some #{1} select) {:selected "selected"})) "Worldwide"])
-               (html [:optgroup {:label "Recent"}
-                      (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) recent)
-                      ])
-               (html [:optgroup {:label "Common Countries"}
-               (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) common)
-               ])
+               (when (not (empty? recent))
+                 (html [:optgroup {:label "Recent"}
+                        (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) recent)
+                        ]))
+               (when (not (empty? common))
+                 (html [:optgroup {:label "Common Countries"}
+                        (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) common)
+                        ]))
               (html [:optgroup {:label "All Countries"}
                (map #(vector :option (merge {:value %} (if (some #{%} select) {:selected "selected"})) (regions %)) regions-remaining)
                ])
