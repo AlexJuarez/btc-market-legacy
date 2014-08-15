@@ -15,6 +15,7 @@
    [whitecity.models.report :as report]
    [whitecity.models.review :as review]
    [whitecity.models.fan :as follower]
+   [whitecity.models.post :as post]
    [noir.response :as resp]
    [noir.session :as session]
    [whitecity.util :as util]))
@@ -72,6 +73,7 @@
     (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/user/" id)}
                                                   :listings-all (listing/public-for-user id page user-listings-per-page)
                                                   :description description
+                                                  :posts (post/all id)
                                                   :feedback-rating (int (* (/ (:rating user) 5) 100))
                                                   :review (review/for-seller id)
                                                   :reported (report/reported? id (user-id) "user")

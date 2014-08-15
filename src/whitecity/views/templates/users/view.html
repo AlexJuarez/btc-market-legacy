@@ -7,6 +7,11 @@
 <a href="/messages/{{id}}">send a message</a>
 <br />
 <br />
+<div>
+  {% for post in posts %}
+    {{post.content|safe}}
+  {% endfor %}
+</div>
 <div class="well sm">
   has been a member since: <strong>{{created_on|date:shortDate}}</strong>
   <br />
@@ -42,7 +47,6 @@
       <pre id="pgp-key">{{pub_key}}</pre>
       <p><a href="/user/{{id}}/key">Download Key</a> as ASC file</p>
     </div>
-
   {% endif %}
 {% endif %}
 {% if not listings-all|empty? %}

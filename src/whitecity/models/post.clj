@@ -12,7 +12,8 @@
 
 (defn all [user-id]
   (select posts
-          (where {:user_id user-id})))
+          (where {:user_id user-id})
+          (limit 5)))
 
 (defn get-news [user-id]
   (select fans
