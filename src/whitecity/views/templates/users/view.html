@@ -5,13 +5,21 @@
 {% else %}
 <h1 class="jumbo">{{alias}}</h1>
 <a href="/messages/{{id}}">send a message</a>
-<br />
-<br />
-<div>
-  {% for post in posts %}
-    {{post.content|safe}}
-  {% endfor %}
+{% if not posts|empty? %}
+<div class="user-posts">
+  <div class="title">{{alias}} updates</div>
+  <ul>
+    {% for post in posts %}
+    <li>
+      <div class="date">{{post.created_on|freshness}}</div>
+      {{post.content|safe}}
+    </li>
+    {% endfor %}
+  </ul>
 </div>
+{% endif %}
+<br />
+<br />
 <div class="well sm">
   has been a member since: <strong>{{created_on|date:shortDate}}</strong>
   <br />

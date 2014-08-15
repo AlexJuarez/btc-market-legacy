@@ -12,17 +12,20 @@
 
 (defn all [user-id]
   (select posts
-          (where {:user_id user-id})
-          (limit 5)))
+          (where {:user_id user-id})))
+
+(defn get-updates [user-id]
+  (select posts
+          (where {:user_id user-id :public true :published true})))
 
 (defn get-news [user-id]
   (select fans
-          (fields :leader_id :post.id :post.subject :post.created_on)
+          (fields :leader_id :post.id :post.public :post.subject :post.created_on)
           (with users
                 (fields :alias))
           (join posts (= :post.user_id :leader_id))
           (order :post.created_on :asc)
-          (where {:user_id user-id :post.published true})
+          (where {:user_id user-id :post.public false :post.published true})
           (limit per-page)))
 
 (defn get [id]

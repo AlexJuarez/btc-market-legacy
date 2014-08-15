@@ -73,7 +73,7 @@
     (layout/render "users/view.html" (merge user {:page {:page page :max pagemax :url (str "/user/" id)}
                                                   :listings-all (listing/public-for-user id page user-listings-per-page)
                                                   :description description
-                                                  :posts (post/all id)
+                                                  :posts (post/get-updates id)
                                                   :feedback-rating (int (* (/ (:rating user) 5) 100))
                                                   :review (review/for-seller id)
                                                   :reported (report/reported? id (user-id) "user")

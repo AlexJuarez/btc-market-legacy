@@ -318,6 +318,7 @@
           (tbl :post
                (text :content)
                (varchar :subject 100)
+               (boolean :newsletter (default true))
                (boolean :published (default false))
                (boolean :public (default true))
                (refer-to :user))))
