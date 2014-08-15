@@ -214,14 +214,17 @@
         (select listings
            (with category (fields [:name :category_name]))
            (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
-           (where {:user_id id})
+           (where {:user_id id :public true})
            (offset (* (- page 1) per-page))
            (limit per-page)
            (order :title :asc))))
   ([page per-page]
-   (select listings
-           (with users (fields :alias)) ;;for the grams market api
-           (with ships-to (fields :region_id))
+   (map
+    add-shipping
+    (select listings
+           (fields [:id :hash] [:title :name] [:updated_on :item_update_time] :description :price :currency_id :from :to :image_id :category_id :rating :sold)
+           (with users (fields :id [:created_on :item_create_time] [:rating :vendor_rating] [:transactions :vendor_tran_count] [:pub_key :vendor_pgp] [:pub_key_id :vendor_fingerprint] [:alias :vendor_name])) ;;for the grams market api
            (limit per-page)
            (offset (* (- page 1) per-page))
-           (order :created_on :asc))))
+           (where {:public true})
+           (order :updated_on :asc)))))

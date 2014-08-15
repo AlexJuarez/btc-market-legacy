@@ -22,12 +22,11 @@
 
 
 (defn load-fixtures []
-  (if (empty? (cat/all false))
-    (do
+  (when (empty? (cat/all false))
     (load-regions)
     (load-currencies)
     (e/update-from-remote)
-    (cat/load-fixture))))
+    (cat/load-fixture)))
 
 (defn actualized?
     "checks if there are no pending migrations"

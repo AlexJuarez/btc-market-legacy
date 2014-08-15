@@ -101,7 +101,9 @@
   (resp/json (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list))))
 
 (defn api-listings [params sign]
-  )
+  (let [page (or (:start params) 1)
+        per-page (or (:count params) 500)]
+   (resp/json (listing/all page per-page))))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)

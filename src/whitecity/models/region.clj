@@ -1,10 +1,10 @@
 (ns whitecity.models.region
   (:refer-clojure :exclude [get])
   (:require
-    [korma.db :refer [defdb]] 
-    [korma.core :refer [select where insert values]]
+    [korma.db :refer [defdb]]
+    [korma.core :refer [select where insert values delete]]
     [whitecity.cache :as cache])
-  (:use 
+  (:use
     [whitecity.db :only [region]]))
 
 (defn get [id]

@@ -62,8 +62,11 @@
 
   (cache/init) ;;sets up the noir local caching options
 
-  (if-not (schema/actualized?)
-    (do (schema/actualize) (schema/load-fixtures)))
+  (when-not (schema/actualized?)
+    (schema/actualize)
+    (schema/load-fixtures))
+
+
 
   (timbre/info "whitecity started successfully"))
 
