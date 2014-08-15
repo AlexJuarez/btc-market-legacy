@@ -27,7 +27,7 @@
    [http-kit "2.1.16"]
    [metis "0.3.3"];;validator
    [com.mchange/c3p0 "0.9.5-pre8"]
-   [korma "0.3.0-beta11"];;dbl
+   [korma "0.3.0-beta11" :exclusions [c3p0/c3p0]];;dbl
    [lobos "1.0.0-beta1"]
    [org.bouncycastle/bcpg-jdk15on "1.50"]
    [log4j
