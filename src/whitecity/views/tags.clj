@@ -22,8 +22,8 @@
 
             (let [args (computed-args args context-map)
                   select (map util/parse-int (second args))
-                  recent (map #(:region_id %) (last args))
-                  common [13 243 40 258]
+                  recent (sort (map #(:region_id %) (last args)))
+                  common [13 40 243 258]
                   regions (apply merge (map #(hash-map (:id %) (:name %)) (first args))) ;;remove undelared
                   regions-remaining (sort (keys (apply dissoc regions (concat [1] common recent))))
                   ]

@@ -48,7 +48,7 @@
   (merge {:title title
           :description (hc/escape-html description)
           :from (util/parse-int from)
-          :to (if (empty? to) nil (vec->array (distinct (map util/parse-int to))))
+          :to (if (empty? to) nil (vec->array (sort (distinct (map util/parse-int to)))))
           :public (= public "true")
           :hedged (= hedged "true")
           :price (util/parse-float price)
@@ -119,7 +119,8 @@
       (update users (set-fields {:listings (raw "listings + 1")}) (where {:id user-id}))
       (if (and (= "true" public) (> (util/parse-int quantity) 0)) (update category (set-fields {:count (raw "count + 1")}) (where {:id category-id})))
       (insert listings (values listing-values)))]
-      (insert ships-to (values (map #(hash :user_id user-id :region_id (util/parse-int %) :listing_id (:id l)) (map util/parse-int to)))))))
+      (insert ships-to (values (map #(hash-map :user_id user-id :region_id (util/parse-int %) :listing_id (:id l)) (map util/parse-int to))))
+      l)))
 
 (defn add! [listing user-id]
   (let [check (v/listing-validator listing)]

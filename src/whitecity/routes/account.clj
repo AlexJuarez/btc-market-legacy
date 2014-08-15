@@ -132,7 +132,7 @@
   ([slug]
    (let [post (post/add! slug (user-id))]
      (if (empty? (:errors post))
-       (resp/redirect ("/vendor/news/" (:id post) "/edit"))
+       (resp/redirect (str "/vendor/news/" (:id post) "/edit"))
        (layout/render "news/create.html" (merge (set-info) post))))))
 
 (defn news-publish [id]
