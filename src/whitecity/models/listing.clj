@@ -97,10 +97,15 @@
     (with category)
     (where {:id (util/parse-int id)})))))
 
-(defn count [id]
-  (:cnt (first (select listings
-    (aggregate (count :*) :cnt)
-    (where {:user_id id})))))
+(defn count
+  ([id]
+   (:cnt (first (select listings
+                        (aggregate (count :*) :cnt)
+                        (where {:user_id id})))))
+  ([]
+   (:cnt (first (select listings
+                        (aggregate (count :*) :cnt)
+                        (where {:public true :quantity [> 0]}))))))
 
 (defn remove! [id user-id]
   (if-let [{:keys [public quantity] :as listing} (get id user-id)]
@@ -216,7 +221,7 @@
         (select listings
            (with category (fields [:name :category_name]))
            (with currency (fields [:name :currency_name] [:symbol :currency_symbol] [:key :currency_key]))
-           (where {:user_id id :public true})
+           (where {:user_id id})
            (offset (* (- page 1) per-page))
            (limit per-page)
            (order :title :asc))))
@@ -224,9 +229,10 @@
    (map
     add-shipping
     (select listings
-           (fields [:id :hash] [:title :name] [:updated_on :item_update_time] :description :price :currency_id :from :to :image_id :category_id :rating :sold)
-           (with users (fields :id [:created_on :item_create_time] [:rating :vendor_rating] [:transactions :vendor_tran_count] [:pub_key :vendor_pgp] [:pub_key_id :vendor_fingerprint] [:alias :vendor_name])) ;;for the grams market api
+           (fields [:id :hash] [:title :name] [:created_on :item_create_time] [:updated_on :item_update_time] :description :price :currency_id :from :to :image_id :category_id :rating [:sold :item_tran_count])
+           (with users (fields :id [:rating :vendor_rating] [:transactions :vendor_tran_count] [:pub_key :vendor_pgp] [:pub_key_id :vendor_fingerprint] [:alias :vendor_name])) ;;for the grams market api
+           (with category (fields [:name :category]))
            (limit per-page)
            (offset (* (- page 1) per-page))
-           (where {:public true})
+           (where {:public true :quantity [> 0]})
            (order :updated_on :asc)))))

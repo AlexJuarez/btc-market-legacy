@@ -14,11 +14,14 @@
    [whitecity.models.resolution :as resolution]
    [whitecity.models.report :as report]
    [whitecity.models.review :as review]
+   [whitecity.models.region :as regions]
    [whitecity.models.fan :as follower]
    [whitecity.models.post :as post]
+   [whitecity.cache :as cache]
    [noir.response :as resp]
    [noir.session :as session]
-   [whitecity.util :as util]))
+   [whitecity.util :as util]
+   [whitecity.util.image :as image]))
 
 (def per-page 10)
 
@@ -100,10 +103,39 @@
 (defn api-vendors [api_key]
   (resp/json (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list))))
 
+(defn format-listing [listing regions]
+  (dissoc
+   (assoc listing
+     :item_link (str "http://grandmpdsznzevvs.onion/listing/" (:id listing))
+     :ship_from (regions (:from listing))
+     :image_encstr (image/image-data (:image_id listing) "_max")
+     :item_rating (int (* 100 (/ (:rating listing) 5)))
+     :vendor_link (str "/user/" (:id listing))
+     :vendor_rating (int (* 100 (/ (:vendor_rating listing) 5)))
+     :ship_to (map #(regions %) (:to listing))
+     :item_create_time (.getTime (:item_create_time listing))
+     :item_update_time (.getTime (:item_update_time listing))
+     :price (util/convert-price (:currency_id listing) 1 (:price listing))
+     )
+   :to
+   :from
+   :id
+   :category_id
+   :currency_id
+   )
+  )
+
+(defn format-for-grams [listings]
+  (let [regions (cache/cache! "regions_map" (into {} (map #(vector (:id %) (:name %)) (regions/all))))]
+    (map #(format-listing % regions) listings)))
+
 (defn api-listings [params sign]
   (let [page (or (:start params) 1)
         per-page (or (:count params) 500)]
-   (resp/json (listing/all page per-page))))
+   (resp/json {:items (format-for-grams (listing/all page per-page))
+               :start page
+               :pagecount per-page
+               :totalcount (listing/count)})))
 
 (defn listing-view [id page]
   (let [listing (listing/view id)
