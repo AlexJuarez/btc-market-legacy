@@ -39,7 +39,7 @@
 
 (defn prep-listing [{:keys [price lid] :as listing} postages]
   (let [quantity (or (cart-get lid :quantity) 0)
-        postage (or (postages lid) 0)
+        postage (or (postages (cart-get lid :postage)) 0)
         subtotal (* price quantity)
         total (+ subtotal postage)]
     (conj listing {:subtotal subtotal :total total})))
