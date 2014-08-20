@@ -34,12 +34,6 @@
   [id key]
   (session/get-in [:cart id key]))
 
-(defn postage-get-price
-  [id postages]
-  (if (nil? id)
-    0
-    (:price (first (filter #(= id (:id %)) postages)))))
-
 (defn prep-postages [postages]
   (apply merge (map #(hash-map (:id %) (:price %)) postages)))
 
