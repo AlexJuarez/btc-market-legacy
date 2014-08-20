@@ -2,7 +2,7 @@
 {% block content %}
 <h1 class="jumbo">Shopping Cart</h1>
 <a href="/cart/empty">empty cart</a>
-{% if listings %}
+{% if not listings|empty? %}
 <form class="my-cart" method="post">
 {% csrf-token %}
 <table class="table">

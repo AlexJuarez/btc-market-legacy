@@ -20,19 +20,19 @@
   (let [cart (or (session/get :cart) {})
         id (util/parse-int id)]
     (when (< (count cart) cart-limit) ;;limit the size of the cart... aka they should only be able to have like 100 items
-      (session/put! :cart (assoc cart id {:quantity (if-let [item (cart id)] (inc (:quantity item)) 1)
-                                                           :postage (if-let [item (cart id)] (:postage item))})))
-  (resp/redirect "/cart")))
+      (session/update-in! [:cart id :quantity] (fnil inc 0)))
+    (resp/redirect "/cart")))
 
 (defn cart-remove
   [id]
-  (let [cart (session/get :cart)]
-    (session/put! :cart (dissoc cart (util/parse-int id))))
+  (let [cart (session/get :cart)
+        id (util/parse-int id)]
+    (session/put! :cart (dissoc cart id)))
   (resp/redirect "/cart"))
 
 (defn cart-get
   [id key]
-   (key ((session/get :cart) id)))
+  (session/get-in [:cart id key]))
 
 (defn postage-get-price
   [id postages]
@@ -40,15 +40,27 @@
     0
     (:price (first (filter #(= id (:id %)) postages)))))
 
+(defn prep-postages [postages]
+  (apply merge (map #(hash-map (:id %) (:price %)) postages)))
+
+(defn prep-listing [{:keys [price lid] :as listing} postages]
+  (let [quantity (or (cart-get lid :quantity) 0)
+        postage (or (postages lid) 0)
+        subtotal (* price quantity)
+        total (+ subtotal postage)]
+    (conj listing {:subtotal subtotal :total total})))
+
+(defn prep-listings [listings]
+  (let [postages (apply merge (map #(prep-postages (:postage %)) listings))]
+    (map #(prep-listing % postages) listings)))
+
 (defn cart-empty []
   (session/put! :cart {})
   (resp/redirect "/cart"))
 
 (defn cart-view []
   (let [ls (listing/get-in (keys (session/get :cart)))
-        listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
-                             total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
-                         (conj % {:subtotal subtotal :total total})) ls))
+        listings (prep-listings ls)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
     (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} (set-info)))))
@@ -56,15 +68,14 @@
 (defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
   (session/put! :cart
                 (let [cart (reduce merge
-                  (map #(hash-map (key %) (merge (val %) {:quantity (util/parse-int (quantity (str (key %))))
-                                                          :postage (util/parse-int (postage (str (key %))))}))
-                          (session/get :cart)))] (select-keys cart (for [[k v] cart :when (> (:quantity v) 0)] k))))
+                                   (map #(hash-map (key %) {:quantity (or (util/parse-int (quantity (str (key %)))) 0)
+                                                            :postage (util/parse-int (postage (str (key %))))})
+                                        (session/get :cart)))]
+                  (select-keys cart (for [[k v] cart :when (> (:quantity v) 0)] k))))
   (if (= "Update Cart" submit)
     (cart-view)
     (let [ls (listing/get-in (keys (session/get :cart)))
-          listings (if-not (empty? ls) (map #(let [subtotal (* (:price %) (cart-get (:lid %) :quantity))
-                               total (+ subtotal (postage-get-price (cart-get (:lid %) :postage) (:postage %)))]
-                           (conj % {:subtotal subtotal :total total})) ls))
+          listings (prep-listings ls)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]
