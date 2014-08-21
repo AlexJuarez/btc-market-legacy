@@ -42,12 +42,14 @@
 (defn messages-download [receiver-id]
   (let [user_id (user-id)
         my-name (:alias (util/current-user))
+        messages (message/all (user-id) receiver-id)
+        sender_name (:user_alias (first messages))
         messages (string/join "\n" (map #(str "\"" (if (= (:sender_id %) user_id) my-name (:user_alias %)) "\",\""
                                               (:created_on %) "\",\""
-                                              (string/replace (:content %) #"[\"]" "\"\"") "\"") (message/all (user-id) receiver-id)))]
+                                              (string/replace (:content %) #"[\"]" "\"\"") "\"") messages))]
     (-> (response messages)
         (content-type "text/plain")
-        (r/header "Content-Disposition" (str "attachment;filename=converstion.csv")))))
+        (r/header "Content-Disposition" (str "attachment;filename=" (util/format-time (java.util.Date. ) "MM-dd-yyyy") "-" sender_name "-conversation.csv")))))
 
 (defn messages-thread
   ([receiver-id]

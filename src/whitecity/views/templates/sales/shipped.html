@@ -2,6 +2,7 @@
 {% block section %}
 {% if not sales|empty? %}
 <h1>Sales in Transit</h1>
+<a href="/vendor/sales/shipped/download?page={{page}}" class="right">download</a>
 <table class="table normal">
   <thead>
     <tr>
@@ -17,7 +18,7 @@
   <tfoot>
   <tr>
     <td colspan="7">
-      {{page|pagination}}
+      {{page-info|pagination}}
     </td>
   </tr>
   </tfoot>

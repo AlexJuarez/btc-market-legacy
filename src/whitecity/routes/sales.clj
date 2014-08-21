@@ -5,14 +5,16 @@
     [noir.util.route :only (wrap-restricted)]
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
+            [ring.util.response :as r :refer [content-type response]]
             [whitecity.models.order :as order]
             [whitecity.util.hashids :as hashids]
             [whitecity.models.order :as order]
             [whitecity.models.resolution :as resolution]
             [noir.response :as resp]
+            [clojure.string :as string]
             [whitecity.util :as util]))
 
-(def sales-per-page 50)
+(def sales-per-page 100)
 
 (defn get-sales [k]
   ((util/session! :sales (order/count-sales (user-id))) k))
@@ -35,7 +37,7 @@
         state ([:new :ship :resolution :finalize] status)
         pagemax (util/page-max (get-sales state) sales-per-page)
         sales (-> (order/sold status (user-id) page sales-per-page) encrypt-ids calculate-amount arbitration)]
-     (layout/render template (merge {:sales sales :page {:page page :max pagemax :url url}} (set-info)))))
+     (layout/render template (merge {:sales sales :page page :page-info {:page page :max pagemax :url url}} (set-info)))))
 
 (defn estimate-refund [resolutions {:keys [total]}]
   (map #(if (= (:action %) "refund")
@@ -89,13 +91,31 @@
        (do (order/update-sales sales (user-id) 1) (resp/redirect "/vendor/sales"))
        (do (order/reject-sales sales (user-id)) (resp/redirect "/vendor/sales"))))))
 
+(defn sales-download [status page]
+  (let [page (or (util/parse-int page) 1)
+        state ([:new :ship :resolution :finalize] status)
+        pagemax (util/page-max (get-sales state) sales-per-page)
+        sales (-> (order/sold status (user-id) page sales-per-page) encrypt-ids calculate-amount arbitration)
+        saleview (string/join "\n" (map #(str "\"" (:id %) "\",\"" (string/replace (:title %) #"[\"]" "\"\"") "\",\""
+                                              (string/replace (:postage_title %) #"[\"]" "\"\"") "\",\""
+                                              (:quantity %) "\",\""
+                                              (:alias %) "\",\""
+                                              (:amount %) "\",\""
+                                              (:fee %) "\",\""
+                                              (string/replace (:address %) #"[\"]" "\"\"") "\"") sales))]
+    (-> (response saleview)
+        (content-type "text/plain")
+        (r/header "Content-Disposition" (str "attachment;filename=" (util/format-time (java.util.Date. ) "MM-dd-yyyy") "-sales-" (name state) "-" page ".csv")))))
+
 (defroutes sales-routes
   (wrap-restricted
    (context
     "/vendor/sales" []
     (GET "/" {{page :page} :params} (sales-overview page))
     (GET "/new" {{page :page} :params} (sales-new page))
+    (GET "/new/download" {{page :page} :params} (sales-download 0 page))
     (GET "/shipped" {{page :page} :params} (sales-shipped page))
+    (GET "/shipped/download" {{page :page} :params} (sales-download 1 page))
     (GET "/resolutions" {{page :page} :params} (sales-disputed page))
     (GET "/past" {{page :page} :params} (sales-finailized page))
     (POST "/new" {params :params} (sales-page params))

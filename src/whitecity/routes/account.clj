@@ -53,7 +53,6 @@
      (change-pin slug)
      (withdrawal slug))))
 
-
 (defn wallet-new []
   (user/update-btc-address! (user-id))
   (resp/redirect "/account/wallet"))
