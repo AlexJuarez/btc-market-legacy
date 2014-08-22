@@ -164,7 +164,6 @@
                 (refer-to :listing)
                 (refer-to :postage)
                 (refer-to :user)
-                (boolean :finalized)
                 (smallint :status))))
   (down [] (drop (table :order))))
 
@@ -340,3 +339,19 @@
                (refer-to :user)
                (refer-to :region))))
   (down [] (drop (table :ships_to))))
+
+(defmigration add-finalized-to-orders-table
+  (up [] (alter :add
+                (table :order
+                       (boolean :finalized (default false)))))
+  (down [] (alter :drop
+                  (table :order
+                         (boolean :finalized)))))
+
+(defmigration add-verified-to-users-table
+  (up [] (alter :add
+                (table :user
+                       (boolean :verified (default false)))))
+  (down [] (alter :drop
+                  (table :user
+                         (boolean :verified)))))
