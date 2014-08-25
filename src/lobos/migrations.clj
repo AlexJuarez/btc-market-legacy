@@ -164,6 +164,7 @@
                 (refer-to :listing)
                 (refer-to :postage)
                 (refer-to :user)
+                (boolean :finalized)
                 (smallint :status))))
   (down [] (drop (table :order))))
 
