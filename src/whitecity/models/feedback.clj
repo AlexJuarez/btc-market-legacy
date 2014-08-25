@@ -1,5 +1,5 @@
 (ns whitecity.models.feedback
-  (:refer-clojure :exclude [count])
+  (:refer-clojure :exclude [count get])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [whitecity.db])
@@ -11,6 +11,10 @@
           (with users
                 (fields :alias))
           (where {:read false})))
+
+(defn get [id]
+  (first (select feedback
+                 (where {:id (util/parse-int id)}))))
 
 (defn prep [{:keys [subject content]} user-id]
   {:subject subject

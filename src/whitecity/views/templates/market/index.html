@@ -52,7 +52,7 @@
         </div>
         <h1><a href="/listing/{{listing.id}}">{{listing.title}}</a></h1>
         <ul>
-          <li>seller: <a href="/user/{{listing.user_id}}">{{listing.alias}}</a></li>
+          <li>seller: <a href="/user/{{listing.user_id}}">{{listing.alias}} ({{listing.rating|rating}})</a></li>
           <li>ships from: {{listing.from|region}}</li>
           <li>ships to: {{listing.to|regions}}</li>
         </ul>

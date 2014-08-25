@@ -10,6 +10,9 @@
 (add-filter! :empty? (fn [x]
                        (if (string? x) (s/blank? x) (empty? x))))
 
+(add-filter! :rating (fn [x]
+                       (int (* (/ x 5.0) 100))))
+
 (add-filter! :count-cart
              (fn [x]
                (:quantity ((session/get :cart) x))))

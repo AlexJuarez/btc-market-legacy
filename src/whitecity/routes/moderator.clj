@@ -32,6 +32,12 @@
   (let [res (moderate/add! slug)]
     ))
 
+(defn support-view [id]
+  (let [id (hashids/decrypt-ticket-id id)
+        ticket (feedback/get id)]
+    (layout/render "moderate/support.html" (merge {:ticket ticket} (set-info)))
+    ))
+
 (defn moderator-view [id]
   (let [id (hashids/decrypt id)
         order (-> (order/moderate-order id) encrypt-id convert-order-price)
@@ -50,4 +56,5 @@
 (def-restricted-routes moderator-routes
   (GET "/moderate" [page] (moderator-page page))
   (GET "/moderate/:id" [id] (moderator-view id))
+  (GET "/moderate/support/:id" [id] (support-view id))
   (POST "/moderate/:id" {params :params} (moderator-add-resolution params)))

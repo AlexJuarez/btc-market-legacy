@@ -182,7 +182,7 @@
   (->
    (select* listings)
    (with users)
-   (fields :title :user.alias :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
+   (fields :title :user.alias :user.rating :user_id :user.login :image_id :from :to :price :id :currency_id :category_id)
    (with currency (fields [:name :currency_name] [:key :currency_key]))))
 
 (defn public
