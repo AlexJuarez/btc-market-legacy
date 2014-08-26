@@ -78,7 +78,10 @@
       {% else %}
         {% if order.status = 2 %}<a href="/order/{{order.id}}">resolution page</a>{% else %}
           {% if order.status = 0 %}
+            {% if not order.finalized %}
             <a href="/order/{{order.id}}/cancel">cancel</a>
+            | <a href="/order/{{order.id}}/finalize">finalize</a>
+            {% endif %}
           {% else %}
             {% if order.resolve %}
             <a href="/order/{{order.id}}/resolve">resolve</a> {% else %} <em>resolve</em> {% endif %} | <a href="/order/{{order.id}}/finalize">finalize<a>

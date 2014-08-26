@@ -78,7 +78,7 @@
 (defn get-in [cart]
   (if-not (nil? cart)
   (convert (select listings
-    (fields [:id :lid] :hedged :quantity :title :price :category_id :currency_id :description :user.login :user.alias :user.pub_key)
+    (fields [:id :lid] :hedged :quantity :title :price :category_id :currency_id :description :user.login :user.alias :user.pub_key :user_id [:user.rating :user_rating])
           (with users
             (with postage)
           (fields :id :login :alias :pub_key))

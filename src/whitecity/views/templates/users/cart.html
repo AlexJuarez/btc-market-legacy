@@ -22,7 +22,7 @@
   <tbody>
   {% for listing in listings %}
   <tr>
-    <td>{{listing.alias}}</td>
+    <td><a href="/user/{{listing.user_id}}">{{listing.alias}} ({{listing.user_rating|rating}})</a></td>
     <td>{{listing.title}}</td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
     <td><input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>

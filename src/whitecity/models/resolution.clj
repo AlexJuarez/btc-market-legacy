@@ -11,6 +11,8 @@
 (defn all
   ([order-id]
    (select resolutions
+           (with sellers
+                (fields [:alias :seller_alias]))
            (where {:order_id (util/parse-int order-id)})
            (order :created_on :ASC)))
   ([order-id user-id]
@@ -19,13 +21,6 @@
                  (fields :alias))
            (where {:order_id (util/parse-int order-id) :user_id user-id})
            (order :created_on :ASC))))
-
-(defn all [order-id]
-  (select resolutions
-          (with sellers
-                (fields [:alias :seller_alias]))
-          (where {:order_id (util/parse-int order-id)})
-          (order :created_on :ASC)))
 
 (defn all-sales [order-id seller-id]
   (select resolutions
@@ -60,8 +55,8 @@
         (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
         (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
         (insert order-audit (values {:status 5 :order_id order_id :user_id user_id}))
-        (update orders (set-fields {:status 5 :updated_on (raw "now()")})
-                (where {:user_id user_id :id order_id}))))))
+        (update orders (set-fields {:status 5 :finalized true :updated_on (raw "now()")})
+                (where {:user_id user_id :finalized false :id order_id}))))))
 
 (defn accept [id user-id]
   (let [id (util/parse-int id)

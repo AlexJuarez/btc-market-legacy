@@ -110,7 +110,7 @@
         (insert order-audit (values {:user_id user_id :status 4 :order_id id}))
         (if (and (:public listing) (<= (- (:quantity listing) quantity) 0))
           (update category (set-fields {:count (raw "count + 1")}) (where {:id (:category_id listing)})))
-        (update orders (set-fields {:status 4 :reviewed true}) (where {:id id}))))))
+        (update orders (set-fields {:status 4 :reviewed true}) (where {:id id :finalized false}))))))
   ([id user-id]
    (let [order (first (select orders (where {:id id :status 0})))]
      (if (or (= (:seller_id order) user-id)
@@ -175,7 +175,7 @@
 (defn finalize [id user-id]
   (util/update-session user-id :orders :sales)
   (let [id (util/parse-int id)
-        {:keys [hedge_fee seller_id listing_id hedged]} (update orders (set-fields {:status 3 :updated_on (raw "now()")}) (where {:id id :user_id user-id :status [not= 3]}))
+        {:keys [hedge_fee seller_id listing_id hedged]} (update orders (set-fields {:finalized true :updated_on (raw "now()")}) (where {:id id :finalized false :user_id user-id}))
         {amount :amount currency_id :currency_id} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id id :from user-id :status "hold"}))
         amount (util/convert-price currency_id 1 amount)
         percent (if hedged hedge_fee (env :fee))
@@ -210,7 +210,7 @@
 (defn moderate [page per-page]
   (select orders
           (with escrow (fields :btc_amount))
-          (where {:status 2 :auto_finalize [< (raw "now()")]})
+          (where {:status 2 :finalized false :auto_finalize [< (raw "now()")]})
           (offset (* (- page 1) per-page))
           (limit per-page)))
 
@@ -231,7 +231,7 @@
 ;;so that catagories and things are updated as the sales are rejected.
 (defn reject-sales [sales seller-id]
   (let [o (select orders
-                  (where {:seller_id seller-id :status 0 :id [in sales]}))]
+                  (where {:seller_id seller-id :finalized false :status 0 :id [in sales]}))]
     (dorun (map #(cancel! %) o))))
 
 (defn count [id]
