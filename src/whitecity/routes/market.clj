@@ -80,7 +80,7 @@
                                                   :feedback-rating (int (* (/ (:rating user) 5) 100))
                                                   :review (review/for-seller id)
                                                   :reported (report/reported? id (user-id) "user")
-                                                  :followed (follower/followed? id (user-id))} (set-info) ))))
+                                                  :followed (follower/followed? id (user-id))} (set-info)))))
 
 (defn search-page [query]
   (if (and (>= (count query) 3) (<= (count query) 100))
@@ -90,15 +90,14 @@
           categories (category/search q)
           message (if (and (empty? users) (empty? listings) (empty? categories)) "Nothing was found for your query. Please try again.")]
       (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query :message message} (set-info))))
-    (layout/render "market/search.html" (conj {:message "Your query is too short it needs to be longers than three characters and less than 100."} (set-info)))
-    ))
+    (layout/render "market/search.html" (conj {:message "Your query is too short it needs to be longers than three characters and less than 100."} (set-info)))))
 
 (defn support-page
   ([]
    (layout/render "support.html" (set-info)))
   ([slug]
    (let [post (feedback/add! slug (user-id))])
-   (layout/render "support.html" (conj {:message "Your request for support has been recieved."} (set-info)) )))
+   (layout/render "support.html" (conj {:message "Your request for support has been recieved."} (set-info)))))
 
 (defn api-vendors [api_key]
   (resp/json (map #(assoc % :uri (str "/user/" (:alias %))) (user/vendor-list))))
@@ -121,9 +120,7 @@
    :from
    :id
    :category_id
-   :currency_id
-   )
-  )
+   :currency_id))
 
 (defn format-for-grams [listings]
   (let [regions (cache/cache! "regions_map" (into {} (map #(vector (:id %) (:name %)) (regions/all))))]

@@ -101,3 +101,6 @@
 
 (v/defvalidator modresolution-validator
   [:percent [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
+
+(v/defvalidator cart-item-validator
+  [:quantity [:numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 9999}]])

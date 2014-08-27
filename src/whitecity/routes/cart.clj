@@ -9,6 +9,7 @@
             [whitecity.models.currency :as currency]
             [whitecity.models.order :as orders]
             [noir.response :as resp]
+            [whitecity.validator :as v]
             [noir.session :as session]
             [whitecity.util :as util]))
 
@@ -52,36 +53,51 @@
   (session/put! :cart {})
   (resp/redirect "/cart"))
 
-(defn cart-view []
-  (let [ls (listing/get-in (keys (session/get :cart)))
+(defn cart-update [{:keys [quantity postage]}]
+  (let [quantities (reduce-kv #(assoc % (util/parse-int %2) {:quantity (util/parse-int %3)}) {} quantity)
+        postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (util/parse-int %3)}) {} postage)
+        new-cart (merge-with merge quantities postages)
+        errors (reduce-kv #(let [e (v/cart-item-validator %3)] (when-not (empty? e) (assoc % %2 e))) {} new-cart)]
+    (if (empty? errors)
+      (let [cart (merge-with merge (session/get :cart) new-cart)]
+        (println cart)
+        ;;(println (apply dissoc (keep #(-> % val :quantity (not= 0)) cart)))
+        (session/put! :cart cart))
+      {:errors errors :cart new-cart})))
+
+(defn cart-view [& slug]
+  (let [updates (when-not (empty? slug) (cart-update (first slug)))
+        ls (listing/get-in (keys (session/get :cart)))
         listings (prep-listings ls)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
-    (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} (set-info)))))
+    (layout/render "users/cart.html" (merge {:errors {}
+                                             :convert (not (= (:currency_id (util/current-user)) 1))
+                                             :total total
+                                             :btc-total btc-total
+                                             :listings listings} updates (set-info)))))
 
-(defn cart-update [{:keys [quantity postage address pin submit] :as slug}]
-  (session/put! :cart
-                (let [cart (reduce merge
-                                   (map #(hash-map (key %) {:quantity (or (util/parse-int (quantity (str (key %)))) 0)
-                                                            :postage (util/parse-int (postage (str (key %))))})
-                                        (session/get :cart)))]
-                  (select-keys cart (for [[k v] cart :when (> (:quantity v) 0)] k))))
+(defn cart-submit [{:keys [quantity postage address pin submit] :as slug}]
   (if (= "Update Cart" submit)
-    (cart-view)
-    (let [ls (listing/get-in (keys (session/get :cart)))
+    (cart-view slug)
+    (let [updates (cart-update slug)
+          ls (listing/get-in (keys (session/get :cart)))
           listings (prep-listings ls)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/orders")
-        (layout/render "users/cart.html" (merge {:errors {} :convert (not (= (:currency_id (util/current-user)) 1)) :total total :btc-total btc-total :listings listings} order (set-info)))))))
+        (layout/render "users/cart.html" (merge {:errors {}
+                                                 :convert (not (= (:currency_id (util/current-user)) 1))
+                                                 :total total :btc-total btc-total
+                                                 :listings listings} order updates (set-info)))))))
 
 (defroutes cart-routes
   (context
    "/cart" []
    (GET "/" [] (cart-view))
-   (POST "/" {params :params} (restricted (cart-update params)))
+   (POST "/" {params :params} (restricted (cart-submit params)))
    (GET "/empty" [] (cart-empty))
    (GET "/add/:id" [id] (cart-add id))
    (GET "/:id/remove" [id] (cart-remove id))))
