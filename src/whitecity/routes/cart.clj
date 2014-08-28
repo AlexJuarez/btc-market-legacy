@@ -60,8 +60,6 @@
         errors (reduce-kv #(let [e (v/cart-item-validator %3)] (when-not (empty? e) (assoc % %2 e))) {} new-cart)]
     (if (empty? errors)
       (let [cart (merge-with merge (session/get :cart) new-cart)]
-        (println cart)
-        ;;(println (apply dissoc (keep #(-> % val :quantity (not= 0)) cart)))
         (session/put! :cart cart))
       {:errors errors :cart new-cart})))
 
@@ -69,13 +67,15 @@
   (let [updates (when-not (empty? slug) (cart-update (first slug)))
         ls (listing/get-in (keys (session/get :cart)))
         listings (prep-listings ls)
+        listings (reduce-kv #(assoc %) {} listings)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
+    (println listings)
     (layout/render "users/cart.html" (merge {:errors {}
                                              :convert (not (= (:currency_id (util/current-user)) 1))
                                              :total total
                                              :btc-total btc-total
-                                             :listings listings} updates (set-info)))))
+                                             :listings listings} (set-info)))))
 
 (defn cart-submit [{:keys [quantity postage address pin submit] :as slug}]
   (if (= "Update Cart" submit)
