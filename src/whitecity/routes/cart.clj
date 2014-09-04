@@ -38,16 +38,18 @@
 (defn prep-postages [postages]
   (apply merge (map #(hash-map (:id %) (:price %)) postages)))
 
-(defn prep-listing [{:keys [price lid] :as listing} postages]
+(defn prep-listing [{:keys [price lid] :as listing} postages updates]
   (let [quantity (or (cart-get lid :quantity) 0)
         postage (or (postages (cart-get lid :postage)) 0)
         subtotal (* price quantity)
-        total (+ subtotal postage)]
-    (conj listing {:subtotal subtotal :total total})))
+        total (+ subtotal postage)
+        errors (or (get (:errors updates) lid) {})
+        new (or (get (:cart updates) lid) {})]
+    (assoc listing :subtotal subtotal :total total :errors errors :new new)))
 
-(defn prep-listings [listings]
+(defn prep-listings [listings updates]
   (let [postages (apply merge (map #(prep-postages (:postage %)) listings))]
-    (map #(prep-listing % postages) listings)))
+    (map #(prep-listing % postages updates) listings)))
 
 (defn cart-empty []
   (session/put! :cart {})
@@ -66,8 +68,7 @@
 (defn cart-view [& slug]
   (let [updates (when-not (empty? slug) (cart-update (first slug)))
         ls (listing/get-in (keys (session/get :cart)))
-        listings (prep-listings ls)
-        listings (map #(assoc % :errors (get (:errors updates) (:lid %)) :new (get (:cart updates) (:lid))) listings)
+        listings (prep-listings ls updates)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
     (layout/render "users/cart.html" (merge {:errors {}
@@ -81,7 +82,7 @@
     (cart-view slug)
     (let [updates (cart-update slug)
           ls (listing/get-in (keys (session/get :cart)))
-          listings (prep-listings ls)
+          listings (prep-listings ls updates)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]

@@ -25,7 +25,12 @@
     <td><a href="/user/{{listing.user_id}}">{{listing.alias}} ({{listing.user_rating|rating}})</a></td>
     <td>{{listing.title}}</td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
-    <td><input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" /><em>max: {{listing.quantity}}</em></td>
+    <td>
+      {{listing.new}}
+      <input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" />
+      <em>max: {{listing.quantity}}</em>
+      {% if listing.errors %}<strong class="error">{{listing.errors.quantity|join:", "}}</strong>{% endif %}
+    </td>
     <td>{{user.currency_symbol|safe}}{{listing.subtotal|double-format:5}}</td>
     <td>
       <select name="postage[{{listing.lid}}]">
