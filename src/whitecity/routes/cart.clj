@@ -67,11 +67,9 @@
   (let [updates (when-not (empty? slug) (cart-update (first slug)))
         ls (listing/get-in (keys (session/get :cart)))
         listings (prep-listings ls)
-        listings (map #(merge % (get (:errors updates) (:id %))) listings)
+        listings (map #(assoc % :errors (get (:errors updates) (:lid %)) :new (get (:cart updates) (:lid))) listings)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
-    (println listings)
-    (println (:errors updates))
     (layout/render "users/cart.html" (merge {:errors {}
                                              :convert (not (= (:currency_id (util/current-user)) 1))
                                              :total total
