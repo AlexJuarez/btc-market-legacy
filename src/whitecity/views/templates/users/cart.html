@@ -26,10 +26,9 @@
     <td>{{listing.title}}</td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
     <td>
-      {{listing.new}}
-      <input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" />
+      <input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{% if listing.new.quantity %}{{listing.new.quantity}}{% else %}{{listing.lid|count-cart}}{% endif %}" />
       <em>max: {{listing.quantity}}</em>
-      {% if listing.errors %}<strong class="error">{{listing.errors.quantity|join:", "}}</strong>{% endif %}
+      {% if listing.errors.quantity %}<strong class="error">{{listing.errors.quantity|join:", "}}</strong>{% endif %}
     </td>
     <td>{{user.currency_symbol|safe}}{{listing.subtotal|double-format:5}}</td>
     <td>
@@ -54,7 +53,7 @@
   <h1>Total: &#3647;{{btc-total|double-format:5}} {% if convert %} ~({{user.currency_symbol|safe}}{{total|double-format:5}}) {% endif %} {% if errors.total %}- <span class="error">{{errors.total|join:", "}}</span>{% endif %}</h1>
   <p>
     <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address|join:", "}}</span> {% endif %}</label>
-    <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea> 
+    <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea>
   </p>
   <label for="pin">Pin: </label>
     <input class="text-input" type="password" name="pin" id="pin" />

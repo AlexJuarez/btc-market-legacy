@@ -34,10 +34,18 @@
     "the btc address is not valid"))
 
 (defn check-amount [map key _]
-  (if-not (empty? (get key map))
-    (when-not (>= (:btc (first (sql/select users (sql/fields :btc) (sql/where {:id (util/user-id)}))))
-                  (get key map))
+  (when-not (and (empty? (get key map))
+                 (>= (:btc (first (sql/select users (sql/fields :btc) (sql/where {:id (util/user-id)}))))
+                     (get key map))
       "user does not have the required funds")))
+
+(defn check-max [map key _]
+  (if-let [amount (get map key)]
+
+    (when-not (and (nil? (get map :max)) (integer? amount) (< amount (get map :max)))
+      "the quantity exceeds the max"
+      )
+    ))
 
 (defn in-range [map key options]
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))
@@ -103,4 +111,4 @@
   [:percent [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
 
 (v/defvalidator cart-item-validator
-  [:quantity [:numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 9999}]])
+  [:quantity [:numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 9999} :check-max]])

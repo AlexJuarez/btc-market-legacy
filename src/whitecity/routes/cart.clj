@@ -55,9 +55,10 @@
   (session/put! :cart {})
   (resp/redirect "/cart"))
 
-(defn cart-update [{:keys [quantity postage]}]
-  (let [quantities (reduce-kv #(assoc % (util/parse-int %2) {:quantity (util/parse-int %3)}) {} quantity)
-        postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (util/parse-int %3)}) {} postage)
+(defn cart-update [{:keys [quantity postage]} listings]
+  (let [maxes (reduce merge (map #(hash-map (:lid %) (:quantity %)) listings))
+        quantities (reduce-kv #(assoc % (util/parse-int %2) {:max (maxes %2) :quantity (or (util/parse-int %3) %3)}) {} quantity)
+        postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (or (util/parse-int %3) %3)}) {} postage)
         new-cart (merge-with merge quantities postages)
         errors (reduce-kv #(let [e (v/cart-item-validator %3)] (when-not (empty? e) (assoc % %2 e))) {} new-cart)]
     (if (empty? errors)
@@ -66,8 +67,8 @@
       {:errors errors :cart new-cart})))
 
 (defn cart-view [& slug]
-  (let [updates (when-not (empty? slug) (cart-update (first slug)))
-        ls (listing/get-in (keys (session/get :cart)))
+  (let [ls (listing/get-in (keys (session/get :cart)))
+        updates (when-not (empty? slug) (cart-update (first slug) ls))
         listings (prep-listings ls updates)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
@@ -80,8 +81,8 @@
 (defn cart-submit [{:keys [quantity postage address pin submit] :as slug}]
   (if (= "Update Cart" submit)
     (cart-view slug)
-    (let [updates (cart-update slug)
-          ls (listing/get-in (keys (session/get :cart)))
+    (let [ls (listing/get-in (keys (session/get :cart)))
+          updates (cart-update slug ls)
           listings (prep-listings ls updates)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
