@@ -41,11 +41,8 @@
 
 (defn check-max [map key _]
   (if-let [amount (get map key)]
-
-    (when-not (and (nil? (get map :max)) (integer? amount) (< amount (get map :max)))
-      "the quantity exceeds the max"
-      )
-    ))
+    (when (and (not (nil? (get map :max))) (integer? amount) (> amount (get map :max)))
+      "the quantity exceeds the max")))
 
 (defn in-range [map key options]
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))

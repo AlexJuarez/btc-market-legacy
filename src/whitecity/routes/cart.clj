@@ -57,18 +57,21 @@
 
 (defn cart-update [{:keys [quantity postage]} listings]
   (let [maxes (reduce merge (map #(hash-map (:lid %) (:quantity %)) listings))
-        quantities (reduce-kv #(assoc % (util/parse-int %2) {:max (maxes %2) :quantity (or (util/parse-int %3) %3)}) {} quantity)
+        quantities (reduce-kv #(assoc % (util/parse-int %2) {:max (maxes (util/parse-int %2)) :quantity (or (util/parse-int %3) %3)}) {} quantity)
         postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (or (util/parse-int %3) %3)}) {} postage)
         new-cart (merge-with merge quantities postages)
         errors (reduce-kv #(let [e (v/cart-item-validator %3)] (when-not (empty? e) (assoc % %2 e))) {} new-cart)]
     (if (empty? errors)
-      (let [cart (merge-with merge (session/get :cart) new-cart)]
-        (session/put! :cart cart))
+      (let [cart  (merge-with merge (session/get :cart) new-cart)]
+        (println (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))
+        (session/put! :cart (apply dissoc cart (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))))
       {:errors errors :cart new-cart})))
 
 (defn cart-view [& slug]
   (let [ls (listing/get-in (keys (session/get :cart)))
         updates (when-not (empty? slug) (cart-update (first slug) ls))
+        cart (session/get :cart)
+        ls (keep #(if (not (nil? (get cart (:lid %)))) %) ls)
         listings (prep-listings ls updates)
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
@@ -83,6 +86,8 @@
     (cart-view slug)
     (let [ls (listing/get-in (keys (session/get :cart)))
           updates (cart-update slug ls)
+          cart (session/get :cart)
+          ls (keep #(if (not (nil? (get cart (:lid %)))) %) ls)
           listings (prep-listings ls updates)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
