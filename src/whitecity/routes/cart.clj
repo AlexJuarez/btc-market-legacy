@@ -67,12 +67,16 @@
         (session/put! :cart (apply dissoc cart (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))))
       {:errors errors :cart new-cart})))
 
-(defn cart-view [& slug]
+(defn get-listings [slug]
   (let [ls (listing/get-in (keys (session/get :cart)))
         updates (when-not (empty? slug) (cart-update (first slug) ls))
         cart (session/get :cart)
         ls (keep #(if (not (nil? (get cart (:lid %)))) %) ls)
-        listings (prep-listings ls updates)
+        listings (prep-listings ls updates)]
+    {:listings listings :errors (:errors updates)}))
+
+(defn cart-view [& slug]
+  (let [listings (:listings (get-listings slug))
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
     (layout/render "users/cart.html" (merge {:errors {}
@@ -84,20 +88,18 @@
 (defn cart-submit [{:keys [quantity postage address pin submit] :as slug}]
   (if (= "Update Cart" submit)
     (cart-view slug)
-    (let [ls (listing/get-in (keys (session/get :cart)))
-          updates (cart-update slug ls)
-          cart (session/get :cart)
-          ls (keep #(if (not (nil? (get cart (:lid %)))) %) ls)
-          listings (prep-listings ls updates)
+    (let [listings (get-listings slug)
+          errors (:errors listings)
+          listings (:listings listings)
           total (reduce + (map #(:total %) listings))
           btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]
-      (if (empty? (:errors order))
+      (if (and (empty? (:errors order)) (empty? errors))
         (resp/redirect "/orders")
         (layout/render "users/cart.html" (merge {:errors {}
                                                  :convert (not (= (:currency_id (util/current-user)) 1))
                                                  :total total :btc-total btc-total
-                                                 :listings listings} order updates (set-info)))))))
+                                                 :listings listings} order (set-info)))))))
 
 (defroutes cart-routes
   (context
