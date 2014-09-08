@@ -64,7 +64,7 @@
     (if (empty? errors)
       (let [cart  (merge-with merge (session/get :cart) new-cart)]
         (println (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))
-        (session/put! :cart (apply dissoc cart (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))))
+        (session/put! :cart (apply dissoc cart (keep #(if (>= 0 (:quantity (val %))) (key %)) cart))))
       {:errors errors :cart new-cart})))
 
 (defn get-listings [slug]
