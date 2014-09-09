@@ -55,6 +55,14 @@
   (session/put! :cart {})
   (resp/redirect "/cart"))
 
+(defn cart-update [{:keys [quantity postage]}]
+  (let [quantities (reduce-kv #(assoc % (util/parse-int %2) {:max (maxes (util/parse-int %2)) :quantity (or (util/parse-int %3) %3)}) {} quantity)
+        postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (or (util/parse-int %3) %3)}) {} postage)
+        cart-changes (merge-with merge quantities postages)]
+    (let [cart  (apply dissoc (merge-with merge (session/get :cart) new-cart) (keep #(if (>= 0 (:quantity (val %))) (key %)) cart))]
+      (session/put! :cart cart)
+      cart)))
+
 (defn cart-update [{:keys [quantity postage]} listings]
   (let [maxes (reduce merge (map #(hash-map (:lid %) (:quantity %)) listings))
         quantities (reduce-kv #(assoc % (util/parse-int %2) {:max (maxes (util/parse-int %2)) :quantity (or (util/parse-int %3) %3)}) {} quantity)
@@ -63,7 +71,6 @@
         errors (reduce-kv #(let [e (v/cart-item-validator %3)] (when-not (empty? e) (assoc % %2 e))) {} new-cart)]
     (if (empty? errors)
       (let [cart  (merge-with merge (session/get :cart) new-cart)]
-        (println (keep #(if (or (not (nil? (:quantity (val %)))) (> 0 (:quantity (val %)))) (key %)) cart))
         (session/put! :cart (apply dissoc cart (keep #(if (>= 0 (:quantity (val %))) (key %)) cart))))
       {:errors errors :cart new-cart})))
 
