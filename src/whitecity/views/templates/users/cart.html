@@ -26,7 +26,7 @@
     <td>{{listing.title}}</td>
     <td>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</td>
     <td>
-      <input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{% if listing.new.quantity %}{{listing.new.quantity}}{% else %}{{listing.lid|count-cart}}{% endif %}" />
+      <input class="quantity-input" type="text" name="quantity[{{listing.lid}}]" value="{{listing.lid|count-cart}}" />
       <em>max: {{listing.quantity}}</em>
       {% if listing.errors.quantity %}<strong class="error">{{listing.errors.quantity|join:", "}}</strong>{% endif %}
     </td>
