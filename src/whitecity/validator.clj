@@ -41,7 +41,7 @@
 
 (defn check-max [map key _]
   (if-let [amount (get map key)]
-    (when (and (not (nil? (get map :max))) (integer? amount) (> amount (get map :max)))
+    (when (and (integer? (get map :max)) (integer? amount) (> amount (get map :max)))
       "the quantity exceeds the max")))
 
 (defn in-range [map key options]
@@ -109,3 +109,7 @@
 
 (v/defvalidator cart-item-validator
   [:quantity [:numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 9999} :check-max]])
+
+(v/defvalidator cart-order-validator
+  [:quantity [:presence :numericality {:greater-than-or-equal-to 1 :less-than-or-equal-to 9999} :check-max]]
+  [:postage [:presence]])

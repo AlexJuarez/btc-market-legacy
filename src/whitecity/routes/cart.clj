@@ -39,7 +39,7 @@
   (apply merge (map #(hash-map (:id %) (:price %)) postages)))
 
 (defn prep-listing [{:keys [price lid] :as listing} postages error-hash]
-  (let [quantity (or (cart-get lid :quantity) 0)
+  (let [quantity (or (util/parse-int (cart-get lid :quantity)) 0)
         postage (or (postages (cart-get lid :postage)) 0)
         subtotal (* price quantity)
         total (+ subtotal postage)
@@ -60,7 +60,7 @@
         postages (reduce-kv #(assoc % (util/parse-int %2) {:postage (or (util/parse-int %3) %3)}) {} postage)
         cart-changes (merge-with merge quantities postages)]
     (let [cart (merge-with merge (session/get :cart) cart-changes)
-          cart (apply dissoc cart (keep #(if (>= 0 (:quantity (val %))) (key %)) cart))]
+          cart (apply dissoc cart (keep #(if-let [quantity (util/parse-int (:quantity (val %)))] (when (>= 0 quantity) (key %))) cart))]
       (session/put! :cart cart)
       cart)))
 

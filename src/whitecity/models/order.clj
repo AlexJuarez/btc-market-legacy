@@ -62,9 +62,9 @@
         listing (listings/get id)
         errors (merge
                 (let [error (reduce merge [(when-not (< 0 quantity) ["Quantity must be greater than 0"])
-                             (when-not (<= quantity (:quantity listing)) ["You can not order more than the max"])])]
+                                           (when-not (<= quantity (:quantity listing)) ["You can not order more than the max"])])]
                   (when-not (empty? error)
-                   {:quantity error}))
+                    {:quantity error}))
                 (let [error (reduce merge (when (nil? (postage/get post (:user_id listing))) ["You need to select a valid postage option"]))]
                   (when-not (empty? error)
                     {:postage error})))]
