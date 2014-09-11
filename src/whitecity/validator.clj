@@ -44,6 +44,12 @@
     (when (and (integer? (get map :max)) (integer? amount) (> amount (get map :max)))
       "the quantity exceeds the max")))
 
+(defn validate-postage [map key _]
+  (let [postage (util/parse-int (get map key))
+        user_id (get map :user_id)]
+      (when (or (not (integer? postage)))
+          "You need to select a valid postage option")))
+
 (defn in-range [map key options]
   (when-not (and (>= (count (get map key)) (:start options)) (<= (count (get map key)) (:end options)))
     (str "This needs to between " (:start options) " and " (:end options))))
@@ -112,4 +118,4 @@
 
 (v/defvalidator cart-order-validator
   [:quantity [:presence :numericality {:greater-than-or-equal-to 1 :less-than-or-equal-to 9999} :check-max]]
-  [:postage [:presence]])
+  [:postage [:presence :validate-postage]])
