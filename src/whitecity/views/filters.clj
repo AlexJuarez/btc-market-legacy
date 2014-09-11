@@ -26,7 +26,7 @@
                (let [diff (/ (Math/abs (- (.getTime x) (.getTime (java.util.Date.)))) 1000)
                      day (* 24 60 60)
                      days (/ diff day)
-                     months (/ diff (* days 30))]
+                     months (/ diff (* day 30))]
                  (cond
                   (< diff day) "today"
                   (< diff (* 30 day)) (if (= (int days) 1) "yesterday" (str (int days) " days ago"))
