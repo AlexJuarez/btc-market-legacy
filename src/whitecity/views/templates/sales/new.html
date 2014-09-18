@@ -47,6 +47,50 @@
     </tbody>
   </table>
 </form>
+<h1>Finalized sales</h1>
+<form action="/vendor/sales/new" method="POST">
+  {% csrf-token %}
+  <input type="submit" name="submit" value="accept" />
+  <table class="table normal sales">
+    <thead>
+      <tr>
+        <th></th>
+        <th>order #</th>
+        <th>item</th>
+        <th>postage type</th>
+        <th>quantity</th>
+        <th>buyer</th>
+        <th>amount</th>
+        <th>fee</th>
+        <th>finalized</th>
+        <th>address</th>
+      </tr>
+    </thead>
+    <tfoot>
+    <tr>
+      <td colspan="7">
+        {{page-info|pagination}}
+      </td>
+    </tr>
+    </tfoot>
+    <tbody>
+    {% for order in finalized %}
+    <tr>
+      <td><input type="checkbox" name="check[{{order.id}}]" /></td>
+      <td><a href="/vendor/sale/{{order.id}}">{{order.id}}</a></td>
+      <td><a href="/listing/{{order.listing_id}}">{{order.title}}</a></td>
+      <td>{{order.postage_title}}</td>
+      <td>{{order.quantity}}</td>
+      <td><a href="/user/{{order.user_id}}">{{order.alias}}</a></td>
+      <td>{{user.currency_symbol|safe}}{{order.amount|double-format:5}}</td>
+      <td>{{user.currency_symbol|safe}}{{order.fee|double-format:5}}</td>
+      <td>{{order.finalized}}
+      <td><em>{{order.address}}</em></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</form>
 {% else %}
   <p class="well">You don't have any pending sales.</p>
 {% endif %}

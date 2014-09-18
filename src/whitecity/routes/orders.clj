@@ -18,7 +18,7 @@
                              res (and (not (nil? autofinalize)) (> 432000000 (- (.getTime autofinalize) (.getTime (java.util.Date.)))))
                              arbitration (and (= (:status %) 2) (<= (.getTime autofinalize) (.getTime (java.util.Date.))))];;TODO: review resolution stuff
                            (assoc % :resolve res :arbitration arbitration :id (hashids/encrypt (:id %)))) orders)
-          pending-review (filter #(= (:status %) 3) orders)
+          pending-review (filter #(:finalized %) orders)
           orders (filter #(< (:status %) 3) orders)]
        (layout/render "orders/index.html" (merge {:errors {} :orders orders :pending-review pending-review :user-id (user-id)} (set-info)))))
   ([{:keys [rating shipped content] :as slug}]

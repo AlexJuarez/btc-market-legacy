@@ -46,7 +46,13 @@
 
 (defn sales-new
   [page]
-  (sales "sales/new.html" "/vendor/sales/new" 0 page))
+  (let [page (or (util/parse-int page) 1)
+        state ([:new :ship :resolution :finalize] 0)
+        pagemax (util/page-max (get-sales state) sales-per-page)
+        sales (-> (order/sold 0 (user-id) page sales-per-page) encrypt-ids calculate-amount arbitration)
+        finalized (filter #(:finalized %) sales)
+        sales (filter #(not (:finalized %)) sales)]
+     (layout/render "sales/new.html" (merge {:sales sales :finalized finalized :page page :page-info {:page page :max pagemax :url "/vendor/sales/new"}} (set-info)))))
 
 (defn sales-shipped
   [page]

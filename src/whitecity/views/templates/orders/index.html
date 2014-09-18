@@ -6,6 +6,7 @@
   {% csrf-token %}
   <table class="table">
     <thead>
+        <th>order #</th>
       <th>item</th>
       <th>seller</th>
       <th>rating</th>
@@ -15,7 +16,8 @@
     <tbody>
       {% for order in pending-review %}
       <tr>
-        <td><a href="/order/{{order.id}}">{{order.title}}</a></td>
+        <td><a href="/order/{{order.id}}">{{order.id}}</a></td>
+        <td><a href="/listing/{{order.listing_id}}">{{order.title}}</a></td>
         <td><a href="/user/{{order.seller_id}}">{{order.alias}}</a></td>
         <td>
           <label><input type="radio" name="rating[{{order.id}}]" value="1" /> 1</label>
