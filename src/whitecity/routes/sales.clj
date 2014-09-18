@@ -6,7 +6,6 @@
     [whitecity.helpers.route])
   (:require [whitecity.views.layout :as layout]
             [ring.util.response :as r :refer [content-type response]]
-            [whitecity.models.order :as order]
             [whitecity.util.hashids :as hashids]
             [whitecity.models.order :as order]
             [whitecity.models.resolution :as resolution]

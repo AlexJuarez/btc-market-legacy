@@ -37,23 +37,23 @@
                 (or (< :status 3) (not :reviewed))))
     (order :created_on :desc)))
 
+(defn sold* [seller-id page per-page]
+   (-> (select* orders)
+       (with users (fields :login :alias))
+       (with postage (fields [:title :postage_title]))
+       (where {:seller_id seller-id})
+       (order :created_on :desc)
+       (offset (* (- page 1) per-page))
+       (limit per-page)))
+
 (defn sold
   ([id page per-page]
-   (select orders
-           (with users (fields :login :alias))
-           (with postage (fields [:title :postage_title]))
-           (where {:seller_id id})
-           (offset (* (- page 1) per-page))
-           (limit per-page)
-           (order :created_on :desc)))
- ([status id page per-page]
-  (select orders
-          (with users (fields :login :alias))
-          (with postage (fields [:title :postage_title]))
-          (where {:seller_id id :status status})
-          (offset (* (- page 1) per-page))
-          (limit per-page)
-          (order :created_on :desc))))
+   (-> (sold* id page per-page)
+       select))
+  ([status id page per-page]
+   (-> (sold* id page per-page)
+       (where {:status status})
+       select)))
 
 (defn check-item [item]
   (let [id (key item)
@@ -160,7 +160,10 @@
     (transaction
      (update orders
              (set-fields statuses)
-             (where {:seller_id seller-id :id [in sales]}))
+             (where {:seller_id seller-id :finalized false :id [in sales]}))
+     (update orders
+             (set-fields {:status 3})
+             (where {:seller_id seller-id :finalized true :id [in sales]}))
      (insert order-audit
              (values audits)))))
 

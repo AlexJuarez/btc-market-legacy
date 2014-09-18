@@ -18,6 +18,7 @@
         <th>buyer</th>
         <th>amount</th>
         <th>fee</th>
+        <th>finalized</th>
         <th>address</th>
       </tr>
     </thead>
@@ -39,6 +40,7 @@
       <td><a href="/user/{{order.user_id}}">{{order.alias}}</a></td>
       <td>{{user.currency_symbol|safe}}{{order.amount|double-format:5}}</td>
       <td>{{user.currency_symbol|safe}}{{order.fee|double-format:5}}</td>
+      <td>{{order.finalized}}
       <td><em>{{order.address}}</em></td>
     </tr>
     {% endfor %}
