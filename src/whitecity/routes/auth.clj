@@ -14,6 +14,10 @@
             "get" "man" "new" "now" "old" "two" "boy" "put" "her" "dad" "zoo"
             "tan" "saw" "mad" "jet" "far" "cat" "map" "key" "dog" "god" "bat"])
 
+(defn redirect-url []
+  (let [url (or (session/get :redirect) "/")]
+    url))
+
 (defn registration-page
   ([params]
    (layout/render "register.html" (merge {:captcha (util/gen-captcha)} (set-info))))
@@ -29,7 +33,8 @@
                                             :login login :pass pass :confirm confirm} (set-info) )))))
 ;;if you change the session name change it here too
 (defn login-page
-  ([]
+  ([referer]
+    (when (not (empty? referer)) (session/put! :redirect referer))
     (layout/render "login.html" (merge {:success (session/flash-get :success)} (set-info))))
   ([login pass cookies]
     (let [user (users/login! {:login login :pass pass :session (:value (cookies "session"))})]
@@ -42,7 +47,7 @@
             (session/put! :user user)
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))
-            (if (session/get :authed) (resp/redirect "/") (resp/redirect "/login/auth"))))
+            (if (session/get :authed) (resp/redirect (redirect-url)) (resp/redirect "/login/auth"))))
         (layout/render "login.html" (merge (set-info) user))))))
 
 (defn auth-page
@@ -61,7 +66,7 @@
 (defroutes auth-routes
   (context
    "/login" []
-   (GET "/"          [] (login-page))
+   (GET "/"          {{referer "referer"} :headers} (login-page referer))
    (POST "/"         {{login :login pass :pass} :params cookies :cookies} (login-page login pass cookies))
    (GET "/auth"      [] (auth-page))
    (POST "/auth"     {params :params} (auth-page params)))

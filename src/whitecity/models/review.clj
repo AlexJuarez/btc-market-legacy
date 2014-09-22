@@ -72,6 +72,6 @@
 
 (defn add! [data user-id order-ids]
   (let [os (select orders (where {:id [in order-ids] :user_id user-id :reviewed false}))
-        order-info (apply merge (map #(assoc {} (:id %) %) os))
+        order-info (apply merge (map #(hash-map (:id %) %) os))
         prepped (map #(prep % user-id order-info) data)]
   (dorun (pmap store! prepped))))
