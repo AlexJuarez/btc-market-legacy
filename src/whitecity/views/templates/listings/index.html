@@ -1,6 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<h1 class="jumbo">my listings - <a href="/user/{{user.alias}}"/>link</a></h1>
+<h1 class="jumbo">my listings</h1>
 <nav class="nav p">
     {% if not postages|empty? %} <a href="/vendor/listings/create">Create a new listing</a> {% else %} <em title="you need to create postage first">Create a new listing</em> {% endif %} - <a href="/vendor/postage/create">add postage</a> - <a href="/vendor/images">manage images</a>
 </nav>
@@ -56,7 +56,7 @@
           {{listing.created_on|date:shortDate}}
         </span>
         <span class="public">
-          this listing is 
+          this listing is
           {% if listing.public %}
           public
           {% else %}

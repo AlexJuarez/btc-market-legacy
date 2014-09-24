@@ -25,12 +25,19 @@
    (if (= (:text (session/flash-get :captcha)) captcha)
      (let [user (users/add! {:login login :pass pass :confirm confirm})]
        (if (nil? (:errors user))
-         (do
-           (session/flash-put! :success {:success "User has been created"})
-           (resp/redirect "/"))
+         (let [{:keys [id vendor auth pub_key]} user]
+          (do
+            (when vendor (session/put! :sales (order/count-sales id)))
+            (session/put! :authed (not (and auth (not (nil? pub_key)))))
+            (session/put! :user_id id)
+            (session/put! :user user)
+            (session/put! :orders (order/count id))
+            (session/put! :messages (message/count id))
+            (resp/redirect "/")))
          (layout/render "register.html" (merge (set-info) user {:login login :captcha (util/gen-captcha)}))))
      (layout/render "register.html" (merge {:captcha (util/gen-captcha) :errors {:captcha ["The captcha was entered incorrectly"]}
                                             :login login :pass pass :confirm confirm} (set-info) )))))
+
 ;;if you change the session name change it here too
 (defn login-page
   ([referer]

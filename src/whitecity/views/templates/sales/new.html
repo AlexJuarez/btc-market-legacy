@@ -47,6 +47,8 @@
     </tbody>
   </table>
 </form>
+{% endif %}
+{% if not finalized|empty? %}
 <h1>Finalized sales</h1>
 <form action="/vendor/sales/new" method="POST">
   {% csrf-token %}
@@ -91,7 +93,10 @@
     </tbody>
   </table>
 </form>
-{% else %}
+{% endif %}
+{% if finalized|empty? %}
+    {% if sales|empty? %}
   <p class="well">You don't have any pending sales.</p>
+    {% endif %}
 {% endif %}
 {% endblock %}
