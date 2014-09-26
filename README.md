@@ -1,8 +1,16 @@
 # Cool side project
 
-[] need to work on bitcoind framework
-[] need to put server config files into a repo
-[] need to start on admin functionality
+- [x] need to work on bitcoind framework
+- [x] need to put server config files into a repo
+- [.5] need to start on admin functionality
+- [ ] work on creating cart flow, update | checkout -> enter address -> confirm -> complete
+- [ ] work adding a custom listings type with order information
+
+#TODO: - custom listing ideas
+listings should have a order completion form, this will be part
+of the checkout process.
+dump a raw blob of unstructured data.
+
 
 sudo apt-get install bitcoind
 

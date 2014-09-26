@@ -82,6 +82,8 @@
                                              :btc-total btc-total
                                              :listings listings} (set-info)))))
 
+(defn cart-checkout [])
+
 (defn cart-submit [{:keys [quantity postage address pin submit] :as slug}]
   (if (= "Update Cart" submit)
     (cart-view slug)
@@ -101,6 +103,7 @@
    "/cart" []
    (GET "/" [] (cart-view))
    (POST "/" {params :params} (restricted (cart-submit params)))
+   (GET "/checkout" [] (cart-checkout))
    (GET "/empty" [] (cart-empty))
    (GET "/add/:id" [id] (cart-add id))
    (GET "/:id/remove" [id] (cart-remove id))))
