@@ -34,16 +34,6 @@
         (check for yes)
       </label>
   </div>
-  <div class="form-group">
-    <label for="pub-key">Public Key:
-    {% if errors.pub_key %}
-      <span class="error">
-        {{errors.pub_key}}
-      </span>
-    {% endif %}
-    </label>
-    <textarea id="pub-key" class="form-control" rows="14" name="pub_key">{{user.pub_key}}</textarea>
-  </div>
   {% if user.vendor %}
   <div class="form-group">
     <label for="description">My Description:</label>

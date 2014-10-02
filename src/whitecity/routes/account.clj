@@ -160,12 +160,25 @@
          content (util/md->html (:content article))]
      (layout/render "news/create.html" (merge (set-info) article {:preview content})))))
 
+(defn pgp-page
+  ([]
+   (layout/render "account/pgp.html" (set-info)))
+  ([{:keys [pub_key verification] :as slug}]
+   (let [errors (user/valid-pgp? slug)
+         message (session/flash-get :pgp-message)]
+     (if (empty? errors)
+       (if (= message verification))
+       (layout/render "account/pgp.html" (merge (set-info) {:errors errors :pub_key pub_key})))
+     )))
+
 (defroutes account-routes
   (wrap-restricted
    (context
     "/account" []
     (GET "/" [] (account-page))
     (POST "/" {params :params} (account-update params))
+    (GET "/pgp" [] (pgp-page))
+    (POST "/pgp" {params :params} (pgp-page params))
     (GET "/password" [] (password-page))
     (POST "/password" {params :params} (password-page params))
     (GET "/wallet" [] (wallet-page))

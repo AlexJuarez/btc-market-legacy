@@ -88,18 +88,22 @@
   (v/user-validator user))
 
 (defn valid-update? [user]
-  (merge (when (and (not (empty? (:pub_key user))) (nil? (pgp/get-key-ring (:pub_key user)))) {:pub_key "Invalid pgp key"})
-  (v/user-update-validator user)))
+  (v/user-update-validator user))
 
 (defn clean [{:keys [alias region_id auth currency_id pub_key description]}]
   {:auth (= auth "true")
-   :pub_key (if (empty? pub_key) nil (clojure.string/trim pub_key))
-   :pub_key_id (if (empty? pub_key) nil (pgp/get-id pub_key))
    :currency_id (util/parse-int currency_id)
    :region_id (util/parse-int region_id)
    :description (hc/escape-html description)
    :updated_on (raw "now()")
    :alias alias})
+
+(defn clean-pgp [pub_key]
+  {:pub_key (if (empty? pub_key) nil (clojure.string/trim pub_key))
+   :pub_key_id (if (empty? pub_key) nil (pgp/get-id pub_key))})
+
+(defn valid-pgp? [user]
+  (when (and (not (empty? (:pub_key user))) (nil? (pgp/get-key-ring (:pub_key user)))) {:pub_key "Invalid pgp key"}))
 
 ;; Operations
 
@@ -128,6 +132,17 @@
                         (where {:id id}))
                        (if-not (= (:curreny_id updates) (:currency_id user))
                                      {:currency_symbol (:symbol (currency/get (:currency_id updates)))}))))
+      {:errors check})))
+
+(defn update-pgp! [id slug]
+  (let [updates (clean-pgp slug)
+        check (valid-pgp? updates)]
+    (if (empty? check)
+       (let [user (util/current-user)]
+        (session/put! :user
+                      (update users
+                              (set-fields updates)
+                              (where {:id id}))))
       {:errors check})))
 
 (defn update-btc-address! [id]
