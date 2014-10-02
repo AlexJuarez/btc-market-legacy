@@ -29,6 +29,11 @@
 (defn bytes-to-base64 [bytes]
   (.toString (Base64/encodeBase64String bytes)))
 
+(defn generate-salt []
+  (let [b (byte-array 20)]
+    (.nextBytes (java.security.SecureRandom.) b)
+    (bytes-to-base64 b)))
+
 (defn read-image [id]
   (let [path (str (noirio/resource-path) "/uploads/" id ".jpg")]
     (with-open [in (io/input-stream (io/file path))]

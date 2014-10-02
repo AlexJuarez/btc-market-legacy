@@ -167,9 +167,16 @@
    (let [errors (user/valid-pgp? slug)
          message (session/flash-get :pgp-message)]
      (if (empty? errors)
-       (if (= message verification))
-       (layout/render "account/pgp.html" (merge (set-info) {:errors errors :pub_key pub_key})))
-     )))
+       (do
+         (session/put! :pub_key pub_key)
+         (resp/redirect "/account/pgp/verify"))
+       (layout/render "account/pgp.html" (merge (set-info) {:errors errors :pub_key pub_key}))))))
+
+(defn pgp-verify
+  ([]
+   (let []
+     )
+   ))
 
 (defroutes account-routes
   (wrap-restricted
@@ -179,6 +186,7 @@
     (POST "/" {params :params} (account-update params))
     (GET "/pgp" [] (pgp-page))
     (POST "/pgp" {params :params} (pgp-page params))
+    (GET "/pgp/verify" [] pgp-verify)
     (GET "/password" [] (password-page))
     (POST "/password" {params :params} (password-page params))
     (GET "/wallet" [] (wallet-page))
