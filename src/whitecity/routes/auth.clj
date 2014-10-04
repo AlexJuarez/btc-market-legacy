@@ -6,6 +6,7 @@
             [whitecity.models.message :as message]
             [noir.session :as session]
             [ring.middleware.session :as sess]
+            [whitecity.models.currency :as currency]
             [noir.response :as resp]
             [whitecity.util.pgp :as pgp]
             [whitecity.models.user :as users]))
@@ -30,7 +31,7 @@
             (when vendor (session/put! :sales (order/count-sales id)))
             (session/put! :authed (not (and auth (not (nil? pub_key)))))
             (session/put! :user_id id)
-            (session/put! :user user)
+            (session/put! :user (assoc user :currency_symbol (:symbol (currency/get (:currency_id user)))))
             (session/put! :orders (order/count id))
             (session/put! :messages (message/count id))
             (resp/redirect "/")))
