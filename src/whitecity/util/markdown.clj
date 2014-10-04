@@ -11,8 +11,7 @@
          tokens (seq text)]
     (if (empty? tokens)
       [(s/join out) state]
-      (let [tokens (seq text)
-            [head xs]   (split-with (partial not= \[) tokens)
+      (let [[head xs]   (split-with (partial not= \[) tokens)
             [title ys]  (split-with (partial not= \]) xs)
             [dud zs]    (split-with (partial not= \() ys)
             [link tail] (split-with (partial not= \)) zs)]
@@ -30,21 +29,24 @@
 
 
 (defn input-transform [text state]
-  (loop [out []
-         tokens (seq text)]
-    (if (empty? tokens)
-      [(s/join out) state]
-      (let [tokens (seq text)
-            [label tail] (split-with (partial not= \=) tokens)]
-        (if (< (count label) 1)
-          (recur label tail)
-          (recur
-           (into out
-                 (html [:input {:name label :type "text"}])))
-          )
-        ))
-
+  (let [[label tail] (split-with (partial not= \=) (seq text))
+        tail (rest tail)
+        tails (s/trim (s/join tail))
+        label (s/trim (s/join label))]
+    (if (empty? label)
+      [text state]
+      (cond
+       (and (empty? (drop-while #{\_ \space} tail))
+            (= (count (remove #{\space} tail)) 3)) [(html [:label label [:br] [:input {:name label :type "text"}]]) state]
+       (> (count (re-seq #"\( \)|\(x\)+" tails)) 1)
+         [(html (map #(if (not (empty? %)) [:label [:input {:name label :type "radio"}] (s/trim %)]) (s/split tails #"\( \)|\(x\)"))) state]
+       (> (count (re-seq #"\[ \]|\[x\]+" tails)) 1)
+         [(html (map #(if (not (empty? %)) [:label [:input {:name label :type "checkbox"}] (s/trim %)]) (s/split tails #"\[ \]|\[x\]"))) state]
+       :else [text state]
+       )
+      )
     ))
+
 
 (defn md->html
     "reads a markdown string and returns the html"
@@ -55,5 +57,10 @@
                                                           mdts/em mdts/strong
                                                           mdts/bold mdts/strikethrough
                                                           mdts/superscript mdts/blockquote
-                                                          mdts/paragraph image-transform
+                                                          input-transform
+                                                          image-transform
+                                                          mdts/paragraph
                                                           mdts/br]))
+
+
+(re-seq #"\[ \]|\[x\]+" "[ ] wow [ ] cool")
