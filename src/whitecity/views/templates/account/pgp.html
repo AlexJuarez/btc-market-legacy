@@ -2,6 +2,7 @@
 {% block section %}
 <form enctype="multipart/form-data" method="POST">
   {% csrf-token %}
+  {% if message %}<span class="success">{{message}}</span>{% endif %}
   <div class="form-group">
     <label for="pub-key">Public Key:
     {% if errors.pub_key %}
@@ -12,17 +13,6 @@
     </label>
     <textarea id="pub-key" class="form-control" rows="14" name="pub_key">{% if pub_key %}{{pub_key}}{% else %}{{user.pub_key}}{% endif %}</textarea>
   </div>
-  {% if decode %}
-  <h2>2 Step auth</h2>
-  {% if error %}
-  <h3 class="error">{{error}}</h3>
-  {% endif %}
-  <p>Decode this message using your private key, and then copy the result into the text area.</p>
-  <pre class="well p">{{decode}}</pre>
-
-  <textarea id="response" class="form-control p" rows="4" name="response"></textarea>
-  {% endif %}
-
   <div class="form-group">
     <button type="submit" class="btn">update</button>
   </div>

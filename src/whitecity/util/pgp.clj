@@ -30,10 +30,10 @@
          (take-last 8
                (-> (get-key-ring asc) (get-encryption-key) (.getKeyID) (java.lang.Long/toHexString))))))
 
-(defn encode [asc secret]
+(defn encode [public-key secret]
   (try
     (java.security.Security/addProvider (BouncyCastleProvider.))
-    (let [key-ring (get-key-ring asc)
+    (let [key-ring (get-key-ring public-key)
           secret (.getBytes secret)
           public-key (get-encryption-key key-ring)
           output (java.io.ByteArrayOutputStream. buffer-size)

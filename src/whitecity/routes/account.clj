@@ -15,7 +15,8 @@
             [whitecity.models.region :as region]
             [noir.response :as resp]
             [noir.session :as session]
-            [whitecity.util :as util]))
+            [whitecity.util :as util]
+            [whitecity.util.pgp :as pgp]))
 
 (defonce reviews-per-page 25)
 
@@ -162,7 +163,7 @@
 
 (defn pgp-page
   ([]
-   (layout/render "account/pgp.html" (set-info)))
+   (layout/render "account/pgp.html" (assoc (set-info) :message (session/flash-get :message))))
   ([{:keys [pub_key verification] :as slug}]
    (let [errors (user/valid-pgp? slug)
          message (session/flash-get :pgp-message)]
@@ -174,9 +175,23 @@
 
 (defn pgp-verify
   ([]
-   (let []
-     )
-   ))
+   (let [pub_key (session/get :pub_key)
+         secret (util/generate-salt)
+         decode (pgp/encode pub_key secret)
+         message (session/flash-get :message)]
+     (session/flash-put! :pgp-verify secret)
+     (layout/render "account/pgp-verification.html" (merge (set-info) {:message message :decode decode :pub_key pub_key})))
+   )
+  ([{response :response}]
+   (let [secret (session/flash-get :pgp-verify)]
+     (if (= secret response)
+       (do
+         (session/flash-put! :message "success")
+         (user/update-pgp! (session/get :pub_key))
+         (pgp-page))
+       (do
+         (session/flash-put! :message "please try again")
+         (pgp-verify))))))
 
 (defroutes account-routes
   (wrap-restricted
@@ -186,7 +201,8 @@
     (POST "/" {params :params} (account-update params))
     (GET "/pgp" [] (pgp-page))
     (POST "/pgp" {params :params} (pgp-page params))
-    (GET "/pgp/verify" [] pgp-verify)
+    (GET "/pgp/verify" [] (pgp-verify))
+    (POST "/pgp/verify" {params :params} (pgp-verify params))
     (GET "/password" [] (password-page))
     (POST "/password" {params :params} (password-page params))
     (GET "/wallet" [] (wallet-page))

@@ -112,10 +112,11 @@
         check (v/user-pin-validator slug)]
     (if (empty? check)
       (do
-        (update users
-                (set-fields {:pin (:pin slug)})
-                (where {:id id}))
-        (session/put! :user (assoc (session/get :user) :pin (:pin slug)))
+        (let [user (util/current-user)]
+          (update users
+                  (set-fields {:pin (:pin slug)})
+                  (where {:id id}))
+          (session/put! :user (assoc user :pin (:pin user))))
       {})
       {:errors check}
       )))
@@ -131,18 +132,18 @@
                         (set-fields updates)
                         (where {:id id}))
                        (if-not (= (:curreny_id updates) (:currency_id user))
-                                     {:currency_symbol (:symbol (currency/get (:currency_id updates)))}))))
+                         {:currency_symbol (:symbol (currency/get (:currency_id updates)))}))))
       {:errors check})))
 
-(defn update-pgp! [id slug]
-  (let [updates (clean-pgp slug)
+(defn update-pgp! [pub_key]
+  (let [updates (clean-pgp pub_key)
         check (valid-pgp? updates)]
     (if (empty? check)
-       (let [user (util/current-user)]
-        (session/put! :user
-                      (update users
-                              (set-fields updates)
-                              (where {:id id}))))
+      (let [user (util/current-user)
+            update  (update users
+                            (set-fields updates)
+                            (where {:id (:id user)}))]
+        (session/put! :user (assoc user :pub_key (update :pub_key))))
       {:errors check})))
 
 (defn update-btc-address! [id]

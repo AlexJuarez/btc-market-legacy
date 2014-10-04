@@ -1,0 +1,16 @@
+{% extends "whitecity/views/templates/account/account.html" %}
+{% block section %}
+<h2>Verify your pgp key</h2>
+<form enctype="multipart/form-data" method="POST">
+  {% csrf-token %}
+  {% if message %}
+  <h3 class="error">{{message}}</h3>
+  {% endif %}
+  <p>Decode this message using your private key, and then copy the result into the text area.</p>
+  <pre class="well p">{{decode}}</pre>
+  <textarea id="response" class="form-control p" rows="4" name="response"></textarea>
+  <div class="form-group">
+    <button type="submit" class="btn">update</button>
+  </div>
+</form>
+{% endblock %}
