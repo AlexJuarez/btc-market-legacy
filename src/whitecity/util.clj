@@ -13,9 +13,7 @@
               [noir.io :as noirio]
               [whitecity.models.exchange :as exchange]
               [clojure.string :as s]
-              [markdown.core :as md]
-              [whitecity.util.image :as image]
-              [markdown.transformers :as mdts])
+              [whitecity.util.markdown :as md])
     (:import net.sf.jlue.util.Captcha
              javax.imageio.ImageIO
              (java.io ByteArrayInputStream ByteArrayOutputStream)
@@ -119,46 +117,15 @@
                 (cache/set session#
                            (assoc sess# :noir (dissoc (:noir sess#) ~@terms :user)) ttl#))))))))
 
+(defn md->html [string]
+  (md/md->html string))
+
 (defn format-time
     "formats the time using SimpleDateFormat, the default format is
        \"dd MMM, yyyy\" and a custom one can be passed in as the second argument"
     ([time] (format-time time "dd MMM, yyyy"))
     ([time fmt]
          (.format (new java.text.SimpleDateFormat fmt) time)))
-
-(defn image-transform [text state]
-  (loop [out []
-         tokens (seq text)]
-    (if (empty? tokens)
-      [(s/join out) state]
-      (let [tokens (seq text)
-            [head xs]   (split-with (partial not= \[) tokens)
-            [title ys]  (split-with (partial not= \]) xs)
-            [dud zs]    (split-with (partial not= \() ys)
-            [link tail] (split-with (partial not= \)) zs)]
-        (if (or (< (count link) 2)
-                (< (count tail) 1)
-                (> (count dud) 1))
-          (recur (concat out head title dud link) tail)
-          (recur
-           (into out
-                 (let [alt (s/join (rest title))
-                       [url title] (split-with (partial not= \space) (rest link))
-                       title (s/join (rest title))]
-                   (concat (butlast head) (image/img (s/join url) (s/join title) alt))))
-           (rest tail)))))))
-
-(defn md->html
-    "reads a markdown string and returns the html"
-    [string]
-  (md/md-to-html-string string :replacement-transformers [mdts/empty-line
-                                                          mdts/hr mdts/li
-                                                          mdts/heading mdts/italics
-                                                          mdts/em mdts/strong
-                                                          mdts/bold mdts/strikethrough
-                                                          mdts/superscript mdts/blockquote
-                                                          mdts/paragraph image-transform
-                                                          mdts/br]))
 
 (defn gen-captcha-text []
     (->> #(rand-int 26) (repeatedly 6) (map (partial + 97)) (map char) (apply str)))
