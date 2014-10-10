@@ -33,6 +33,11 @@
 (defn checkbox [label text selected]
   [:label [:input (conj {:name label :type "checkbox"} (when selected {:checked "checked"}))] (s/trim text)])
 
+(defn dob []
+  (list [:input {:name "month" :type "text" :class "date-2" :placeholder "MM" :maxlength 2}]
+        [:input {:name "day" :type "text" :class "date-2" :placeholder "DD" :maxlength 2}]
+        [:input {:name "year" :type "text" :class "date-4" :placeholder "YYYY" :maxlength 4}]))
+
 (defn option [text]
   (let [options (s/split text #"-&gt;")
         value (s/trim (first options))
@@ -55,6 +60,7 @@
        (> (count (re-seq #"\[ \]|\[x\]+" tails)) 1)
          [(html (map #(if (not (empty? %)) (if (= (take 3 %) (seq "[x]")) (checkbox label (s/join (drop 3 %)) true) (checkbox label % false))) (s/split tails #"\[ \]"))) state]
        (and (= (first tails) \{) (= (last tails) \})) [(html [:label label [:select {:name label} (map #(option %) (s/split (s/join (rest (drop-last tails))) #","))]]) state]
+       (and (= (first tails) \[) (= (last tails) \])) [(html [:label label (dob)]) state]
        :else [text state]
        )
       )
