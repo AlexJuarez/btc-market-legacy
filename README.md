@@ -2,9 +2,9 @@
 
 - [x] need to work on bitcoind framework
 - [x] need to put server config files into a repo
-- [.5] need to start on admin functionality
+- [x] added markdown processing for form input, make your own order form. TODO- test
 - [ ] work on creating cart flow, update | checkout -> enter address -> confirm -> complete
-- [ ] work adding a custom listings type with order information
+- [.5] need to start on admin functionality
 
 #TODO: - custom listing ideas
 listings should have a order completion form, this will be part
