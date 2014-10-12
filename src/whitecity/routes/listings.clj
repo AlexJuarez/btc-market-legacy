@@ -93,6 +93,9 @@
                                                     :categories (create-categories (category/all))
                                                     :currencies (currency/all)} (set-info) listing))))))
 
+(defn forms-page [page]
+  (let []))
+
 (defn listing-bookmark [id]
   (if-let [bookmark (:errors (bookmark/add! id (user-id)))]
     (session/flash-put! :bookmark bookmark))
@@ -110,6 +113,12 @@
     (GET "/unbookmark" {{referer "referer"} :headers} (listing-unbookmark id referer))
     (GET "/report" {{referer "referer"} :headers} (report-add id (user-id) "listing" referer))
     (GET "/unreport" {{referer "referer"} :headers} (report-remove id (user-id) "listing" referer))))
+
+  (wrap-restricted
+   (context
+    "/vendor/forms" []
+    (GET "/" [page] (forms-page page))
+    ))
 
   (wrap-restricted
    (context

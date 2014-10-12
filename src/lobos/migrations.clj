@@ -355,3 +355,9 @@
   (down [] (alter :drop
                   (table :user
                          (boolean :verified)))))
+
+(defmigration add-order-forms-table
+  (up [] (create
+          (table :orderform
+                 (text :content)
+                 (refer-to :user)))))

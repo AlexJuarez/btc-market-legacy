@@ -18,7 +18,7 @@
          postage images category
          region currency exchange
          bookmarks fans reviews
-         ships-to
+         ships-to order-form
          escrow modresolutions posts)
 
 (defentity audits
@@ -45,6 +45,10 @@
   (table :order-audit)
   (belongs-to users)
   (belongs-to orders))
+
+
+(defentity order-form
+  (table :order-form))
 
 (defentity users
   (table :user)
