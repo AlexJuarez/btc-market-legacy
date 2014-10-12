@@ -28,9 +28,12 @@
                                                :tickets support
                                                } (set-info)))))
 
-(defn moderator-add-resolution [slug]
-  (let [res (moderate/add! slug)]
-    ))
+(defn moderator-add-resolution [id slug]
+  (println id)
+  (println slug)
+  (let [id (hashids/decrypt id)
+        res (moderate/add! id slug (user-id))]
+    (moderator-view id)))
 
 (defn support-view [id]
   (let [id (hashids/decrypt-ticket-id id)
@@ -46,8 +49,10 @@
         seller-resolutions (-> (order/past-resolutions (:seller_id order)) encrypt-ids)
         buyer (user/get (:user_id order))
         buyer-resolutions (-> (order/past-resolutions (:user_id order)) encrypt-ids)
-        resolutions (resolution/all id)]
+        resolutions (resolution/all id)
+        modresolutions (moderate/all id)]
     (layout/render "moderate/resolution.html" (merge order {:resolutions resolutions
+                                                            :modresolutions modresolutions
                                                             :buyer buyer
                                                             :buyer-resolutions buyer-resolutions
                                                             :seller-resolutions seller-resolutions
@@ -57,4 +62,4 @@
   (GET "/moderate" [page] (moderator-page page))
   (GET "/moderate/:id" [id] (moderator-view id))
   (GET "/moderate/support/:id" [id] (support-view id))
-  (POST "/moderate/:id" {params :params} (moderator-add-resolution params)))
+  (POST "/moderate/:id" {id :id params :params} (moderator-add-resolution id params)))

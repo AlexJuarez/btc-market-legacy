@@ -6,11 +6,10 @@
         [whitecity.validator :as v]
         [whitecity.util :as util]))
 
-(defn prep [slug user-id]
-  (let [order_id (:id slug)
-        order (first (select orders
+(defn prep [order_id slug user-id]
+  (let [order (first (select orders
                  (with sellers (fields :login :alias))
-                 (where {:id (util/parse-int order_id)})))]
+                 (where {:id order_id})))]
     {:user_id user-id
      :buyer_id (:user_id order)
      :seller_id (:seller_id order)
@@ -22,9 +21,12 @@
 (defn store! [resolution]
   (insert modresolutions (values resolution)))
 
-(defn add! [slug user-id]
-  (let [resolution (prep slug user-id)
+(defn add! [id slug user-id]
+  (let [resolution (prep id slug user-id)
         check (v/modresolution-validator resolution)]
     (if (empty? check)
       (store! resolution)
       {:errors check})))
+
+(defn all [order-id]
+  (select modresolutions (where {:order_id order-id})))

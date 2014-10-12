@@ -246,7 +246,7 @@
                (integer :seller_id [:refer :user :id :on-delete :set-null])
                (refer-to :order)
                (integer :votes (default 0))
-               (boolean :applied)
+               (boolean :applied (default false))
                (integer :percent)
                (check :percent (>= :percent 0))
                (text :content))))
@@ -348,13 +348,13 @@
                   (table :order
                          (boolean :finalized)))))
 
-(defmigration add-verified-to-users-table
+(defmigration add-vacation-to-users-table
   (up [] (alter :add
                 (table :user
-                       (boolean :verified (default false)))))
+                       (boolean :vacation (default false)))))
   (down [] (alter :drop
                   (table :user
-                         (boolean :verified)))))
+                         (boolean :vacation)))))
 
 (defmigration add-order-forms-table
   (up [] (create
