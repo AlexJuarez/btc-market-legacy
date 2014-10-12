@@ -28,7 +28,7 @@
         <span class="sender">{{message.user_alias}}</span>
       </td>
       <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
-      <td><span data-time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
+      <td><span title="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
       <td>
         {% if message.read %}
         <span class="subject"><a href="/messages/{{message.sender_id}}">read</a></span>
@@ -64,7 +64,7 @@
       <a href="/user/{{article.alias}}">{{article.alias}}</a>
     </td>
     <td><a href="/news/{{article.id}}">{{article.subject}}</a></td>
-    <td><span data-time="{{article.created_on|date:fullDateTime}}" class="age pretty-time">{{article.created_on|freshness}}</span></td>
+    <td><span title="{{article.created_on|date:fullDateTime}}" class="age pretty-time">{{article.created_on|freshness}}</span></td>
     <td><a href="/news/{{article.id}}">read</a></td>
   </tr>
   {% endfor %}

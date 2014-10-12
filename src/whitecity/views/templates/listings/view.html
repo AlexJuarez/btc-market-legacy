@@ -73,7 +73,7 @@
         <tr>
           <td>{{r.rating}} of 5</td>
           <td>{{r.content}}</td>
-          <td data-time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
+          <td title="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
           <td>{% if r.shipped %}received{% else %}waiting{% endif %}</td>
         </tr>
         {% endfor %}

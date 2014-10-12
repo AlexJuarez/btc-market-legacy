@@ -32,12 +32,6 @@
     (order/finalize id (user-id))
     (resp/redirect "/orders")))
 
-(defn estimate-refund [resolutions {:keys [total]}]
-  (map #(if (= (:action %) "refund")
-            (assoc % :est (* (/ (:value %) 100) total))
-          %
-         ) resolutions))
-
 (defn order-cancel [id]
   (let [id (hashids/decrypt id)]
     (order/cancel! id (user-id))

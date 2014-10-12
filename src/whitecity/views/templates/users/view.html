@@ -21,9 +21,9 @@
 <br />
 <br />
 <div class="well sm">
-  has been a member since: <strong>{{created_on|date:shortDate}}</strong>
+  has been a member since: <strong title="{{created_on|freshness}}">{{created_on|date:shortDate}}</strong>
   <br />
-  was last seen: <strong>{{last_login|freshness}}</strong>
+  was last seen: <strong title="{{last_login|date:shortDate}}">{{last_login|freshness}}</strong>
   <br />
   {% if ranking %}
   ranked in the top % of sellers with
@@ -111,7 +111,7 @@
         <td>{{r.rating}} of 5</td>
         <td class="item-title"><a href="/listing/{{r.listing_id}}">{{r.title}}</a></td>
         <td>{{r.content}}</td>
-        <td data-time="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
+        <td title="{{r.created_on|date:fullDateTime}}" class="pretty-time">{{r.created_on|date:shortDate}}</td>
         <td>{% if r.shipped %}received{% else %}no{% endif %}</td>
       </tr>
       {% endfor %}

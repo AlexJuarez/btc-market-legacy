@@ -26,7 +26,10 @@
         check (v/modresolution-validator resolution)]
     (if (empty? check)
       (store! resolution)
-      {:errors check})))
+      check)))
 
 (defn all [order-id]
-  (select modresolutions (where {:order_id order-id})))
+  (select modresolutions
+          (with users
+                (fields :alias))
+          (where {:order_id order-id})))

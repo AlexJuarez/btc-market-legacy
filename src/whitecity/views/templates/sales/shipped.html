@@ -30,7 +30,7 @@
     <td>{{order.postage_title}}</td>
     <td>{{order.quantity}}</td>
     <td><a href="/user/{{order.user_id}}">{{order.alias}}</a></td>
-    <td><span data-time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span></td>
+    <td><span title="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span></td>
     <td><em>{{order.address}}</em></td>
   </tr>
   {% endfor %}

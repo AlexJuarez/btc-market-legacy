@@ -39,6 +39,12 @@
 (defn encrypt-ids [l]
   (map encrypt-id l))
 
+(defn estimate-refund [resolutions {:keys [total]}]
+  (map #(if (= (:action %) "refund")
+            (assoc % :est (* (/ (:value %) 100) total))
+          %
+         ) resolutions))
+
 (defn user-id []
   (util/user-id))
 

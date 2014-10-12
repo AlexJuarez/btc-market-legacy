@@ -38,12 +38,6 @@
         sales (-> (order/sold status (user-id) page sales-per-page) encrypt-ids calculate-amount arbitration)]
      (layout/render template (merge {:sales sales :page page :page-info {:page page :max pagemax :url url}} (set-info)))))
 
-(defn estimate-refund [resolutions {:keys [total]}]
-  (map #(if (= (:action %) "refund")
-            (assoc % :est (* (/ (- 100 (:value %)) 100) total))
-          %
-         ) resolutions))
-
 (defn sales-new
   [page]
   (let [page (or (util/parse-int page) 1)

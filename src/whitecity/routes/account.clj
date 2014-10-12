@@ -220,7 +220,7 @@
     (GET "/news/create" [] (news-create))
     (POST "/news/create" {params :params} (news-create params))
     (GET "/news/:id/edit" [id] (news-edit id))
-    (POST "/news/:id/edit" {id :id params :params} (news-edit id params))
+    (POST "/news/:id/edit" {params :params} (news-edit (:id params) params))
     (GET "/news/:id/publish" [id] (news-publish id))
     (GET "/news/:id/delete" [id] (news-delete id))
     (GET "/images" [] (images-page))

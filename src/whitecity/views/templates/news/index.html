@@ -26,7 +26,7 @@
     </td>
     <td>{% if post.public %}<strong>yes</strong>{% else %} no {% endif %}</td>
     <td>{% if post.published %} published {% else %} false {% endif %}</td>
-    <td>{{post.created_on|freshness}}</td>
+    <td><span title="{{post.created_on|date:fullDateTime}}">{{post.created_on|freshness}}</span></td>
     <td>
       {% if not post.published %}<a href="/vendor/news/{{post.id}}/publish">publish</a>
       | {% endif %}<a href="/vendor/news/{{post.id}}/delete">delete</a>

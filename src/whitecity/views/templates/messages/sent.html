@@ -21,7 +21,7 @@
         <span class="sender">{{message.user_alias}}</span>
       </td>
       <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
-      <td><span data-time="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
+      <td><span title="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
       <td>
         <span class="subject"><a href="/messages/{{message.user_id}}">read</a></span>
       </td>

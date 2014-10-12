@@ -20,7 +20,7 @@
   <tr>
     <td><a href="/user/{{user.id}}">{{user.alias}}</a></td>
     <td>{{user.rating}}</td>
-    <td><span data-time="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
+    <td><span title="{{user.last_login|date:fullDateTime}}" class="pretty-time">{{user.last_login|date:shortDate}}</span>
     </td>
   </tr>
   {% endfor %}

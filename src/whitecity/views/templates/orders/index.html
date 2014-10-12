@@ -71,7 +71,7 @@
       {% if order.status = 0 %}
         N/A
       {% else %}
-        <span data-time="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span>
+        <span title="{{order.auto_finalize|date:fullDateTime}}" class="pretty-time">{{order.auto_finalize|date:shortDate}}</span>
       {% endif %}
     </td>
     <td>

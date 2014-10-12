@@ -33,7 +33,7 @@
         {% endif %}
         <pre class="content">{{message.content}}</pre>
       </td>
-      <td><span data-time="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
+      <td><span title="{{message.created_on|date:fullDateTime}}" class="pretty-time">{{message.create_on|date:shortDate}}</span></td>
       <td>{% ifequal message.user_id user.id %}<a href="/message/{{message.id}}/delete">delete</a>{% endifequal %}</td>
     </tr>
     {% endfor %}

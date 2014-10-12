@@ -30,7 +30,7 @@
       <td>{{review.content}}</td>
       <td>{{review.rating}}</td>
       <td>{% if review.shipped %}yes{% else %}no{% endif %}</td>
-      <td><strong class="pretty-time" data-time="{{review.created_on|date:fullDateTime}}">{{review.created_on|date:shortDate}}</strong></td>
+      <td><strong class="pretty-time" title="{{review.created_on|date:fullDateTime}}">{{review.created_on|date:shortDate}}</strong></td>
       <td><a href="/review/{{review.id}}/edit">edit</a></td>
     </tr>
   {% endfor %}

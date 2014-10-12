@@ -23,7 +23,7 @@
         <td>{{image.id}}</td>
         <td><input type="text" value="{{image.name}}" name="name[{{image.id}}]" class="input" /></td>
         <td>
-          <span class="pretty-time" data-time="{{image.created_on|date:fullDateTime}}">
+          <span class="pretty-time" title="{{image.created_on|date:fullDateTime}}">
             {{image.created_on|date:shortDate}}
           </span>
         </td>
