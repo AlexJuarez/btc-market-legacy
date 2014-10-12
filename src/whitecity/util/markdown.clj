@@ -36,8 +36,14 @@
 ;;range is exclusive
 (defn dob []
   (list [:select {:name "month"} (map #(vector :option {:value %} %) (range 1 13))]
+        "-"
         [:select {:name "day"} (map #(vector :option {:value %} %) (range 1 32))]
-        [:select {:name "year"} (map #(vector :option {:value %} %) (range 1981 1994))]))
+        "-"
+        [:select {:name "year"} (map #(vector :option {:value %} %) (range 1980 1994))]))
+
+(defn height []
+  (list [:select {:name "feet"} (map #(vector :option {:value %} %) (range 4 8))]
+        [:select {:name "inches"} (map #(vector :option {:value %} %) (range 0 13))]))
 
 (defn option [text]
   (let [options (s/split text #"-&gt;")
@@ -45,6 +51,19 @@
         selected (and (= (first value) \() (= (last value) \)))
         label (or (second options) value)]
     [:option (conj {:value (if selected (s/join (rest (drop-last value))) value) :label label} (when selected {:selected "selected"}))]))
+
+(defn input-text [label text]
+  (let [placeholder (second (s/split text #"\#"))]
+    [:label label [:br] [:input (conj {:name label :type "text"} (when (not (empty? placeholder)) {:placeholder placeholder}))]]))
+
+(defn weight []
+  (list [:select {:name "weight"} (map #(vector :option {:value %} %) (range 80 321))]))
+
+(defn trim-fl [string]
+  {:pre [(string? string)]}
+  (s/join (rest (drop-last string))))
+
+(defonce fns {"DOB" (dob) "HEIGHT" (height) "WEIGHT" (weight)})
 
 (defn input-transform [text state]
   (let [[label tail] (split-with (partial not= \=) (seq text))
@@ -54,14 +73,13 @@
     (if (empty? label)
       [text state]
       (cond
-       (and (empty? (drop-while #{\_ \space} tail))
-            (= (count (remove #{\space} tail)) 3)) [(html [:label label [:br] [:input {:name label :type "text"}]]) state]
+       (= (count (re-seq #"\_" tails)) 3) [(html (input-text label tails)) state]
        (> (count (re-seq #"\( \)|\(x\)+" tails)) 1)
          [(html (map #(if (not (empty? %)) (if (= (take 3 %) (seq "(x)")) (radio label (s/join (drop 3 %)) true) (radio label % false))) (s/split tails #"\( \)"))) state]
        (> (count (re-seq #"\[ \]|\[x\]+" tails)) 1)
          [(html (map #(if (not (empty? %)) (if (= (take 3 %) (seq "[x]")) (checkbox label (s/join (drop 3 %)) true) (checkbox label % false))) (s/split tails #"\[ \]"))) state]
-       (and (= (first tails) \{) (= (last tails) \})) [(html [:label label [:select {:name label} (map #(option %) (s/split (s/join (rest (drop-last tails))) #","))]]) state]
-       (and (= (first tails) \[) (= (last tails) \])) [(html [:label (str label " mm/dd/yyyy:") (dob)]) state]
+       (and (= (first tails) \{) (= (last tails) \})) [(html [:label label [:select {:name label} (map #(option %) (s/split (trim-fl tails)  #","))]]) state]
+       (and (= (first tails) \[) (= (last tails) \]) (not (nil? (fns (trim-fl tails))))) [(html [:label label (fns (trim-fl tails))]) state]
        :else [text state]
        )
       )

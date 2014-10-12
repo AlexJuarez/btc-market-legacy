@@ -2,7 +2,7 @@
 {% block content %}
 <div class="inbox">
   <h1 class="jumbo">my followers</h1>
-  <nav class="nav"><a href="/vendor/news">overview</a> - <em>create a new post</em></nav>
+  <nav class="nav"><a href="/vendor/news">overview</a> - {% if preview|empty? %} <em>create a new post</em> {% else %} <a href="/vendor/news/create">create a new post</a> {% endif %}</nav>
 </div>
 {{preview|safe}}
 <form class="well" method="POST">
