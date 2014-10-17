@@ -34,14 +34,14 @@
   [:label [:input (conj {:name label :type "checkbox"} (when selected {:checked "checked"}))] (s/trim text)])
 
 ;;range is exclusive
-(defn dob []
+(defn dob [label]
   (list [:select {:name "month"} (map #(vector :option {:value %} %) (range 1 13))]
         "-"
         [:select {:name "day"} (map #(vector :option {:value %} %) (range 1 32))]
         "-"
         [:select {:name "year"} (map #(vector :option {:value %} %) (range 1980 1994))]))
 
-(defn height []
+(defn height [label]
   (list [:select {:name "feet"} (map #(vector :option {:value %} %) (range 4 8))]
         [:select {:name "inches"} (map #(vector :option {:value %} %) (range 0 13))]))
 
@@ -56,14 +56,17 @@
   (let [placeholder (second (s/split text #"\#"))]
     [:label label [:br] [:input (conj {:name label :type "text"} (when (not (empty? placeholder)) {:placeholder placeholder}))]]))
 
-(defn weight []
+(defn weight [label]
   (list [:select {:name "weight"} (map #(vector :option {:value %} %) (range 80 321))]))
+
+(defn picture [label]
+  (list [:input {:type "file" :accept "image/jpeg" :name label}]))
 
 (defn trim-fl [string]
   {:pre [(string? string)]}
   (s/join (rest (drop-last string))))
 
-(defonce fns {"DOB" (dob) "HEIGHT" (height) "WEIGHT" (weight)})
+(defonce fns {"DOB" dob "height" height "weight" weight "picture" picture})
 
 (defn input-transform [text state]
   (let [[label tail] (split-with (partial not= \=) (seq text))
@@ -79,7 +82,7 @@
        (> (count (re-seq #"\[ \]|\[x\]+" tails)) 1)
          [(html (map #(if (not (empty? %)) (if (= (take 3 %) (seq "[x]")) (checkbox label (s/join (drop 3 %)) true) (checkbox label % false))) (s/split tails #"\[ \]"))) state]
        (and (= (first tails) \{) (= (last tails) \})) [(html [:label label [:select {:name label} (map #(option %) (s/split (trim-fl tails)  #","))]]) state]
-       (and (= (first tails) \[) (= (last tails) \]) (not (nil? (fns (trim-fl tails))))) [(html [:label label (fns (trim-fl tails))]) state]
+       (and (= (first tails) \[) (= (last tails) \]) (not (nil? (fns (trim-fl tails))))) [(html [:label label ((fns (trim-fl tails)) label)]) state]
        :else [text state]
        )
       )
