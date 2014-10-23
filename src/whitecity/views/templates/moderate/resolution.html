@@ -110,6 +110,44 @@ Order not found
   {% endif %}
 </div>
 
+{% if not modresolutions|empty? %}
+<h1>Moderator resolutions</h1>
+<table class="table resolution fill p">
+  <thead>
+  <tr>
+    <th>from</th>
+    <th class="large-column" style="width:70%">message</th>
+    <th>action</th>
+    <th>freshness</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for resolution in modresolutions %}
+  <tr>
+    <td>
+      {% ifequal resolution.from user.id %}
+      <span class="sender">{{user.alias}}</span>
+      {% else %}
+      <a href="/user/{{resolution.seller_id}}" class="sender">{{resolution.alias}}</a>
+      {% endifequal %}
+    </td>
+    <td>
+      {{resolution.content}}
+    </td>
+    <td>
+      {% ifequal resolution.action "extension" %}
+      extend by {{resolution.value}} day{% if not resolution.value = 1 %}s{% endif %}
+      {% endifequal %}
+      {% ifequal resolution.action "refund" %}
+      refund {{resolution.value}}% ~({{user.currency_symbol|safe}}{{resolution.est|double-format:5}})
+      {% endifequal %}
+    </td>
+    <td><span data-time="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 {% if not resolutions|empty? %}
 <h1>User resolutions</h1>
 <table class="table resolution fill p">

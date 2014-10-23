@@ -216,6 +216,7 @@
             (limit per-page)))))
 
 (defn all
+  ;;This is for the vendor listings page
   ([id page per-page]
    (map add-shipping
         (select listings
@@ -225,6 +226,7 @@
            (offset (* (- page 1) per-page))
            (limit per-page)
            (order :title :asc))))
+  ;;This is for the grams api
   ([page per-page]
    (map
     add-shipping
