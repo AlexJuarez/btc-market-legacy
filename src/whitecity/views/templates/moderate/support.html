@@ -1,10 +1,13 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
-<div class="inbox">
-  <h1 class="jumbo">my messages</h1>
-  <nav class="nav"><a href="/messages">inbox <strong>{{user.messages.unread}}</strong></a> - <a href="/messages/sent">sent</a></nav>
+<div class="well p">
+  <strong>ticket id#:</strong><span> {{id}}, created </span><span title="{{ticket.created_on|date:shortDate}}">{{ticket.created_on|freshness}}</span>
+  <br />
+  <strong>Subject:</strong><span>{{ticket.subject}}</span>
+  <p>
+    {{ticket.content}}
+  </p>
 </div>
-{{ticket}}
 {% if not messages|empty? %}
 <a class="right" href="/messages/{{user_id}}/download">download thread</a>
 <table class="table thread">
@@ -41,13 +44,8 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/messages/{{user_id}}" method="POST">
-  <p>Compose a message to: <strong>{{alias}}</strong></p>
-  <p>
-    <label for="subject">Subject:{% if errors.title %}{{errors.title|join:", "}}{% endif %}</label>
-    <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
-    {% if has_pub_key %}<label><input type="checkbox" value="true" name="encrypt" />Encrypt?</label>{% endif %}
-  </p>
+<form class="well" method="POST">
+  <p>Compose a message to: <a href="/user/{{ticket.alias}}">{{ticket.alias}}</a></p>
   {% if errors.content %}
   <p>{{errors.content|join:", "}}</p>
   {% endif %}

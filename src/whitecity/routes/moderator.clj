@@ -28,14 +28,23 @@
                                                :tickets support
                                                } (set-info)))))
 
-(defn support-view [id]
-  (let [id (hashids/decrypt-ticket-id id)
-        ticket (feedback/get id)]
-    (layout/render "moderate/support.html" (merge {:ticket ticket} (set-info)))
-    ))
+(defn support-view
+  ([raw-id]
+   (let [id (hashids/decrypt-ticket-id raw-id)
+         ticket (feedback/get id)]
+     (layout/render "moderate/support.html" (merge {:ticket ticket :id raw-id} (set-info)))
+     )
+   )
+  ([raw-id slug]
+   (let [id (hashids/decrypt-ticket-id raw-id)
+         ticket (feedback/respond id slug)]
+     )
+   )
+  )
 
 (defn est [resolutions total]
-  (map #(assoc % :est (* (/ (:percent %) 100) total))
+  (map #(assoc % :est (* (/ (:percent %) 100) total)
+                 :voted (moderate/voted? (:id %) (user-id)))
        resolutions))
 
 (defn moderator-view [id & errors]
@@ -51,11 +60,19 @@
     (layout/render "moderate/resolution.html" (merge order {:resolutions (estimate-refund resolutions order)
                                                             :modresolutions (est modresolutions (:total order))
                                                             :buyer buyer
-                                                            :errors errors
+                                                            :errors (first errors)
                                                             :seller-rating (int (* (/ (:rating seller) 5) 100))
                                                             :buyer-resolutions buyer-resolutions
                                                             :seller-resolutions seller-resolutions
                                                             :seller seller :past_orders past-orders} (set-info)))))
+
+(defn moderator-add-vote [id res]
+    (moderate/vote! res (user-id))
+    (resp/redirect (str "/moderate/" id)))
+
+(defn moderator-remove-vote [id res]
+    (moderate/remove-vote! res (user-id))
+    (resp/redirect (str "/moderate/" id)))
 
 (defn moderator-add-resolution [raw_id slug]
   (let [id (hashids/decrypt raw_id)
@@ -66,4 +83,7 @@
   (GET "/moderate" [page] (moderator-page page))
   (GET "/moderate/:id" [id] (moderator-view id))
   (GET "/moderate/support/:id" [id] (support-view id))
-  (POST "/moderate/:id" {params :params} (moderator-add-resolution (:id params) params)))
+  (POST "/moderate/support/:id" {params :params} (support-view (:id params) params))
+  (POST "/moderate/:id" {params :params} (moderator-add-resolution (:id params) params))
+  (GET "/moderate/:id/:res/upvote" [id res] (moderator-add-vote id res))
+  (GET "/moderate/:id/:res/downvote" [id res] (moderator-remove-vote id res)))

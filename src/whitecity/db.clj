@@ -18,6 +18,7 @@
          postage images category
          region currency exchange
          bookmarks fans reviews
+         modvotes
          ships-to order-form
          escrow modresolutions posts)
 
@@ -31,6 +32,10 @@
 
 (defentity modresolutions
   (table :modresolution)
+  (belongs-to users))
+
+(defentity modvotes
+  (table :modvote)
   (belongs-to users))
 
 (defentity wallets

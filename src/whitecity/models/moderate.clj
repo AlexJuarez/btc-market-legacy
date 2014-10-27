@@ -25,11 +25,37 @@
   (let [resolution (prep id slug user-id)
         check (v/modresolution-validator resolution)]
     (if (empty? check)
-      (store! resolution)
+      (do (store! resolution) nil)
       check)))
+
+(defn get-vote [res user-id]
+  (let [res (util/parse-int res)]
+    (first
+     (select modvotes (where {:modresolution_id res :user_id user-id})))))
+
+(defn voted? [res user-id]
+  (not (nil? (get-vote res user-id))))
+
+(defn vote! [res user-id]
+  (let [res (util/parse-int res)]
+    (transaction
+     (update modresolutions
+             (set-fields {:votes (raw "votes + 1")})
+             (where {:id res}))
+     (insert modvotes (values {:modresolution_id res :user_id user-id})))))
+
+(defn remove-vote! [res user-id]
+  (when (voted? res user-id)
+    (let [res (util/parse-int res)]
+      (transaction
+       (update modresolutions
+               (set-fields {:votes (raw "votes - 1")})
+               (where {:id res}))
+       (delete modvotes (values {:modresolution_id res :user_id user-id}))))))
 
 (defn all [order-id]
   (select modresolutions
           (with users
                 (fields :alias))
           (where {:order_id order-id})))
+

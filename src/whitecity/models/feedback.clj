@@ -14,6 +14,8 @@
 
 (defn get [id]
   (first (select feedback
+                 (with users
+                       (fields :alias))
                  (where {:id (util/parse-int id)}))))
 
 (defn prep [{:keys [subject content]} user-id]
