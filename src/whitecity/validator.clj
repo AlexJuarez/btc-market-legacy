@@ -104,6 +104,10 @@
   [:public :accept "true"]
   [:published :accept "true"])
 
+(v/defvalidator support-validator
+  [:subject :length {:is-not-greater-than 100}]
+  [:content [:presence :length {:is-not-greater-than 6000}]])
+
 (v/defvalidator resolution-refund-validator
   [:value [:presence :numericality {:greater-than-or-equal-to 0 :less-than-or-equal-to 100}]])
 

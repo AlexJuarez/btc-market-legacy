@@ -10,6 +10,7 @@
             [whitecity.models.moderate :as moderate]
             [whitecity.models.resolution :as resolution]
             [whitecity.models.feedback :as feedback]
+            [whitecity.models.message :as messages]
             [whitecity.models.user :as user]
             [noir.response :as resp]
             [whitecity.util :as util]))
@@ -31,13 +32,14 @@
 (defn support-view
   ([raw-id]
    (let [id (hashids/decrypt-ticket-id raw-id)
-         ticket (feedback/get id)]
-     (layout/render "moderate/support.html" (merge {:ticket ticket :id raw-id} (set-info)))
+         ticket (feedback/get id)
+         messages (messages/all (user-id) (:user_id ticket))]
+     (layout/render "moderate/support.html" (merge {:ticket ticket :messages messages :id raw-id} (set-info)))
      )
    )
   ([raw-id slug]
    (let [id (hashids/decrypt-ticket-id raw-id)
-         ticket (feedback/respond id slug)]
+         ticket (feedback/respond id slug (user-id))]
      )
    )
   )

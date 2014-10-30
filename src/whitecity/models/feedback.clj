@@ -4,7 +4,8 @@
         [korma.core]
         [whitecity.db])
   (:require
-        [whitecity.util :as util]))
+   [whitecity.validator :as v]
+   [whitecity.util :as util]))
 
 (defn all []
   (select feedback
@@ -24,4 +25,24 @@
    :user_id user-id})
 
 (defn add! [message user-id]
-  (insert feedback (values (prep message user-id))))
+  (let [message (prep message user-id)
+        check (v/support-validator message)]
+    (if (empty? check)
+      (insert feedback (values message))
+      {:errors check})))
+
+
+(defn add-response! [id slug user-id]
+  (let [ticket (get id)
+        prepped {:subject (str "RE: " (:subject ticket))
+                 :content (:content slug)
+                 :user_id (:user_id ticket)
+                 :sender_id user-id
+                 :support true}
+        check (v/support-validator prepped)]
+    (if (empty? check)
+      (transaction
+       (insert messages
+               (values prepped)))
+       {:errors check}
+      )))

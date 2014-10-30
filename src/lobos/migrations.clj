@@ -79,6 +79,7 @@
   (up [] (create
            (tbl :message
                   (boolean :read (default false))
+                  (boolean :support (default false))
                   (text :content)
                   (varchar :subject 100)
                   (refer-to :user)
