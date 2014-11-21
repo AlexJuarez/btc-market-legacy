@@ -44,13 +44,15 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" action="/messages/{{user_id}}" method="POST">
+<form class="well" method="POST">
   <p>Compose a message to: <strong>{{alias}}</strong></p>
+  {% if not no_subject %}
   <p>
     <label for="subject">Subject:{% if errors.title %}{{errors.title|join:", "}}{% endif %}</label>
     <input name="subject" class="text-input" id="subject" type="text" value="{{subject}}" />
     {% if has_pub_key %}<label><input type="checkbox" value="true" name="encrypt" />Encrypt?</label>{% endif %}
   </p>
+  {% endif %}
   {% if errors.content %}
   <p>{{errors.content|join:", "}}</p>
   {% endif %}

@@ -18,7 +18,7 @@
 (defonce per-page 25)
 
 (defn encrypt-feedback-ids [messages]
-  (map #(assoc % :feedback_id (hashids/encrypt-ticket-id (:feedback_id %))) messages))
+  (map #(assoc % :feedback_id (if (not (nil? (:feedback_id %))) (hashids/encrypt-ticket-id (:feedback_id %)))) messages))
 
 (defn messages-page [page]
   (let [page (or (util/parse-int page) 1)
@@ -34,8 +34,18 @@
    (let [tid (hashids/decrypt-ticket-id ticket-id)]
      (layout/render "messages/thread.html" (merge (set-info)
                                                   {:has_pub_key false
-                                                   :alias (str "Support Staff")
-                                                   :messages (message/all tid)})))))
+                                                   :alias "Support Staff"
+                                                   :no_subject true
+                                                   :messages (message/all tid)}))))
+  ([ticket-id slug]
+   (let [tid (hashids/decrypt-ticket-id ticket-id)
+         message (message/add-support! slug tid (user-id))]
+     (layout/render "messages/thread.html" (merge (set-info)
+                                                  {:has_pub_key false
+                                                   :alias "Support Staff"
+                                                   :no_subject true
+                                                   :messages (message/all tid)} message))
+     )))
 
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
@@ -75,6 +85,7 @@
     (GET "/message/:id/delete" {{id :id} :params {referer "referer"} :headers} (message-delete id referer))
     (GET "/messages/:id/download" [id] (messages-download id))
     (GET "/messages/support/:tid" [tid] (support-thread tid))
+    (POST "/messages/support/:tid" {params :params} (support-thread (:tid params) params))
     (GET "/messages" [page] (messages-page page))
     (GET "/messages/sent" [] (messages-sent))
     (GET "/messages/:id" [id] (messages-thread id))
