@@ -22,6 +22,7 @@
 
 ;; Gets
 
+(first (select users))
 
 (defn search [query]
   (select users
@@ -43,7 +44,7 @@
   (first
     (select users
       (with currency (fields [:key :currency_key] [:symbol :currency_symbol]))
-      (where {:login (s/lower-case login)}))))
+      (where {:login (s/lower-case login) :banned false}))))
 
 (defn track-login [{:keys [id last_attempted_login login_tries] :as user}]
   (if (or (= login_tries 0) (nil? last_attempted_login) (> (- (.getTime (java.util.Date.)) (.getTime last_attempted_login)) 86400000))

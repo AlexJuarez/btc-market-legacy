@@ -38,7 +38,7 @@
                  :content (:content slug)
                  :user_id (:user_id ticket)
                  :sender_id user-id
-                 :support true}
+                 :feedback_id id}
         check (v/support-validator prepped)]
     (if (empty? check)
       (transaction

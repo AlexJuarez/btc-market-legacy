@@ -33,13 +33,13 @@
   ([raw-id]
    (let [id (hashids/decrypt-ticket-id raw-id)
          ticket (feedback/get id)
-         messages (messages/all (user-id) (:user_id ticket))]
+         messages (messages/all id)]
      (layout/render "moderate/support.html" (merge {:ticket ticket :messages messages :id raw-id} (set-info)))
      )
    )
   ([raw-id slug]
    (let [id (hashids/decrypt-ticket-id raw-id)
-         ticket (feedback/respond id slug (user-id))]
+         ticket (feedback/add-response! id slug (user-id))]
      )
    )
   )

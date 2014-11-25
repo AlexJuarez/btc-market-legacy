@@ -44,6 +44,7 @@
   </tbody>
 </table>
 {% endif %}
+{% if ticket.alias %}
 <form class="well" method="POST">
   <p>Compose a message to: <a href="/user/{{ticket.alias}}">{{ticket.alias}}</a></p>
   {% if errors.content %}
@@ -57,4 +58,5 @@
   </span>
   {% csrf-token %}
 </form>
+{% endif %}
 {% endblock %}

@@ -33,13 +33,20 @@
 (defn all
   ([id page per-page]
     (select messages
-            (fields :id [:user.login :user_login] [:user.alias :user_alias] :subject :content :created_on :user_id :sender_id :read)
+            (fields :id [:user.login :user_login] [:user.alias :user_alias] :feedback_id :subject :content :created_on :user_id :sender_id :read)
             (join
              users (= :user.id :sender_id))
             (where {:user_id id})
             (order :created_on :DESC)
             (limit per-page)
             (offset (* (- page 1) per-page))))
+  ([ticket_id]
+   (let [tid (util/parse-int ticket_id)]
+     (select messages
+               (fields :id :subject :content :created_on :user_id :sender_id :feedback_id :read)
+               (with senders (fields [:alias :user_alias]))
+               (where {:feedback_id tid})
+               (order :created_on :ASC))))
   ([id receiver-id]
    (let [rid (util/parse-int receiver-id)]
      (do

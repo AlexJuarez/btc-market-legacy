@@ -7,30 +7,35 @@
             [whitecity.models.user :as user]
             [ring.util.response :as r :refer [content-type response]]
             [whitecity.models.message :as message]
-            [whitecity.models.listing :as listing]
-            [whitecity.models.category :as category]
-            [whitecity.models.resolution :as resolution]
-            [whitecity.models.report :as report]
-            [whitecity.models.review :as review]
-            [whitecity.models.fan :as follower]
-            [whitecity.models.postage :as postage]
             [whitecity.models.post :as post]
             [clojure.string :as string]
             [whitecity.models.currency :as currency]
             [noir.response :as resp]
             [noir.session :as session]
-            [whitecity.util :as util]))
+            [whitecity.util :as util]
+            [whitecity.util.hashids :as hashids]))
 
 (defonce per-page 25)
+
+(defn encrypt-feedback-ids [messages]
+  (map #(assoc % :feedback_id (hashids/encrypt-ticket-id (:feedback_id %))) messages))
 
 (defn messages-page [page]
   (let [page (or (util/parse-int page) 1)
         pagemax (util/page-max (:total (util/session! :messages (message/count (user-id)))) per-page)
         news (post/get-news (user-id)) ;;TODO: add pagination
-        messages (message/all (user-id) page per-page)]
+        messages (encrypt-feedback-ids (message/all (user-id) page per-page))]
     (layout/render "messages/index.html" (conj (set-info) {:page {:page page :max pagemax}
                                                            :news news
                                                            :messages messages}))))
+
+(defn support-thread
+  ([ticket-id]
+   (let [tid (hashids/decrypt-ticket-id ticket-id)]
+     (layout/render "messages/thread.html" (merge (set-info)
+                                                  {:has_pub_key false
+                                                   :alias (str "Support Staff")
+                                                   :messages (message/all tid)})))))
 
 (defn messages-sent []
   (layout/render "messages/sent.html" (conj (set-info) {:messages (message/sent (user-id))})))
@@ -69,6 +74,7 @@
 (def-restricted-routes message-routes
     (GET "/message/:id/delete" {{id :id} :params {referer "referer"} :headers} (message-delete id referer))
     (GET "/messages/:id/download" [id] (messages-download id))
+    (GET "/messages/support/:tid" [tid] (support-thread tid))
     (GET "/messages" [page] (messages-page page))
     (GET "/messages/sent" [] (messages-sent))
     (GET "/messages/:id" [id] (messages-thread id))

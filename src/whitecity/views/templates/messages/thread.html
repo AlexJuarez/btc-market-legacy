@@ -19,11 +19,15 @@
     {% for message in messages %}
     <tr>
       <td>
-        {% ifequal user.id message.sender_id %}
-          <span class="sender">{{user.alias}}</span>
+        {% if message.feedback_id %}
+          <strong class="support">Support Staff</strong>
         {% else %}
-          <a href="/user/{{message.sender_id}}" class="sender">{{message.user_alias}}</a>
-        {% endifequal %}
+          {% ifequal user.id message.sender_id %}
+            <span class="sender">{{user.alias}}</span>
+          {% else %}
+            <a href="/user/{{message.sender_id}}" class="sender">{{message.user_alias}}</a>
+          {% endifequal %}
+        {% endif %}
       </td>
       <td>
         {% if not message.subject|empty? %}
