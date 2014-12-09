@@ -53,12 +53,9 @@
                (where {:id res}))
        (delete modvotes (values {:modresolution_id res :user_id user-id}))))))
 
-(defn refund [order_id res user-id]
-  (let [res (util/parse-int res)
-        {amount :btc_amount} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :status "hold"}))
-        {user_id :user_id seller_id :seller_id} (first (select orders (where {:id order_id})))
-        {percent :percent} (first (select modresolutions (where {:id res})))
-        user-amount (* amount (/ percent 100))
+(defn refund [id user_id seller_id order_id percent]
+  (let [{amount :btc_amount} (update escrow (set-fields {:status "done" :updated_on (raw "now()")}) (where {:order_id order_id :status "hold"}))
+        user-amount (* amount (/ percent 100.0))
         seller-amount (- amount user-amount)
         user-audit {:amount user-amount :user_id user_id :role "refund"}
         seller-audit {:amount seller-amount :user_id seller_id :role "refund"}]
@@ -66,9 +63,6 @@
     (util/update-session seller_id :orders :sales)
     (if amount
       (transaction
-        (update resolutions
-                (set-fields res)
-                (where {:id res}))
         (insert audits (values [user-audit seller-audit]))
         (update users (set-fields {:btc (raw (str "btc + " user-amount))}) (where {:id user_id}))
         (update users (set-fields {:btc (raw (str "btc + " seller-amount))}) (where {:id seller_id}))
@@ -76,8 +70,17 @@
         (update orders (set-fields {:status 5 :finalized true :updated_on (raw "now()")})
                 (where {:user_id user_id :finalized false :id order_id}))))))
 
+(defn accept! [id user-id]
+  (let [id (util/parse-int id)
+        res (first (select modresolutions (where {:id id :applied false})))] ;;added a flag to see if the resolution was used
+    (when (not (nil? res))
+      (update modresolutions (set-fields {:applied true}) (where {:id id}))
+            (refund id (:buyer_id res) (:seller_id res) (:order_id res) (:percent res))
+      )))
+
 (defn all [order-id]
   (select modresolutions
           (with users
                 (fields :alias))
-          (where {:order_id order-id})))
+          (where {:order_id order-id})
+          (order :created_on)))

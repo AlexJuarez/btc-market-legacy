@@ -1,5 +1,5 @@
 (ns whitecity.models.order
-  (:refer-clojure :exclude [get count])
+  (:refer-clojure :exclude [count])
   (:use [korma.db :only (transaction)]
         [korma.core]
         [environ.core :only [env]]
@@ -19,7 +19,7 @@
 ;;4 - canceled
 ;;5 - refunded
 
-(def statuses [:new :ship :resolution :finalize])
+(def statuses [:new :ship :resolution :finalize :canceled :refunded])
 
 (defn get-order [id user-id]
   (first (select orders
@@ -213,12 +213,23 @@
 (defn moderate-order [id]
   (first (select orders
                  (with sellers (fields :login :alias))
-                 (where {:id (util/parse-int id) :status 2 :auto_finalize [< (raw "now()")]}))))
+                 (where {:id (util/parse-int id) :auto_finalize [< (raw "now()")]}))))
 
 (defn past-resolutions [user-id]
   (select orders
-          (with escrow (fields :btc_amount))
-          (where {:status 5 :user_id user-id})
+          (fields :id :title :quantity :auto_finalize :listing_id :modresolution.percent)
+          (with escrow (fields :escrow.btc_amount))
+          (join modresolutions (= :modresolution.order_id :order.id))
+          (where {:status 5 :user_id user-id :modresolution.applied true})
+          (order :auto_finalize :DESC)
+          (limit 10)))
+
+(defn past-seller-resolutions [user-id]
+  (select orders
+          (fields :id :title :quantity :auto_finalize :listing_id :modresolution.percent)
+          (with escrow (fields :escrow.btc_amount))
+          (join modresolutions (= :modresolution.order_id :order.id))
+          (where {:status 5 :seller_id user-id :modresolution.applied true})
           (order :auto_finalize :DESC)
           (limit 10)))
 
@@ -245,7 +256,7 @@
   ([id]
    (let [sales
      (into {}
-          (map #(vector (statuses (:status %)) (:cnt %))
+          (map #(vector (get statuses (:status %)) (:cnt %))
             (select orders
               (fields :status)
               (aggregate (count :*) :cnt)

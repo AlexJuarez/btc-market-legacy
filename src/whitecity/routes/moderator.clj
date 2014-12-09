@@ -51,7 +51,7 @@
         order (-> (order/moderate-order id) encrypt-id convert-order-price)
         past-orders (order/count-past (:user_id order))
         seller (user/get (:seller_id order))
-        seller-resolutions (-> (order/past-resolutions (:seller_id order)) encrypt-ids)
+        seller-resolutions (-> (order/past-seller-resolutions (:seller_id order)) encrypt-ids)
         buyer (user/get (:user_id order))
         buyer-resolutions (-> (order/past-resolutions (:user_id order)) encrypt-ids)
         resolutions (resolution/all id)
@@ -60,7 +60,7 @@
                                                             :modresolutions (est modresolutions (:total order))
                                                             :buyer buyer
                                                             :errors (first errors)
-                                                            :seller-rating (int (* (/ (:rating seller) 5) 100))
+                                                            :seller-rating (int (* (/ (or (:rating seller) 0) 5.0) 100))
                                                             :buyer-resolutions buyer-resolutions
                                                             :seller-resolutions seller-resolutions
                                                             :seller seller :past_orders past-orders} (set-info)))))
@@ -74,7 +74,7 @@
     (resp/redirect (str "/moderate/" id)))
 
 (defn apply-resolution [id res]
-  (moderate/refund (hashids/decrypt id) res (user-id))
+  (moderate/accept! res (user-id))
   (resp/redirect (str "/moderate/" id)))
 
 (defn moderator-add-resolution [raw_id slug]
