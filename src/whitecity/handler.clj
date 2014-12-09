@@ -37,6 +37,9 @@
 (defn moderator-access [req]
   (:mod (util/current-user)))
 
+(defn admin-access [req]
+  (:admin (util/current-user)))
+
 (defn vendor-access [req]
   (:vendor (util/current-user)))
 
@@ -65,8 +68,6 @@
   (when-not (schema/actualized?)
     (schema/actualize)
     (schema/load-fixtures))
-
-
 
   (timbre/info "whitecity started successfully"))
 
@@ -100,6 +101,7 @@
    ;; add access rules here
    :access-rules [{:rule user-access :redirect "/login"}
                   {:uri "/moderate/*" :redirect "/" :rule moderator-access}
+                  {:uri "/admin/*" :redirect "/" :rule admin-access}
                   {:uri "/vendor/*" :redirect "/" :rule vendor-access}]
    ;; I can only assume
    ;; serialize/deserialize the following data formats

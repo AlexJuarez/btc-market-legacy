@@ -150,7 +150,10 @@ Order not found
     </td>
     <td><span title="{{resolution.created_on|date:fullDateTime}}" class="pretty-time">{{resolution.create_on|date:shortDate}}</span></td>
     <td>{{resolution.votes}}</td>
-    <td>{% if resolution.voted %}<a href="/moderate/{{id}}/{{resolution.id}}/downvote">disagree</a>{% else %}<a href="/moderate/{{id}}/{{resolution.id}}/upvote">agree</a>{% endif %}</td>
+    <td>
+      {% if resolution.voted %}<a href="/moderate/{{id}}/{{resolution.id}}/downvote">disagree</a>{% else %}<a href="/moderate/{{id}}/{{resolution.id}}/upvote">agree</a>{% endif %}
+      {% if user.admin %}| <a href="/admin/{{id}}/{{resolution.id}}/resolve">resolve<a/>{% endif %}
+    </td>
   </tr>
   {% endfor %}
   </tbody>

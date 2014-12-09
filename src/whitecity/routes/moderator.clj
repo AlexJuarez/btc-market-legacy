@@ -73,6 +73,10 @@
     (moderate/remove-vote! res (user-id))
     (resp/redirect (str "/moderate/" id)))
 
+(defn apply-resolution [id res]
+  (moderate/refund (hashids/decrypt id) res (user-id))
+  (resp/redirect (str "/moderate/" id)))
+
 (defn moderator-add-resolution [raw_id slug]
   (let [id (hashids/decrypt raw_id)
         res (moderate/add! id slug (user-id))]
@@ -84,5 +88,6 @@
   (GET "/moderate/support/:id" [id] (support-view id))
   (POST "/moderate/support/:id" {params :params} (support-view (:id params) params))
   (POST "/moderate/:id" {params :params} (moderator-add-resolution (:id params) params))
+  (GET "/admin/:id/:res/resolve" [id res] (apply-resolution id res))
   (GET "/moderate/:id/:res/upvote" [id res] (moderator-add-vote id res))
   (GET "/moderate/:id/:res/downvote" [id res] (moderator-remove-vote id res)))
