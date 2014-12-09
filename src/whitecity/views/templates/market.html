@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Grand Trunk</title>
+    <title>Flight: Relax, take flight</title>
     <meta name="viewport" content="initial-scale=1.0">
     {% load-styles css/screen.css %}
   </head>
@@ -12,7 +12,7 @@
         <div class="row">
           <div class="cell header">
             <header id="header">
-              <div id="banner"><a href="/">Grand Trunk<br><span class="bar"></span></a></div>
+              <div id="banner"><a href="/">Flight</a></div>
               <div class="account-cart">
                 <div class="account">
                   {% if user.logged_in %}
@@ -29,36 +29,32 @@
                   </a>
                 </div>
               </div>
-              <div class="nav-search">
-                {% if user.logged_in %}
-                <nav class="links">
-                  <a href="/messages">messages <strong>{{user.messages.unread}}</strong></a>
-                  | <a href="/orders">orders <strong>{{user.orders}}</strong></a>
-                  | <a href="/account/wallet">wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</strong></a>
-                  {% if user.vendor %}
-                  | <a href="/vendor/sales">my sales <strong>{{user.sales.total}}</strong></a>
-                  | <a href="/vendor/listings">my listings <strong>{{user.listings}}</strong></a>
-                  | <a href="/vendor/news">my followers</a>
-                  {% endif %}
-                  {% if user.mod %}
-                  | <a href="/moderate">moderate</a>
-                  {% endif %}
-                </nav>
+              {% if user.logged_in %}
+              <nav class="links">
+                <a href="/">Market</a>
+                <a href="/messages">Inbox ({{user.messages.unread}})</a>
+                <a href="/orders">Orders ({{user.orders}})</a>
+                {% if user.vendor %}
+                <a href="/vendor/sales">Sold ({{user.sales.total}})</a>
+                <a href="/vendor/listings">Sell ({{user.listings}})</a>
                 {% endif %}
-                <form action="/search" method="GET" class="search">
+                <a href="/account/wallet">Wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</a>
+                {% if user.mod %}
+                <a href="/moderate">Mod</a>
+                {% endif %}
+              </nav>
+              {% endif %}
+                <!-- <form action="/search" method="GET" class="search">
                   <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
                   <button type="submit">GO</button>
-                </form>
-              </div>
+                </form> -->
             </header>
           </div>
         </div>
         <div class="row">
           <div class="cell max">
-            <section class="container">
-              {% block content %}
-              {% endblock %}
-            </section>
+            {% block content %}
+            {% endblock %}
           </div>
         </div>
         <div class="row">

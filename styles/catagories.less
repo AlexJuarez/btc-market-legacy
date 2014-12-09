@@ -2,13 +2,77 @@
  * Categories
  */
 
+.categories {
+  padding-top: 8px;
+  background: #2C394A;
+  position: relative;
+
+  .title {
+    color: #888888;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 16px 24px 8px 24px;
+  }
+
+  .header {
+    height: 8px;
+    background: #FF931E;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    .green {
+      width: 33%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #BEC86E;
+    }
+    .pink {
+      width: 33%;
+      height: 100%;
+      position: absolute;
+      right: 0;
+      top: 0;
+      background: #FF247D;
+    }
+  }
+  white-space: nowrap;
+  min-width: 230px;
+}
+
 .categories ul {
   list-style: none;
   padding-left: 0;
   margin-left: 10px;
 }
 
+.categories > ul {
+  margin:0 24px 0 24px;
+}
+
 .categories .count {
   color: #ccc;
-  font-style: italic;
+  letter-spacing: .6px;
+}
+
+.category {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: .6px;
+  font-size: 13px;
+  padding: 6px 0;
+  display: inline-block;
+
+  &:hover {
+    &:after {
+      content: "";
+      width: 5px;
+      height: 100%;
+      background: #39BDD1;
+    }
+  }
 }

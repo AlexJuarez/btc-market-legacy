@@ -3,104 +3,74 @@
  */
 
 .cell.header {
-  border-bottom: 1px solid #ccc;
+  background: #fff;
 }
 
 #header {
   position: relative;
-  margin-bottom: 15px;
   padding: 0 15px;
   overflow: hidden;
+  height: 50px;
 
-  .nav-search {
-    margin-top: 12px;
-
-    nav {
-      color: #ccc;
-    }
-
-    .search {
-      margin-top: 5px;
-    }
-
-    input {
+  .links {
+    height: 100%;
+    a {
       display: inline-block;
-      border-radius: 0;
-      margin: 0;
-      vertical-align: top;
-      padding-left: 7px;
-      padding-right: 7px;
-    }
-
-    .form-control {
-      height: 25px;
-    }
-
-    button {
-      height: 25px;
-      cursor: pointer;
-      display: inline-block;
-      background: #e4e4e4;
-      border: 0;
-      margin: 0;
-      vertical-align: top;
-      outline: 0;
-      padding: 0 9px;
-    }
-
-    button:hover {
-      background: #ccc;
+      height: 100%;
+      padding-top: 14px;
+      margin-right: 12px;
+      font-size: 13px;
+      letter-spacing: 1.2px;
+      position: relative;
+      &:hover {
+       &:after {
+         content: "";
+         width: 100%;
+         position: absolute;
+         height: 4px;
+         bottom: 0;
+         left: 0;
+         background: #999;
+       }
+      }
     }
   }
 
   .account-cart {
     color: #4D4D4D;
     float: right;
-    margin-top: 12px;
+    margin-top: 14px;
     text-align: right;
   }
 
+  .account {
+    float: left;
+    margin-right: 12px;
+  }
+
   .cart {
-    margin-top: 11px;
+    float: left;
   }
 }
 
 #banner {
-  margin: 6px 30px 0 0;
+  margin: 8px 30px 0 0;
   float: left;
-  height: 53px;
   overflow: hidden;
 
   a {
     text-align: center;
     display: inline-block;
     font-weight: bold;
-    font-size: 36px;
-    color: #4d4d4d;
-    height: 80px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    font-size: 25px;
+    color: #999999;
     position: relative;
     overflow: hidden;
   }
-
-  .bar {
-    height: 8px;
-    width: 210px;
-    display: inline-block;
-    background: #4d4d4d;
-    position: absolute;
-    bottom: 27px;
-    left: 3px;
-  }
-}
-
-@media only screen and (min-device-width: 820px) {
-  #header {
-    .nav-search {
-      input {
-        width: 310px;
-      }
-    }
-
+  a:hover {
+    color: #CECECE;
   }
 }
 
