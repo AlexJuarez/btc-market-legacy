@@ -1,5 +1,33 @@
-{% extends "whitecity/views/templates/market.html" %}
-{% block content %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/sell.html" %}
+{% endblock %}
+{% block menu %}
+<div class="title">
+  Vendor Dashboard
+</div>
+<ul class="category-tree">
+  <li>
+    <a class="header" href="/vendor/listings"><span class="category">Listings</span></a>
+  </li>
+  <li>
+    <a class="header active" href="/vendor/listings/create"><span class="category">Add listing</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/postage/create"><span class="category">Add postage</span></a>
+  </li>
+  <!-- <li>
+    <a class="header" href="/vendor/form/create"><span class="category">create an order form</span></a>
+  </li> -->
+  <li>
+    <a class="header" href="/vendor/news"><span class="category">Manage Followers</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/images"><span class="category">manage images</span></a>
+  </li>
+</ul>
+{% endblock %}
+{% block container %}
 <h1 class="jumbo">{% if edit %}Listing Edit{% else %}Listing Create{% endif %} {% if success %}- {% endif %}<span class="success">{{success}}</span></h1>
 <hr>
 <form enctype="multipart/form-data" method="post">
@@ -44,7 +72,7 @@
         </option>
         {% endfor %}
         </select>
-        <a href="/vendor/images">manage images</a>
+        <a target="_blank" href="/vendor/images">manage images</a>
       </div>
     </div>
     {% endif %}

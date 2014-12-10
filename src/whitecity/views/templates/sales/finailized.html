@@ -1,5 +1,30 @@
-{% extends "whitecity/views/templates/sales/index.html" %}
-{% block section %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/sales.html" %}
+{% endblock %}
+{% block menu %}
+<div class="title">
+  my sales
+</div>
+<ul class="category-tree">
+  <li>
+    <a class="header" href="/vendor/sales"><span class="category">Overview</span><span class="count">({{user.sales.total|default:0}})</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/sales/new"><span class="category">New</span><span class="count">({{user.sales.new|default:0}})</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/sales/shipped"><span class="category">In Transit</span><span class="count">({{user.sales.ship|default:0}})</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/sales/resolutions"><span class="category">In Resolution</span><span class="count">({{user.sales.resolution|default:0}})</span></a>
+  </li>
+  <li>
+    <a class="header active" href="/vendor/sales/past"><span class="category">Past</span><span class="count">({{user.sales.finalize|default:0}})</span></a>
+  </li>
+</ul>
+{% endblock %}
+{% block container %}
 {% if not sales|empty? %}
 <h1>Finalized Sales</h1>
 <table class="table">

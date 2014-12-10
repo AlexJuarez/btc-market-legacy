@@ -1,5 +1,8 @@
-{% extends "whitecity/views/templates/market.html" %}
-{% block content %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+    {% include "whitecity/views/templates/links/orders.html" %}
+{% endblock %}
+{% block container %}
 <h1 class="jumbo">my orders</h1>
 {% if not pending-review|empty? %}
 <form method="post">

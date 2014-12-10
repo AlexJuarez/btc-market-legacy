@@ -1,9 +1,38 @@
-{% extends "whitecity/views/templates/market.html" %}
-{% block content %}
-<h1 class="jumbo">my listings</h1>
-<nav class="nav p">
-    {% if not postages|empty? %} <a href="/vendor/listings/create">Create a new listing</a> {% else %} <em title="you need to create postage first">Create a new listing</em> {% endif %} - <a href="/vendor/postage/create">add postage</a> - <a href="/vendor/form/create">create an order form</a> - <a href="/vendor/images">manage images</a>
-</nav>
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/sell.html" %}
+{% endblock %}
+{% block menu %}
+<div class="title">
+  Vendor Dashboard
+</div>
+<ul class="category-tree">
+  <li>
+    <a class="header active" href="/vendor/listings"><span class="category">Listings</span></a>
+  </li>
+  <li>
+    {% if not postages|empty? %}
+      <a class="header" href="/vendor/listings/create"><span class="category">Add listing</span></a>
+    {% else %}
+      <em class="header" title="you need to create postage first"><span class="category">Add listing</span></em>
+    {% endif %}
+  </li>
+  <li>
+    <a class="header" href="/vendor/postage/create"><span class="category">Add postage</span></a>
+  </li>
+  <!-- <li>
+    <a class="header" href="/vendor/form/create"><span class="category">create an order form</span></a>
+  </li> -->
+  <li>
+    <a class="header" href="/vendor/news"><span class="category">Manage Followers</span></a>
+  </li>
+  <li>
+    <a class="header" href="/vendor/images"><span class="category">manage images</span></a>
+  </li>
+</ul>
+{% endblock %}
+{% block container %}
+<h1 class="jumbo">Listings</h1>
 <div class="postage">
 {% if not postages|empty? %}
 <table class="table normal">
