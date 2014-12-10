@@ -57,20 +57,25 @@
                     ])])))
                     ;;[:li [:a {:href (str url "?page=")} ]]]))))
 
-(defn render-tree [tree params]
+(defn header [tree params id]
+  [:a.header (merge (when (= id (:id tree)) {:class "active"}) {:href (str "/category/" (:id tree) params)})
+   [:span.category (:name tree) " " [:span.count  (str "(" (:count tree) ")")]]])
+
+(defn render-tree [tree params id]
   (let [children (:children tree)]
     (if-not (empty? children)
       [:li
-       [:a.category {:href (str "/category/" (:id tree) params)} (:name tree)] " " [:span.count  (str "(" (:count tree) ")")]
-       [:ul (map #(render-tree % params) children)]]
+       (header tree params id)
+       [:ul (map #(render-tree % params id) children)]]
       [:li
-       [:a.category {:href (str "/category/" (:id tree) params)} (:name tree)] " " [:span.count (str "(" (:count tree) ")")]])))
+       (header tree params id)])))
 
 (add-filter! :render-tree
              (fn [x]
                (let [tree (:tree x)
+                     id (:id x)
                      params (if-not (empty? (:params x)) (str "?" (util/params (:params x))))]
-                 [:safe (html [:ul (render-tree tree params)])])))
+                 [:safe (html [:ul {:class "category-tree"} (render-tree tree params id)])])))
 
 (add-filter! :status
              (fn [x]

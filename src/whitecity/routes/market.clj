@@ -44,7 +44,7 @@
     (layout/render "market/index.html"
                    (conj {:page {:page page :max pagemax :url url :params params}
                           :listings listings
-                          :categories {:tree categories :params params}}
+                          :categories {:tree categories :params params :id (util/parse-int cid)}}
                          params
                          (set-info)))))
 

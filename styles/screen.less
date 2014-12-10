@@ -7,6 +7,7 @@
 @import "market";
 @import "footer";
 @import "account";
+@import "search";
 
 @price: #771105;
 
@@ -27,6 +28,7 @@
   .content {
     padding: 10px 0;
   }
+
 }
 
 .danger {
@@ -185,7 +187,7 @@ ul.pagination {
   min-height: 100%;
   height: 100%;
   margin: 0 auto;
-  > .table {
+  > .container {
     width: 100%;
     height: 100%;
     display: table;
@@ -289,60 +291,58 @@ ul.pagination {
 }
 
 .fact-table tr td:first-child {
+  padding-right: 14px;
   text-align: right;
   font-weight: bold;
 }
 
-.container {
-  padding: 10px 20px;
-  .table.normal {
-    width: inherit;
-  }
+.table.normal {
+  width: auto;
+}
 
-  .table.normal tbody td, .table.normal thead th {
-    padding: 2px 12px;
-  }
+.table.normal tbody td, .table.normal thead th {
+  padding: 2px 12px;
+}
 
-  .table {
-    border: 1px solid #e2e2e2;
-    padding: 3px;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    width: 100%;
-    border-spacing: 0;
-    .gain {
-      td {
-        background-color: #dff0d8;
-      }
-    }
-    .loss {
-      td {
-        background-color: #f2dede;
-      }
+.table {
+  border: 1px solid #e2e2e2;
+  padding: 3px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  width: 100%;
+  border-spacing: 0;
+  .gain {
+    td {
+      background-color: #dff0d8;
     }
   }
-
-  .table thead th {
-    text-align: left;
+  .loss {
+    td {
+      background-color: #f2dede;
+    }
   }
+}
 
-  .table tbody td, .table thead th {
-    padding: 2px 4px;
-  }
+.table thead th {
+  text-align: left;
+}
 
-  .table .large-column {
-    width: 80%;
-    text-align: center;
-  }
+.table tbody td, .table thead th {
+  padding: 2px 4px;
+}
 
-  .table tfoot td {
-    padding-top: 5px;
-  }
+.table .large-column {
+  width: 80%;
+  text-align: center;
+}
 
-  .table thead tr, .table tbody tr:nth-child(even) {
-    background: #f7f7f7;
-  }
+.table tfoot td {
+  padding-top: 5px;
+}
+
+.table thead tr, .table tbody tr:nth-child(even) {
+  background: #f7f7f7;
 }
 
 .form-group {
@@ -510,9 +510,6 @@ textarea.form-control {
     }
   }
 
-  .container {
-    padding: 10px 4px;
-  }
   .bitcoin-address {
     word-break: break-all;
   }

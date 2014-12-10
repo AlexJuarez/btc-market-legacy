@@ -8,11 +8,26 @@
   </head>
   <body>
     <div class="wrapper">
-      <div class="table">
+      <div class="container">
         <div class="row">
           <div class="cell header">
             <header id="header">
-              <div id="banner"><a href="/">Flight</a></div>
+              <div id="banner"><a href="/">
+                <svg class="icon-feather" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                  width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+                  <g>
+                    <g>
+                    <path fill-rule="evenodd" clip-rule="evenodd" fill="#989898" d="M3.515,4.809c8.432,13.302,20.094,21.289,20.094,21.289
+                    c0.374-1.217,0.281-2.225-0.047-3.442c-1.357-4.074-6.275-9.649-6.275-9.649c-1.078,0.421-1.874,0.515-1.874,0.515l1.077-1.405
+                    l-0.984-0.187l-2.623,2.295l0.563-4.497C6.794,7.62,1.173,0.406,1.173,0.406S0.33,1.952,0.19,4.622
+                    c-0.141,2.67,0.656,4.778,0.656,4.778c1.452,0.609,3.793,1.827,3.793,1.827l-3.075,0.219c2.779,8.04,6.448,10.648,6.448,10.648
+                    c3.888,0.421,8.104,1.64,8.104,1.64c-1.968-0.188-6.277-0.235-6.277-0.235c7.869,6.371,13.538,4.778,13.538,4.778
+                    C11.291,20.174,8.714,13.756,3.515,4.809z M7.782,11.415c0,0,5.843,9.984,15.371,16.057c5.805,3.922,7.418,3.91,7.418,3.91
+                    s0.838,0.008,1.471-0.372C32.042,31.01,19.912,27.72,7.782,11.415z"/>
+                    </g>
+                  </g>
+                </svg>
+                Flight</a></div>
               <div class="account-cart">
                 <div class="account">
                   {% if user.logged_in %}
@@ -25,13 +40,13 @@
                 </div>
                 <div class="cart">
                   <a href="/cart">
-                    <strong><span class="cart-icon">Cart</span> {{cart-count}}</strong>
+                    <span class="cart-icon">Cart</span> ({{cart-count}})
                   </a>
                 </div>
               </div>
               {% if user.logged_in %}
               <nav class="links">
-                <a href="/">Market</a>
+                <a class="active" href="/">Market</a>
                 <a href="/messages">Inbox ({{user.messages.unread}})</a>
                 <a href="/orders">Orders ({{user.orders}})</a>
                 {% if user.vendor %}
@@ -44,10 +59,6 @@
                 {% endif %}
               </nav>
               {% endif %}
-                <!-- <form action="/search" method="GET" class="search">
-                  <input class="form-control" type="search" name="q" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
-                  <button type="submit">GO</button>
-                </form> -->
             </header>
           </div>
         </div>

@@ -8,7 +8,7 @@
 
 #header {
   position: relative;
-  padding: 0 15px;
+  padding: 0 48px;
   overflow: hidden;
   height: 50px;
 
@@ -22,8 +22,7 @@
       font-size: 13px;
       letter-spacing: 1.2px;
       position: relative;
-      &:hover {
-       &:after {
+      &:hover:after, &.active:after {
          content: "";
          width: 100%;
          position: absolute;
@@ -31,7 +30,14 @@
          bottom: 0;
          left: 0;
          background: #999;
-       }
+      }
+
+      &.active {
+        color: #39BDD1;
+      }
+
+      &.active:after {
+        background: #39BDD1;
       }
     }
   }
@@ -54,9 +60,15 @@
 }
 
 #banner {
-  margin: 8px 30px 0 0;
+  margin: 8px 72px 0 0;
   float: left;
-  overflow: hidden;
+
+  .icon-feather {
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+    vertical-align: top;
+  }
 
   a {
     text-align: center;
@@ -71,6 +83,9 @@
   }
   a:hover {
     color: #CECECE;
+    path {
+      fill: #CECECE !important;
+    }
   }
 }
 
