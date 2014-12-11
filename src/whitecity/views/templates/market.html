@@ -31,13 +31,15 @@
               <div class="account-cart">
                 <div class="settings">
                   <a href="/account">settings</a>
-                  <ul class="drop-down">
-                    <li><a href="/account/pgp">pgp</a></li>
-                    <li><a href="/account/pgp/wallet">wallet</a></li>
-                    <li><a href="/account/pgp/wallet">favorites</a></li>
-                    <li><a href="/account/pgp/wallet">reviews</a></li>
-                    <li><a href="/account/pgp/wallet">change password</a></li>
-                  </ul>
+                  <div class="drop-down">
+                    <ul>
+                      <li><a href="/account/pgp">pgp</a></li>
+                      <li><a href="/account/pgp/wallet">wallet</a></li>
+                      <li><a href="/account/pgp/wallet">favorites</a></li>
+                      <li><a href="/account/pgp/wallet">reviews</a></li>
+                      <li><a href="/account/pgp/wallet">change password</a></li>
+                    </ul>
+                  </div>
                 </div>
                 <div class="account">
                   {% if user.logged_in %}
