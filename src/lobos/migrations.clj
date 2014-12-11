@@ -303,7 +303,7 @@
                   (text :content)
                   (varchar :subject 100)
                   (refer-to :user))))
-  (down [] (drop (table :messages))))
+  (down [] (drop (table :feedback))))
 
 
 (defmigration add-pgpkeyid-to-users

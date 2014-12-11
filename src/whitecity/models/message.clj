@@ -28,7 +28,7 @@
   (select messages
     (fields :subject :content :created_on :user_id :sender_id :read)
     (with users (fields [:login :user_login] [:alias :user_alias]))
-    (where {:sender_id id})))
+    (where {:sender_id id :user_id [not= nil] :feedback_id nil})))
 
 (defn all
   ([id page per-page]

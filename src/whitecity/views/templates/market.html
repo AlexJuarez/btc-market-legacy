@@ -13,7 +13,7 @@
           <div class="cell header">
             <header id="header">
               <div id="banner"><a href="/">
-                <svg class="icon-feather" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                <svg class="icon-feather" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                   width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
                   <g>
                     <g>
@@ -23,7 +23,7 @@
                     c-0.141,2.67,0.656,4.778,0.656,4.778c1.452,0.609,3.793,1.827,3.793,1.827l-3.075,0.219c2.779,8.04,6.448,10.648,6.448,10.648
                     c3.888,0.421,8.104,1.64,8.104,1.64c-1.968-0.188-6.277-0.235-6.277-0.235c7.869,6.371,13.538,4.778,13.538,4.778
                     C11.291,20.174,8.714,13.756,3.515,4.809z M7.782,11.415c0,0,5.843,9.984,15.371,16.057c5.805,3.922,7.418,3.91,7.418,3.91
-                    s0.838,0.008,1.471-0.372C32.042,31.01,19.912,27.72,7.782,11.415z"/>
+                    s0.838,0.008,1.471-0.372C32.042,31.01,19.912,27.72,7.782,11.415z"></path>
                     </g>
                   </g>
                 </svg>
@@ -44,21 +44,8 @@
                   </a>
                 </div>
               </div>
-              {% if user.logged_in %}
-              <nav class="links">
-                <a class="active" href="/">Market</a>
-                <a href="/messages">Inbox ({{user.messages.unread}})</a>
-                <a href="/orders">Orders ({{user.orders}})</a>
-                {% if user.vendor %}
-                <a href="/vendor/sales">Sold ({{user.sales.total}})</a>
-                <a href="/vendor/listings">Sell ({{user.listings}})</a>
-                {% endif %}
-                <a href="/account/wallet">Wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</a>
-                {% if user.mod %}
-                <a href="/moderate">Mod</a>
-                {% endif %}
-              </nav>
-              {% endif %}
+              {% block links %}
+              {% endblock %}
             </header>
           </div>
         </div>

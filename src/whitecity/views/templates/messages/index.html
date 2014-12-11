@@ -1,114 +1,97 @@
-{% extends "whitecity/views/templates/market.html" %}
-{% block content %}
-<div class="column-layout">
-    <div class="row">
-        <nav class="side-menu cell">
-            <div class="header"><div class="green"></div><div class="pink"></div></div>
-            <form action="/search" method="GET" class="search">
-                <input type="search" name="q" placeholder="Search Listings" {% if query %}value="{{query}}"{% endif %} />
-                <button type="submit">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                         width="18px" height="18px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                          <path fill="#989898" d="M6.762,2.25c2.467,0,4.474,2.019,4.474,4.5c0,0.935-0.287,1.834-0.829,2.601L9.966,9.974l-0.618,0.442
-                        c-0.763,0.546-1.657,0.834-2.586,0.834c-2.467,0-4.474-2.018-4.474-4.5S4.295,2.25,6.762,2.25 M6.762,0L6.762,0
-                        C3.056,0,0.051,3.022,0.051,6.75s3.005,6.75,6.711,6.75c1.449,0,2.786-0.466,3.882-1.25l5.391,5.42
-                        c0.219,0.221,0.506,0.33,0.793,0.33c0.286,0,0.572-0.109,0.791-0.33c0.438-0.439,0.438-1.153,0-1.594l-5.39-5.42
-                        c0.78-1.104,1.243-2.449,1.243-3.906C13.473,3.022,10.469,0,6.762,0"/>
-                    </svg>
-                </button>
-            </form>
-            <div class="title">
-                My messages
-            </div>
-            <ul class="category-tree">
-                <li>
-                    <a class="header active" href="/messages"><span class="category">Inbox</span><span class="count">({{user.messages.unread}})</span></a>
-                </li>
-                <li>
-                    <a class="header" href="/messages/sent"><span class="category">Sent</span></a>
-                </li>
-            </ul>
-        </nav>
-        <div class="cell ls">
-            <div class="inbox">
-                <h1 class="jumbo">my messages</h1>
-            </div>
-            {% if not messages|empty? %}
-            <table class="table normal messages">
-                <thead>
-                <tr>
-                    <th>from</th>
-                    <th>subject</th>
-                    <th>freshness</th>
-                    <th>&nbsp;</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                    <td colspan="4">
-                        {{page|pagination}}
-                    </td>
-                </tr>
-                </tfoot>
-                <tbody>
-                {% for message in messages %}
-                <tr class="message">
-                    <td>
-                        {% if message.feedback_id %}
-                        <span class="support">Support Staff</span>
-                        {% else %}
-                        <span class="sender">{{message.user_alias}}</span>
-                        {% endif %}
-                    </td>
-                    <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
-                    <td><span title="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
-                    <td>
-                        {% if message.feedback_id %}
-                        <span class="subject"><a href="/messages/support/{{message.feedback_id}}">read</a></span>
-                        {% else %}
-                        {% if message.read %}
-                        <span class="subject"><a href="/messages/{{message.sender_id}}">read</a></span>
-                        {% else %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+  {% include "whitecity/views/templates/links/messages.html" %}
+{% endblock %}
+{% block menu %}
+  <div class="title">
+    My messages
+  </div>
+  <ul class="category-tree">
+    <li>
+      <a class="header active" href="/messages"><span class="category">Inbox</span><span class="count">({{user.messages.unread}})</span></a>
+    </li>
+    <li>
+      <a class="header" href="/messages/sent"><span class="category">Sent</span></a>
+    </li>
+  </ul>
+{% endblock %}
+{% block container %}
+<div class="inbox">
+  <h1 class="jumbo">Inbox</h1>
+</div>
+{% if not messages|empty? %}
+<table class="table normal messages">
+  <thead>
+  <tr>
+    <th>from</th>
+    <th>subject</th>
+    <th>freshness</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <td colspan="4">
+      {{page|pagination}}
+    </td>
+  </tr>
+  </tfoot>
+  <tbody>
+  {% for message in messages %}
+  <tr class="message">
+    <td>
+      {% if message.feedback_id %}
+      <span class="support">Support Staff</span>
+      {% else %}
+      <span class="sender">{{message.user_alias}}</span>
+      {% endif %}
+    </td>
+    <td>{% if message.subject %}{{message.subject}}{% else %}no subject{% endif %}</td>
+    <td><span title="{{message.created_on|date:fullDateTime}}" class="age pretty-time">{{message.created_on|date:shortDate}}</span></td>
+    <td>
+      {% if message.feedback_id %}
+      <span class="subject"><a href="/messages/support/{{message.feedback_id}}">read</a></span>
+      {% else %}
+      {% if message.read %}
+      <span class="subject"><a href="/messages/{{message.sender_id}}">read</a></span>
+      {% else %}
           <span class="subject">
             <strong><a href="/messages/{{message.sender_id}}">read</a></strong>
           </span>
-                        {% endif %}
-                        {% endif %}
-                        | <a href="/message/{{message.id}}/delete">delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <div class="well">You do not have any messages</div>
-            {% endif %}
-            {% if not news|empty? %}
-            <h2>News from followed vendors</h2>
-            <table class="table normal messages">
-                <thead>
-                <tr>
-                    <th>from</th>
-                    <th>subject</th>
-                    <th>freshness</th>
-                    <th>&nbsp;</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for article in news %}
-                <tr class="message">
-                    <td>
-                        <a href="/user/{{article.alias}}">{{article.alias}}</a>
-                    </td>
-                    <td><a href="/news/{{article.id}}">{{article.subject}}</a></td>
-                    <td><span title="{{article.created_on|date:fullDateTime}}" class="age pretty-time">{{article.created_on|freshness}}</span></td>
-                    <td><a href="/news/{{article.id}}">read</a></td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
-        </div>
-    </div>
-</div>
+      {% endif %}
+      {% endif %}
+      | <a href="/message/{{message.id}}/delete">delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="well">You do not have any messages</div>
+{% endif %}
+{% if not news|empty? %}
+<h2>News from followed vendors</h2>
+<table class="table normal messages">
+  <thead>
+  <tr>
+    <th>from</th>
+    <th>subject</th>
+    <th>freshness</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for article in news %}
+  <tr class="message">
+    <td>
+      <a href="/user/{{article.alias}}">{{article.alias}}</a>
+    </td>
+    <td><a href="/news/{{article.id}}">{{article.subject}}</a></td>
+    <td><span title="{{article.created_on|date:fullDateTime}}" class="age pretty-time">{{article.created_on|freshness}}</span></td>
+    <td><a href="/news/{{article.id}}">read</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 {% endblock %}
