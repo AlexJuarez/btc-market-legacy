@@ -29,18 +29,20 @@
                 </svg>
                 Flight</a></div>
               <div class="account-cart">
+                {% if user.logged_in %}
                 <div class="settings">
                   <a href="/account">settings</a>
                   <div class="drop-down">
                     <ul>
                       <li><a href="/account/pgp">pgp</a></li>
-                      <li><a href="/account/pgp/wallet">wallet</a></li>
-                      <li><a href="/account/pgp/wallet">favorites</a></li>
-                      <li><a href="/account/pgp/wallet">reviews</a></li>
-                      <li><a href="/account/pgp/wallet">change password</a></li>
+                      <li><a href="/account/wallet">wallet</a></li>
+                      <li><a href="/account/favorites">favorites</a></li>
+                      <li><a href="/account/reviews">reviews</a></li>
+                      <li><a href="/account/password">change password</a></li>
                     </ul>
                   </div>
                 </div>
+                {% endif %}
                 <div class="account">
                   {% if user.logged_in %}
                   Hi, <strong>{{user.alias}}</strong>
