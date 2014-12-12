@@ -29,9 +29,19 @@
                 </svg>
                 Flight</a></div>
               <div class="account-cart">
+                <div class="settings">
+                  <a href="/account">settings</a>
+                  <ul class="drop-down">
+                    <li><a href="/account/pgp">pgp</a></li>
+                    <li><a href="/account/pgp/wallet">wallet</a></li>
+                    <li><a href="/account/pgp/wallet">favorites</a></li>
+                    <li><a href="/account/pgp/wallet">reviews</a></li>
+                    <li><a href="/account/pgp/wallet">change password</a></li>
+                  </ul>
+                </div>
                 <div class="account">
                   {% if user.logged_in %}
-                  Hi, <a href="/account">{{user.alias}}</a>
+                  Hi, <strong>{{user.alias}}</strong>
                   | <a href="/logout">logout</a>
                   {% else %}
                   <a href="/login">login</a> |

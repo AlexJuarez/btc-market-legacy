@@ -9,7 +9,6 @@
 #header {
   position: relative;
   padding: 0 48px;
-  overflow: hidden;
   height: 50px;
 
   .links {
@@ -43,18 +42,64 @@
   }
 
   .account-cart {
+    height: 100%;
     color: #4D4D4D;
     float: right;
-    margin-top: 14px;
     text-align: right;
   }
 
+  .settings {
+    .drop-down {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #2c394a;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      z-index: 10;
+      list-style: none;
+      transition: max-height .15s ease-out;
+      max-height: 0;
+      overflow: hidden;
+    }
+
+    &:hover {
+      > a {
+        color: #fff;
+        background: #2c394a;
+        transition-delay: 0;
+      }
+      .drop-down {
+        max-height: 500px;
+        transition: max-height .25s ease-in;
+      }
+    }
+
+    > a {
+      display: inline-block;
+      height: 100%;
+      font-size: 13px;
+      letter-spacing: 1.2px;
+      padding: 14px 14px 0 14px;
+      transition: 0s background-color;
+      transition-delay: .3s;
+    }
+
+    float: left;
+    height: 100%;
+    margin-right: 12px;
+    position: relative;
+  }
+
   .account {
+    margin-top: 14px;
     float: left;
     margin-right: 12px;
   }
 
   .cart {
+    margin-top: 14px;
     float: left;
   }
 }

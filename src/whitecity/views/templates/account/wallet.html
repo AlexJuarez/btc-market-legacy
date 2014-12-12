@@ -1,5 +1,33 @@
-{% extends "whitecity/views/templates/account/account.html" %}
-{% block section %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/wallet.html" %}
+{% endblock %}
+{% block menu %}
+<div class="title">
+  Account
+</div>
+<ul class="category-tree">
+  <li>
+    <a class="header" href="/account"><span class="category">settings</span></a>
+  </li>
+  <li>
+    <a class="header" href="/account/pgp"><span class="category">pgp</span></a>
+  </li>
+  <li>
+    <a class="header active" href="/account/wallet"><span class="category">wallet</span></a>
+  </li>
+  <li>
+    <a class="header" href="/account/favorites"><span class="category">favorites</span></a>
+  </li>
+  <li>
+    <a class="header" href="/account/reviews"><span class="category">reviews</span></a>
+  </li>
+  <li>
+    <a class="header" href="/account/password"><span class="category">change password</span></a>
+  </li>
+</ul>
+{% endblock %}
+{% block container %}
 <h3>Wallet</h3>
 <p class="well">
   <strong>availible: </strong>&#3647;{{user.btc}} {% if balance %}(~{{user.currency_symbol|safe}}{{user.balance|double-format:2}}){% endif %}
