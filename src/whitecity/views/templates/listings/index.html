@@ -73,6 +73,10 @@
         {% image listing.image_id %}
       </div>
     {% endif %}
+    <div class="cost">
+      <h3>Price: {{listing.currency_symbol|safe}}{{listing.price}}</h3>
+      <h4>Currency: {{listing.currency_key}}</h4>
+    </div>
     <div class="info">
       <h2>{{listing.title}}
         <sup class="normal">
@@ -101,10 +105,7 @@
         <span class="category">Category: <a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
       </p>
     </div>
-    <div class="cost">
-      <h3>Price: {{listing.currency_symbol|safe}}{{listing.price}}</h3>
-      <h4>Currency: {{listing.currency_key}}</h4>
-    </div>
+
   </div>
 {% endfor %}
   {{page|pagination}}

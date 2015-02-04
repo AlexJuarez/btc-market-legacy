@@ -3,7 +3,7 @@
     {% include "whitecity/views/templates/links/orders.html" %}
 {% endblock %}
 {% block container %}
-<h1 class="jumbo">my orders</h1>
+<h1 class="jumbo">Orders</h1>
 {% if not pending-review|empty? %}
 <form method="post">
   {% csrf-token %}

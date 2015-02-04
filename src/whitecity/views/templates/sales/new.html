@@ -26,7 +26,7 @@
 {% endblock %}
 {% block container %}
 {% if not sales|empty? %}
-<h1 class="jumbo">New sales</h1>
+<h1 class="jumbo">New Sales</h1>
 <form action="/vendor/sales/new" method="POST">
   {% csrf-token %}
   <input type="submit" name="submit" value="accept" />

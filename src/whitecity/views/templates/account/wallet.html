@@ -28,8 +28,8 @@
 </ul>
 {% endblock %}
 {% block container %}
-<h3>Wallet</h3>
-<p class="well">
+<h1 class="jumbo">Wallet</h1>
+<p>
   <strong>availible: </strong>&#3647;{{user.btc}} {% if balance %}(~{{user.currency_symbol|safe}}{{user.balance|double-format:2}}){% endif %}
   <br>
   <strong>Bitcoin address:</strong> <span class="bitcoin-address">{{user.wallet}}</span>
@@ -37,7 +37,7 @@
   <a href="/account/wallet/new">generate a new address</a>
 </p>
 <h3>Wallet Pin</h3>
-<div class="well p">
+<div class="p">
   {% if not user.pin %}
   <h4>You need to create a pin to preform a purchase or withdrawal.</h4>
   <form method="post">
@@ -110,7 +110,7 @@
   {% endif %}
 </div>
 <h3>Withdraw Funds</h3>
-<div class="well p">
+<div class="p">
   {% if user.btc >= 0 %}
     <form method="post">
       {% csrf-token %}
@@ -132,7 +132,6 @@
           {{errors.pin|join:", "}}
         {% endif %}
       </div>
-
       <button type="submit" class="btn">Withdraw</button>
     </form>
   {% else %}

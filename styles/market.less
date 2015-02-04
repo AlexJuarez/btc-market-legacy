@@ -101,12 +101,21 @@
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
 
+    .body {
+      margin-left: 24px;
+    }
+
+    .title {
+      margin: 18px 0 10px;
+      font-size: 18px;
+    }
+
     .thumbnail {
       height: 135px;
       width: 180px;
       overflow: hidden;
       float: left;
-      margin-right: 20px;
+      margin-right: 24px;
       a {
         opacity: 1;
       }
@@ -132,18 +141,28 @@
       display: table;
       height: 135px;
       box-sizing:border-box;
-      text-align: center;
+      text-align: right;
       background: #eee;
+      position:relative;
+      padding-right: 24px;
 
-      .text {
-        display: table-cell;
-        vertical-align: middle;
-      }
-
-      span {
-        font-size: 20px;
+      .price {
+        margin: 18px 0 10px;
+        font-size: 18px;
         color: @price;
       }
+
+      .cart-link {
+        color: @orange;
+      }
+
+      .favorite {
+        position: absolute;
+        right: 1px;
+        margin-right: 24px;
+        bottom: 21px;
+      }
+
     }
   }
 }

@@ -42,28 +42,31 @@
   {% endif %}
   <div class="sale">
     <div class="text">
-      <span>{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</span>
+      <div class="price">{{user.currency_symbol|safe}}{{listing.price|double-format:5}}</div>
+      <a class="cart-link" href="/cart/add/{{listing.id}}">add to cart</a>
       <br />
-      <a href="/cart/add/{{listing.id}}">add to cart</a>
+      <a class="favorite" href="/listing/{{listing.id}}/bookmark">favorite</a>
     </div>
   </div>
-  <h1><a href="/listing/{{listing.id}}">{{listing.title}}</a></h1>
-  <table class="fact-table">
-    <tbody>
-    <tr>
-      <td>seller:</td>
-      <td><a href="/user/{{listing.user_id}}">{{listing.alias}} ({{listing.rating|rating}})</a></td>
-    </tr>
-    <tr>
-      <td>ships from:</td>
-      <td>{{listing.from|region}}</td>
-    </tr>
-    <tr>
-      <td>ships to:</td>
-      <td>{{listing.to|regions}}</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="body">
+    <div class="title"><a href="/listing/{{listing.id}}">{{listing.title}}</a></div>
+    <table class="fact-table">
+      <tbody>
+      <tr>
+        <td>seller:</td>
+        <td><a href="/user/{{listing.user_id}}">{{listing.alias}} ({{listing.rating|rating}})</a></td>
+      </tr>
+      <tr>
+        <td>ships from:</td>
+        <td>{{listing.from|region}}</td>
+      </tr>
+      <tr>
+        <td>ships to:</td>
+        <td>{{listing.to|regions}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endfor %}
 <div class="clear-float"></div>
