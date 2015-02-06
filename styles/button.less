@@ -15,6 +15,11 @@
   -moz-border-radius: 2px;
   -webkit-user-select: none;
   user-select: none;
+
+  &:active {
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    outline: 0;
+  }
 }
 
 .btn-gray {
@@ -26,8 +31,18 @@
     border-color: #adadad;
   }
   &:active {
-    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
-    outline: 0;
+    background-color: #dcdcdc;
+  }
+}
+
+.btn-warn {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  color: #fff;
+
+  &:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
   }
 }
 
@@ -44,8 +59,6 @@
     border-color: lighten(#299dae, 10%);
   }
   &:active {
-    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
-    outline: 0;
     background: darken(@blue, 10%);
     border-color: darken(#299dae, 10%);
   }

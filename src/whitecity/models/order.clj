@@ -153,19 +153,20 @@
           (values {:user_id user-id :order_id id})))
 
 (defn update-sales [sales seller-id status]
-  (if (= status 1) (util/update-session seller-id :sales :orders))
-  (let [statuses {:status status :updated_on (raw "(now())")}
-        statuses (if (= status 1) (assoc statuses :auto_finalize (raw "(now() + interval '17 days')")) statuses)
-        audits (map #(hash-map :user_id seller-id :order_id % :status status) sales)]
-    (transaction
-     (update orders
-             (set-fields statuses)
-             (where {:seller_id seller-id :finalized false :id [in sales]}))
-     (update orders
-             (set-fields {:status 3})
-             (where {:seller_id seller-id :finalized true :id [in sales]}))
-     (insert order-audit
-             (values audits)))))
+  (when (not (empty? sales))
+    (if (= status 1) (util/update-session seller-id :sales :orders))
+    (let [statuses {:status status :updated_on (raw "(now())")}
+          statuses (if (= status 1) (assoc statuses :auto_finalize (raw "(now() + interval '17 days')")) statuses)
+          audits (map #(hash-map :user_id seller-id :order_id % :status status) sales)]
+      (transaction
+       (update orders
+               (set-fields statuses)
+               (where {:seller_id seller-id :finalized false :id [in sales]}))
+       (update orders
+               (set-fields {:status 3})
+               (where {:seller_id seller-id :finalized true :id [in sales]}))
+       (insert order-audit
+               (values audits))))))
 
 ;;use update instead of select... genius
 (defn finalize [id user-id]
@@ -237,9 +238,10 @@
 ;;make sure to separate logic here
 ;;so that catagories and things are updated as the sales are rejected.
 (defn reject-sales [sales seller-id]
-  (let [o (select orders
-                  (where {:seller_id seller-id :finalized false :status 0 :id [in sales]}))]
-    (dorun (map #(cancel! %) o))))
+  (when (not (empty? sales))
+    (let [o (select orders
+                    (where {:seller_id seller-id :finalized false :status 0 :id [in sales]}))]
+      (dorun (map #(cancel! %) o)))))
 
 (defn count [id]
   (:cnt (first (select orders

@@ -25,8 +25,8 @@
 </ul>
 {% endblock %}
 {% block container %}
-{% if not sales|empty? %}
 <h1 class="jumbo">Sales in Transit</h1>
+{% if not sales|empty? %}
 <a href="/vendor/sales/shipped/download?page={{page}}" class="right">download</a>
 <table class="table">
   <thead>

@@ -1,6 +1,9 @@
 {% extends "whitecity/views/templates/layout/side-menu.html" %}
 {% block links %}
-{% include "whitecity/views/templates/links/wallet.html" %}
+{% include "whitecity/views/templates/links/settings.html" %}
+{% endblock %}
+{% block settings %}
+{% include "whitecity/views/templates/layout/settings.html" %}
 {% endblock %}
 {% block menu %}
 <div class="title">

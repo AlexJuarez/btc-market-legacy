@@ -1,5 +1,9 @@
-{% extends "whitecity/views/templates/market.html" %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/mod.html" %}
+{% endblock %}
 {% block content %}
+<div class="mod">
 {% if not id %}
 Order not found
 {% else %}
@@ -207,7 +211,7 @@ Order not found
 </table>
 {% endif %}
 {% if status = 2 %}
-<form class="well" action="/moderate/{{id}}" method="POST">
+<form action="/moderate/{{id}}" method="POST">
   <p>
     Propose a resolution:
   </p>
@@ -225,11 +229,10 @@ Order not found
     <label for="message">Message:</label>
     <textarea rows="6" id="message" name="content" class="form-control">{{content}}</textarea>
   </p>
-  <span class="submit">
-    <input type="submit" class="btn" value="send" />
-  </span>
+  <input type="submit" class="btn btn-primary p" value="send" />
   {% csrf-token %}
 </form>
 {% endif %}
 {% endif %}
+</div>
 {% endblock %}

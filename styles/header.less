@@ -49,6 +49,12 @@
   }
 
   .settings {
+    &.active {
+      > a {
+        color: #fff;
+        background: #2c394a;
+      }
+    }
     .drop-down {
       ul {
         padding: 5px 0;
@@ -110,7 +116,6 @@
   }
 
   .cart {
-    margin-top: 14px;
     float: left;
   }
 }
@@ -158,10 +163,6 @@
 
     #banner {
       float: none;
-    }
-
-    .cart {
-      margin-top: 0;
     }
 
     .account-cart {

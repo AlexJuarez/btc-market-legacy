@@ -8,7 +8,7 @@
 <div class="p">
   <strong>ticket id#:</strong><span> {{id}}, created </span><span title="{{ticket.created_on|date:shortDate}}">{{ticket.created_on|freshness}}</span>
   <br />
-  <strong>Subject:</strong><span>{{ticket.subject}}</span>
+  <strong>Subject:</strong> <span>{{ticket.subject}}</span>
   <p>
     {{ticket.content}}
   </p>
@@ -57,10 +57,8 @@
   {% endif %}
   <p>
     <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
-  </p> 
-  <span class="submit">
-    <input type="submit" class="btn" value="send" />
-  </span>
+  </p>
+  <input type="submit" class="btn btn-primary p" value="send" />
   {% csrf-token %}
 </form>
 {% endif %}

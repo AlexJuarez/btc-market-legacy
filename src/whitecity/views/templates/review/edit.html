@@ -1,5 +1,8 @@
-{% extends "whitecity/views/templates/account/account.html" %}
-{% block section %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/orders.html" %}
+{% endblock %}
+{% block container %}
   <form method="post">
     {% csrf-token %}
     <table class="table">
@@ -29,10 +32,6 @@
         </tr>
       </tbody>
     </table>
-    <p>
-      <span class="submit">
-        <input type="submit" class="btn" value="update" />
-      </span>
-    </p>
+    <input type="submit" class="btn btn-primary p" value="update" />
   </form>
 {% endblock %}

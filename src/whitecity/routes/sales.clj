@@ -87,8 +87,8 @@
   ([{:keys [submit check] :as slug}]
    (let [sales (map #(-> % name hashids/decrypt util/parse-int) (keys check))]
      (if (= submit "accept")
-       (do (order/update-sales sales (user-id) 1) (resp/redirect "/vendor/sales"))
-       (do (order/reject-sales sales (user-id)) (resp/redirect "/vendor/sales"))))))
+       (do (order/update-sales sales (user-id) 1) (resp/redirect "/vendor/sales/new")) ;;state 1 means shipped
+       (do (order/reject-sales sales (user-id)) (resp/redirect "/vendor/sales/new"))))))
 
 (defn sales-download [status page]
   (let [page (or (util/parse-int page) 1)

@@ -210,6 +210,10 @@ a:active {
   margin-right: 12px;
   position: relative;
 }
+#header .settings.active > a {
+  color: #fff;
+  background: #2c394a;
+}
 #header .settings .drop-down {
   position: absolute;
   top: 100%;
@@ -259,7 +263,6 @@ a:active {
   margin-right: 12px;
 }
 #header .cart {
-  margin-top: 14px;
   float: left;
 }
 #banner {
@@ -301,9 +304,6 @@ a:active {
   #header #banner {
     float: none;
   }
-  #header .cart {
-    margin-top: 0;
-  }
   #header .account-cart {
     float: none;
     display: block;
@@ -334,6 +334,10 @@ a:active {
   -webkit-user-select: none;
   user-select: none;
 }
+.btn:active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  outline: 0;
+}
 .btn-gray {
   background: #fff;
   color: #333;
@@ -345,8 +349,16 @@ a:active {
   border-color: #adadad;
 }
 .btn-gray:active {
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  outline: 0;
+  background-color: #dcdcdc;
+}
+.btn-warn {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  color: #fff;
+}
+.btn-warn:hover {
+  background-color: #c9302c;
+  border-color: #ac2925;
 }
 .btn-gray:hover {
   background: #ccc;
@@ -361,8 +373,6 @@ a:active {
   border-color: #3abdd0;
 }
 .btn-primary:active {
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  outline: 0;
   background: #299dae;
   border-color: #1f7885;
 }
@@ -700,9 +710,6 @@ a:active {
   color: #ccc;
   position: relative;
   letter-spacing: .6px;
-}
-.cart {
-  padding: 0 24px;
 }
 .input-table {
   margin-bottom: 12px;

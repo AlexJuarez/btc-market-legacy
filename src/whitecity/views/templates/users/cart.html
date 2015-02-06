@@ -1,6 +1,18 @@
-{% extends "whitecity/views/templates/market.html" %}
-{% block content %}
-<div class="cart">
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block menu %}
+<div class="title">
+  My messages
+</div>
+<ul class="category-tree">
+  <li>
+    <a class="header active" href="/messages"><span class="category">Inbox</span> <span class="count">({{user.messages.unread}})</span></a>
+  </li>
+  <li>
+    <a class="header" href="/messages/sent"><span class="category">Sent</span></a>
+  </li>
+</ul>
+{% endblock %}
+{% block container %}
 <h1 class="jumbo">Shopping Cart</h1>
 <a href="/cart/empty">empty cart</a>
 {% if not listings|empty? %}
@@ -69,5 +81,4 @@
 {% else %}
   <p class="well">Your cart is empty!</p>
 {% endif %}
-</div>
 {% endblock %}

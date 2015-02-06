@@ -29,20 +29,22 @@
                 </svg>
                 Flight</a></div>
               <div class="account-cart">
+                {% block settings %}
                 {% if user.logged_in %}
                 <div class="settings">
-                  <a href="/account">settings</a>
+                  <a href="/account">Settings</a>
                   <div class="drop-down">
                     <ul>
-                      <li><a href="/account/pgp">pgp</a></li>
-                      <li><a href="/account/wallet">wallet</a></li>
-                      <li><a href="/account/favorites">favorites</a></li>
-                      <li><a href="/account/reviews">reviews</a></li>
-                      <li><a href="/account/password">change password</a></li>
+                      <li><a href="/account/pgp">PGP</a></li>
+                      <li><a href="/account/wallet">Wallet</a></li>
+                      <li><a href="/account/favorites">Favorites</a></li>
+                      <li><a href="/account/reviews">Reviews</a></li>
+                      <li><a href="/account/password">Change Password</a></li>
                     </ul>
                   </div>
                 </div>
                 {% endif %}
+                {% endblock %}
                 <div class="account">
                   {% if user.logged_in %}
                   Hi, <strong>{{user.alias}}</strong>
@@ -52,7 +54,7 @@
                   <a href="/register">register</a>
                   {% endif %}
                 </div>
-                <div class="cart">
+                <div class="cart links">
                   <a href="/cart">
                     <span class="cart-icon">Cart</span> ({{cart-count}})
                   </a>
@@ -60,19 +62,19 @@
               </div>
               {% block links %}
                 <nav class="links">
-                    <a class="active" href="/">Market</a>
-                    {% if user.logged_in %}
-                    <a href="/messages">Inbox ({{user.messages.unread}})</a>
-                    <a href="/orders">Orders ({{user.orders}})</a>
-                    {% if user.vendor %}
-                    <a href="/vendor/sales">Sold ({{user.sales.total}})</a>
-                    <a href="/vendor/listings">Sell ({{user.listings}})</a>
-                    {% endif %}
-                    <a href="/account/wallet">Wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</a>
-                    {% if user.mod %}
-                    <a href="/moderate">Mod</a>
-                    {% endif %}
-                    {% endif %}
+                  <a class="active" href="/">Market</a>
+                  {% if user.logged_in %}
+                  <a href="/messages">Inbox ({{user.messages.unread}})</a>
+                  <a href="/orders">Orders ({{user.orders}})</a>
+                  {% if user.vendor %}
+                  <a href="/vendor/sales">Sold ({{user.sales.total}})</a>
+                  <a href="/vendor/listings">Sell ({{user.listings}})</a>
+                  {% endif %}
+                  <a href="/account/wallet">Wallet {{user.currency_symbol|safe}}{{user.balance|double-format:4}}</a>
+                  {% if user.mod %}
+                  <a href="/moderate">Mod</a>
+                  {% endif %}
+                  {% endif %}
                 </nav>
               {% endblock %}
             </header>
