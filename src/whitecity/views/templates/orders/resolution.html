@@ -98,7 +98,7 @@ Order not found
       <label>
         <input type="radio" name="action" {% ifequal action "extension" %}checked="checked"{% endifequal %} value="extension" />
       Extension:</label>
-      <input name="extension" class="text-input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
+      <input name="extension" class="input input-2" maxlength="2" id="extension" type="text" value="{{extension}}" />
       days
       {% ifequal action "extension" %}
         {% if errors.value %}
@@ -109,7 +109,7 @@ Order not found
     <li>
       <label title="This is the percentage of the total that you will receive"><input type="radio" name="action" {% ifequal action "refund" %}checked="checked"{% endifequal %} value="refund" />
       Refund:</label>
-      <input name="refund" class="text-input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
+      <input name="refund" class="input input-3" maxlength="3" id="refund" type="text" value="{{refund}}" />
       %
       {% ifequal action "refund" %}
         {% if errors.value %}

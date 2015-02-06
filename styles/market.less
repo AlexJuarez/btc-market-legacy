@@ -45,6 +45,13 @@
   }
 }
 
+.mod {
+  padding: 0 24px;
+  .table {
+    background: white;
+  }
+}
+
 .options {
   margin-top: 20px;
 }
@@ -80,6 +87,16 @@
   }
   li:last-child {
     border-bottom: none;
+  }
+}
+
+.cart-link {
+  color: @orange;
+  &:hover {
+    color: lighten(@orange, 10%);
+  }
+  &:active {
+    color: darken(@orange, 10%);
   }
 }
 
@@ -132,13 +149,9 @@
     }
 
     .sale {
-      float: right;
-      width: 180px;
-      display: table;
       height: 135px;
-      box-sizing:border-box;
+      float: right;
       text-align: right;
-      background: #eee;
       position:relative;
       padding-right: 24px;
 
@@ -146,10 +159,6 @@
         margin: 18px 0 10px;
         font-size: 18px;
         color: @price;
-      }
-
-      .cart-link {
-        color: @orange;
       }
 
       .favorite {

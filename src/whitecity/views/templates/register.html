@@ -6,17 +6,17 @@
     {% csrf-token %}
     <div class="p">
       <div{% if errors.login %} class="has-error"{% endif %}>
-      <input placeholder="Username" class="text-input" id="login" name="login" type="text" value="{{login}}" />
+      <input placeholder="Username" class="input" id="login" name="login" type="text" value="{{login}}" />
       {% if errors.login %}
         {{errors.login|join:", "}}
       {% endif %}
       </div>
       <div{% if errors.pass %} class="has-error"{% endif %}>
-        <input placeholder="Password" class="text-input" id="pass" value="{{pass}}" name="pass" type="password" />
+        <input placeholder="Password" class="input" id="pass" value="{{pass}}" name="pass" type="password" />
         {% if errors.pass %}
           {{errors.pass|join:", "}}
         {% endif %}
-        <input placeholder="Confirm Password" class="text-input" id="confirm" value="{{confirm}}" name="confirm" type="password" />
+        <input placeholder="Confirm Password" class="input" id="confirm" value="{{confirm}}" name="confirm" type="password" />
       </div>
     </div>
     <div class="p{% if errors.captcha %} has-error{% endif %}">
@@ -24,7 +24,7 @@
          {{errors.captcha|join:", "}}
        {% endif %}
        <img class="captcha" src="data:image/jpeg;base64,{{captcha|safe}}" />
-       <input placeholder="captcha" class="text-input" id="captcha" name="captcha" type="text" />
+       <input placeholder="captcha" class="input" id="captcha" name="captcha" type="text" />
     </div>
     <input type="submit" class="btn" value="Register" />
   </form>

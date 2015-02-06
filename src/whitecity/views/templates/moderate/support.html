@@ -1,6 +1,11 @@
-{% extends "whitecity/views/templates/market.html" %}
+{% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+{% include "whitecity/views/templates/links/mod.html" %}
+{% endblock %}
 {% block content %}
-<div class="well p">
+<div class="mod">
+<h1 class="jumbo">Support</h1>
+<div class="p">
   <strong>ticket id#:</strong><span> {{id}}, created </span><span title="{{ticket.created_on|date:shortDate}}">{{ticket.created_on|freshness}}</span>
   <br />
   <strong>Subject:</strong><span>{{ticket.subject}}</span>
@@ -45,7 +50,7 @@
 </table>
 {% endif %}
 {% if ticket.alias %}
-<form class="well" method="POST">
+<form method="POST">
   <p>Compose a message to: <a href="/user/{{ticket.alias}}">{{ticket.alias}}</a></p>
   {% if errors.content %}
   <p>{{errors.content|join:", "}}</p>
@@ -59,4 +64,5 @@
   {% csrf-token %}
 </form>
 {% endif %}
+</div>
 {% endblock %}

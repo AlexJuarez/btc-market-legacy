@@ -57,7 +57,7 @@
     <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea>
   </p>
   <label for="pin">Pin: </label>
-    <input class="text-input" type="password" name="pin" id="pin" />
+    <input class="input" type="password" name="pin" id="pin" />
     {% if errors.pin %}
       <span class="error">{{errors.pin|join:", "}}</span>
     {% endif %}

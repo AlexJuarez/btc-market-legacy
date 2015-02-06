@@ -1,4 +1,10 @@
 {% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block menu %}
+<div class="title">
+  Browse
+</div>
+{{categories|render-tree}}
+{% endblock %}
 {% block container %}
 {% if not lid %}
 <p>Listing not found</p>
@@ -12,10 +18,8 @@
     </div>
   {% endif %}
   <h1 class="jumbo">{{title}}</h1>
-  <p>
-    <span class="price">{{user.currency_symbol|safe}}{{price|double-format:4}}</span>
-    <a href="/cart/add/{{lid}}">add to cart</a>
-  </p>
+  <span class="price">{{user.currency_symbol|safe}}{{price|double-format:4}}</span>
+  <a class="cart-link" href="/cart/add/{{lid}}">add to cart</a>
   <p>
     {% if reported %}
     <a href="/listing/{{lid}}/unreport">remove my report</a>

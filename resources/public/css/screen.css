@@ -339,18 +339,32 @@ a:active {
   color: #333;
   border-color: #e3e3e3;
 }
+.btn-gray:hover,
+.btn-gray:active {
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.btn-gray:active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  outline: 0;
+}
 .btn-gray:hover {
   background: #ccc;
 }
 .btn-primary {
   background: #39bdd1;
   color: #fff;
+  border-color: #299dae;
 }
 .btn-primary:hover {
-  background: lighter(#39bdd1);
+  background: #62cbdb;
+  border-color: #3abdd0;
 }
 .btn-primary:active {
-  background: darker(#39bdd1);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  outline: 0;
+  background: #299dae;
+  border-color: #1f7885;
 }
 #ships_to {
   vertical-align: top;
@@ -381,6 +395,7 @@ a:active {
 /* listing view page */
 .listing .price {
   color: #bec86e;
+  font-size: 18px;
 }
 .listing .image {
   background: #fff;
@@ -451,6 +466,12 @@ a:active {
   display: table-cell;
   vertical-align: top;
 }
+.mod {
+  padding: 0 24px;
+}
+.mod .table {
+  background: white;
+}
 .options {
   margin-top: 20px;
 }
@@ -484,6 +505,15 @@ a:active {
 }
 .user-posts li:last-child {
   border-bottom: none;
+}
+.cart-link {
+  color: #ff931e;
+}
+.cart-link:hover {
+  color: #ffab51;
+}
+.cart-link:active {
+  color: #ea7a00;
 }
 .ls {
   width: 100%;
@@ -529,13 +559,9 @@ a:active {
   padding: 0;
 }
 .ls .listing-row .sale {
-  float: right;
-  width: 180px;
-  display: table;
   height: 135px;
-  box-sizing: border-box;
+  float: right;
   text-align: right;
-  background: #eee;
   position: relative;
   padding-right: 24px;
 }
@@ -543,9 +569,6 @@ a:active {
   margin: 18px 0 10px;
   font-size: 18px;
   color: #bec86e;
-}
-.ls .listing-row .sale .cart-link {
-  color: #ff931e;
 }
 .ls .listing-row .sale .favorite {
   position: absolute;
@@ -673,12 +696,19 @@ a:active {
   margin: 0 24px 0 24px;
 }
 .side-menu .count {
+  font-weight: bold;
   color: #ccc;
   position: relative;
   letter-spacing: .6px;
 }
 .cart {
   padding: 0 24px;
+}
+.input-table {
+  margin-bottom: 12px;
+}
+.input-table tr td + td {
+  padding-left: 12px;
 }
 .price {
   color: #bec86e;
@@ -729,10 +759,6 @@ a:active {
   padding: 2px 3px;
   width: 4em;
   margin-right: 7px;
-}
-.text-input {
-  border: 1px solid #ccc;
-  padding: 2px 3px;
 }
 form .image {
   margin-bottom: 20px;
@@ -859,14 +885,12 @@ ul.pagination .disabled a:hover {
 .has-error {
   color: #b94a48;
 }
-.has-error .form-control,
-.has-error .text-input {
+.has-error .form-control {
   border-color: #b94a48;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-.has-error .form-control:focus,
-.has-error .text-input:focus {
+.has-error .form-control:focus {
   outline: none;
   border-color: #953b39;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
@@ -893,6 +917,7 @@ ul.pagination .disabled a:hover {
   border: none;
   padding: 0;
   border-spacing: 0;
+  color: #333;
 }
 .fact-table tr td:first-child {
   padding-right: 14px;
@@ -907,6 +932,7 @@ ul.pagination .disabled a:hover {
   padding: 2px 12px;
 }
 .table {
+  background: white;
   border: 1px solid #e2e2e2;
   padding: 3px;
   border-radius: 5px;
@@ -1005,12 +1031,6 @@ textarea.form-control {
 #modal form,
 #modal h2 {
   text-align: left;
-}
-#modal .text-input {
-  width: 100%;
-  line-height: 22px;
-  height: 26px;
-  margin: 2px 0;
 }
 #modal label {
   margin-bottom: 0;

@@ -136,12 +136,13 @@
 
 (defn listing-view [id page]
   (let [listing (listing/view id)
+        categories (category/public (:category_id listing))
         page (or (util/parse-int page) 1)
         reviews (review/all id page per-page)
         revs (:reviews listing)
         description (util/md->html (:description listing))
         pagemax (util/page-max revs per-page)]
-    (layout/render "listings/view.html" (merge {:review reviews :page {:page page :max pagemax :url (str "/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing {:description description}))))
+    (layout/render "listings/view.html" (merge {:categories {:tree categories :id (:category_id listing)} :review reviews :page {:page page :max pagemax :url (str "/listing/" id)} :reported (report/reported? id (user-id) "listing") :bookmarked (bookmark/bookmarked? id (user-id))} (set-info) listing {:description description}))))
 
 (defn resolution-accept [id referer]
   (resolution/accept id (user-id))

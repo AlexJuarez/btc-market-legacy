@@ -73,22 +73,28 @@
         {% image listing.image_id %}
       </div>
     {% endif %}
-    <div class="cost">
-      <h3>Price: {{listing.currency_symbol|safe}}{{listing.price}}</h3>
-      <h4>Currency: {{listing.currency_key}}</h4>
+    <div class="sale">
+      <div class="text">
+        <div class="price">Price: {{listing.currency_symbol|safe}}{{listing.price}}</div>
+        <br/>
+        <span>Currency: {{listing.currency_key}}</span>
+      </div>
     </div>
     <div class="info">
-      <h2>{{listing.title}}
+      <div class="title">{{listing.title}}
         <sup class="normal">
           <a href="/vendor/listing/{{listing.id}}/edit" class="edit">edit</a> -
           <a href="/vendor/listing/{{listing.id}}/remove" class="remove" oncLick="return confirm('Delete?')">delete</a>
         </sup>
-      </h2>
-      <p>
-        <span class="age pretty-time" title="{{listing.created_on|date:fullDateTime}}">
-          {{listing.created_on|date:shortDate}}
-        </span>
-        <span class="public">
+      </div>
+      <table class="fact-table">
+        <tbody>
+        <tr>
+          <td>created on:</td><td>
+          <span title="{{listing.created_on|date:fullDateTime}}">
+            {{listing.created_on|date:shortDate}},
+          </span>
+          <span class="public">
           this listing is
           {% if listing.public %}
           public
@@ -97,13 +103,19 @@
           {% endif %}
           - <a href="/listing/{{listing.id}}" class="link">link</a>
         </span>
-        <br />
-        <span class="ships-from">ships from: {{listing.from|region}}</span>
-        <br />
-        <span class="ships-to">ships to: {{listing.to|regions}}</span>
-        <br />
-        <span class="category">Category: <a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></span>
-      </p>
+        </td>
+        </tr>
+        <tr>
+          <td>ships from:</td><td>{{listing.from|region}}</td>
+        </tr>
+        <tr>
+          <td>ships to:</td><td>{{listing.to|regions}}</td>
+        </tr>
+        <tr>
+          <td>Category:</td><td><a href="/category/{{listing.category_id}}">{{listing.category_name}}</a></td>
+        </tr>
+        </tbody>
+      </table>
     </div>
 
   </div>

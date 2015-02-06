@@ -11,6 +11,7 @@
 @import "layout";
 @import "side-menu";
 @import "cart";
+@import "table";
 
 @price: #bec86e;
 @orange: #ff931e;
@@ -81,12 +82,6 @@
   width: 4em;
   margin-right: 7px;
 }
-
-.text-input {
-  border: 1px solid #ccc;
-  padding: 2px 3px;
-}
-
 
 form .image {
   margin-bottom: 20px;
@@ -228,13 +223,13 @@ ul.pagination {
 .has-error {
   color: #b94a48;
 
-  .form-control, .text-input {
+  .form-control {
     border-color: #b94a48;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     box-shadow: inset 0 1px 1px rgba(0,0,0, 0.075);
   }
 
-  .form-control:focus, .text-input:focus {
+  .form-control:focus {
     outline: none;
     border-color: #953b39;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 6px #d59392;
@@ -264,6 +259,7 @@ ul.pagination {
   border: none;
   padding: 0;
   border-spacing: 0;
+  color: #333;
 }
 
 .fact-table tr td:first-child {
@@ -281,6 +277,7 @@ ul.pagination {
 }
 
 .table {
+  background: white;
   border: 1px solid #e2e2e2;
   padding: 3px;
   border-radius: 5px;
@@ -398,13 +395,6 @@ textarea.form-control {
 
 #modal form, #modal h2 {
   text-align:left;
-}
-
-#modal .text-input {
-  width: 100%;
-  line-height: 22px;
-  height: 26px;
-  margin: 2px 0;
 }
 
 #modal label {
