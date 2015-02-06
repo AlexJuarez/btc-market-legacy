@@ -1,5 +1,6 @@
 {% extends "whitecity/views/templates/market.html" %}
 {% block content %}
+<div class="cart">
 <h1 class="jumbo">Shopping Cart</h1>
 <a href="/cart/empty">empty cart</a>
 {% if not listings|empty? %}
@@ -68,4 +69,5 @@
 {% else %}
   <p class="well">Your cart is empty!</p>
 {% endif %}
+</div>
 {% endblock %}

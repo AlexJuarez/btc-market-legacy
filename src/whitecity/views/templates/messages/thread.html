@@ -59,7 +59,7 @@
   </tbody>
 </table>
 {% endif %}
-<form class="well" method="POST">
+<form method="POST">
   <p>Compose a message to: <strong>{{alias}}</strong></p>
   {% if not no_subject %}
   <p>
@@ -74,9 +74,9 @@
   <p>
     <textarea rows="6" name="content" class="form-control">{{content}}</textarea>
   </p>
-        <span class="submit">
-          <input type="submit" class="btn" value="send" />
-        </span>
+  <span class="submit">
+    <input type="submit" class="btn btn-primary" value="send" />
+  </span>
   {% csrf-token %}
 </form>
 {% endblock %}
