@@ -29,10 +29,10 @@
 <h1 class="jumbo">New Sales</h1>
 <form action="/vendor/sales/new" method="POST">
   {% csrf-token %}
-  <input type="submit" name="submit" value="accept" />
-  <input type="submit" name="submit" value="reject" />
+  <input class="btn btn-primary" type="submit" name="submit" value="accept" />
+  <input class="btn btn-warn" type="submit" name="submit" value="reject" />
   <a href="/vendor/sales/new/download?page={{page}}" class="right">download</a>
-  <table class="table normal sales">
+  <table class="table sales">
     <thead>
       <tr>
         <th></th>
