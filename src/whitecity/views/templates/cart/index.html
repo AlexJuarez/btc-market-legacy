@@ -1,16 +1,14 @@
 {% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block links %}
+  {% include "whitecity/views/templates/links/settings.html" %}
+{% endblock %}
+{% block cartlink %}
+  {% include "whitecity/views/templates/layout/cart.html" %}
+{% endblock %}
 {% block menu %}
 <div class="title">
-  My messages
+  My cart
 </div>
-<ul class="category-tree">
-  <li>
-    <a class="header active" href="/messages"><span class="category">Inbox</span> <span class="count">({{user.messages.unread}})</span></a>
-  </li>
-  <li>
-    <a class="header" href="/messages/sent"><span class="category">Sent</span></a>
-  </li>
-</ul>
 {% endblock %}
 {% block container %}
 <h1 class="jumbo">Shopping Cart</h1>
@@ -60,23 +58,9 @@
   </tbody>
 </table>
 <p>
-  <input type="submit" name="submit" value="Update Cart" />
+  <input class="btn btn-primary" type="submit" name="submit" value="Checkout" />
+  <input class="btn btn-gray" type="submit" name="submit" value="Update Cart" />
 </p>
-<div class="well">
-  <h1>Total: &#3647;{{btc-total|double-format:5}} {% if convert %} ~({{user.currency_symbol|safe}}{{total|double-format:5}}) {% endif %} {% if errors.total %}- <span class="error">{{errors.total|join:", "}}</span>{% endif %}</h1>
-  <p>
-    <label for="address">Address {% if errors.address %} <span class="error">- {{errors.address|join:", "}}</span> {% endif %}</label>
-    <textarea rows="7" class="form-control" id="address" name="address">{{address}}</textarea>
-  </p>
-  <label for="pin">Pin: </label>
-    <input class="input" type="password" name="pin" id="pin" />
-    {% if errors.pin %}
-      <span class="error">{{errors.pin|join:", "}}</span>
-    {% endif %}
-    <p>
-      <input type="submit" name="submit" value="Place Order" onclick="return confirm('Order?')" />
-    </p>
-</div>
 </form>
 {% else %}
   <p class="well">Your cart is empty!</p>

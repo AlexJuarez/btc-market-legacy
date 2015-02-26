@@ -76,7 +76,7 @@
   (let [listings (get-listings (first slug))
         total (reduce + (map #(:total %) listings))
         btc-total (util/convert-price (:currency_id (util/current-user)) 1 total)]
-    (layout/render "users/cart.html" (merge {:errors {}
+    (layout/render "cart/index.html" (merge {:errors {}
                                              :convert (not (= (:currency_id (util/current-user)) 1))
                                              :total total
                                              :btc-total btc-total
@@ -93,7 +93,7 @@
           order (orders/add! (session/get :cart) btc-total address pin (user-id))]
       (if (empty? (:errors order))
         (resp/redirect "/orders")
-        (layout/render "users/cart.html" (merge {:errors {}
+        (layout/render "cart/index.html" (merge {:errors {}
                                                  :convert (not (= (:currency_id (util/current-user)) 1))
                                                  :total total :btc-total btc-total
                                                  :listings listings} order (set-info)))))))

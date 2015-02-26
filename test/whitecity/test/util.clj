@@ -26,5 +26,4 @@
 
 (deftest test-params
   (testing "params"
-    (is (= "test=1" (params {:test 1})))
-    (is (= "test2=1&test=2" (params {:test 1 :test2 2})))))
+    (is (= "test=1" (params {:test 1})))))

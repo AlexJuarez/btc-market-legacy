@@ -13,11 +13,11 @@
 
 (defrecord CouchBaseSessionStore [conn ttl-secs]
   session-store/SessionStore
-  (read-session [_ key] (or (when key (c/get conn key)) {}))
-  (delete-session [_ key] (c/delete conn key) nil)
+  (read-session [_ key] (or (when key (c/get conn (str "session:" key))) {}))
+  (delete-session [_ key] (c/delete conn (str "session:" key)) nil)
   (write-session [_ key data]
     (let [key (or key (str (java.util.UUID/randomUUID)))]
-      (c/set conn key (+ ttl-secs (rand-int ttl-secs)) data)
+      (c/set conn (str "session:" key) (+ ttl-secs (rand-int ttl-secs)) data)
       key)))
 
 (defn store

@@ -136,6 +136,6 @@
           captcha (doto (new Captcha))]
       (session/flash-put! :captcha {:text text})
       (with-open [out (new ByteArrayOutputStream)]
-        (ImageIO/write (.gen captcha text 216 26) "jpeg" out)
+        (ImageIO/write (.gen captcha text 218 26) "jpeg" out)
         (.flush out)
         (bytes-to-base64 (.toByteArray out)))))

@@ -54,11 +54,13 @@
                   <a href="/register">register</a>
                   {% endif %}
                 </div>
+                {% block cartlink %}
                 <div class="cart links">
                   <a href="/cart">
                     <span class="cart-icon">Cart</span> ({{cart-count}})
                   </a>
                 </div>
+                {% endblock %}
               </div>
               {% block links %}
                 <nav class="links">

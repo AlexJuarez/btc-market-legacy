@@ -9,12 +9,10 @@
   {% csrf-token %}
     <div {% if error %}class="has-error"{% endif %}>
       {{error}}
-      <input id="handle" class="input" name="login" type="text" placeholder="Username" value="{{login}}"/>
-      <input id="pass" class="input" name="pass" type="password" placeholder="Password" />
+      <input id="handle" class="form-control" name="login" type="text" placeholder="Username" value="{{login}}"/>
+      <input id="pass" class="form-control" name="pass" type="password" placeholder="Password" />
     </div>
-  <span class="submit">
-    <input type="submit" class="btn" value="login" />
-  </span>
+    <input type="submit" class="btn btn-primary p" value="login" />
   </form>
   <a href="/register">register</a>
 </div>

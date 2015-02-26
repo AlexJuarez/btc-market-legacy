@@ -30,6 +30,7 @@
    [korma "0.3.0-beta11" :exclusions [c3p0/c3p0]];;dbl
    [lobos "1.0.0-beta1"]
    [org.bouncycastle/bcpg-jdk15on "1.50"]
+   [kerodon "0.5.0"];;testing
    [log4j
     "1.2.17"
     :exclusions
