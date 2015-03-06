@@ -27,23 +27,24 @@
   ([cache?]
     (select category (order :id :ASC))))
 
-(defn all-search [query]
-  (let [categories (all)
-        counts (select
-                [(subselect listings
-                           (where {:public true :quantity [> 0] :title [ilike query]})) :l2]
-                (fields [:l2.category_id :id])
-                (aggregate (count :*) :count)
-                (group :l2.category_id)
-                (order :l2.category_id :ASC))]))
+(defn- search-tree [query]
+  (select
+   [(subselect listings
+               (where {:public true :quantity [> 0] :title [ilike query]})) :l2]
+   (fields [:l2.category_id :id])
+   (aggregate (count :*) :count)
+   (group :l2.category_id)
+   (order :l2.category_id :ASC)))
 
-(let [cats (apply merge (map #(hash-map (:id %) (assoc % :count 0)) (all)))]
-  (->>
-   (all-search "%cat%")
-   (map #(hash-map (:id %) (assoc (cats (:id %)) :count (:count %))))
-   (apply merge)
-   (merge cats)
-   (vals)))
+(defn all-search [query]
+  (let [cats (apply merge (map #(hash-map (:id %) (assoc % :count 0)) (all)))]
+    (->>
+     (search-tree query)
+     (map #(hash-map (:id %) (assoc (cats (:id %)) :count (:count %))))
+     (apply merge)
+     (merge cats)
+     (vals)
+     (sort-by :id))))
 
 ;;cache the tree
 
@@ -67,9 +68,13 @@
       (dissoc tree :children))
     tree))
 
-(defn public [cid]
-  (let [cats (all false)]
-    (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid))))
+(defn public
+  ([cid]
+    (let [cats (all false)]
+      (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid))))
+  ([cid query]
+    (let [cats (all-search query)]
+      (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid)))))
 
 (defn add! [categories]
   (insert category (values categories)))

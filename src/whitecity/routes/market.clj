@@ -6,6 +6,7 @@
   (:require
    [whitecity.views.layout :as layout]
    [ring.util.response :as r :refer [content-type response]]
+   [environ.core :refer [env]]
    [whitecity.models.user :as user]
    [whitecity.models.feedback :as feedback]
    [whitecity.models.listing :as listing]
@@ -82,14 +83,16 @@
                                                   :reported (report/reported? id (user-id) "user")
                                                   :followed (follower/followed? id (user-id))} (set-info)))))
 
-(defn search-page [query]
+(defn search-page [query cid]
   (if (and (>= (count query) 3) (<= (count query) 100))
     (let [q (str "%" query "%")
+          cid (or cid 1)
           users (user/search q)
           listings (listing/search q)
-          categories (category/search q)
+          categories (category/public cid q)
+          category-results (category/search q)
           message (if (and (empty? users) (empty? listings) (empty? categories)) "Nothing was found for your query. Please try again.")]
-      (layout/render "market/search.html" (conj {:users users :listings listings :categories categories :query query :message message} (set-info))))
+      (layout/render "market/search.html" (conj {:users users :listings listings :categories {:tree categories :id cid} :category-results category-results :query query :message message} (set-info))))
     (layout/render "market/search.html" (conj {:message "Your query is too short it needs to be longers than three characters and less than 100."} (set-info)))))
 
 (defn support-page
@@ -105,7 +108,7 @@
 (defn format-listing [listing regions]
   (dissoc
    (assoc listing
-     :item_link (str "http://grandmpdsznzevvs.onion/listing/" (:id listing))
+     :item_link (str (env :domain) (:id listing))
      :ship_from (regions (:from listing))
      :image_encstr (image/image-data (:image_id listing) "_max")
      :item_rating (int (* 100 (/ (:rating listing) 5)))
@@ -150,7 +153,7 @@
 
 (defroutes market-routes
   (GET "/" {params :params} (home-page params))
-  (GET "/search" {{q :q} :params} (search-page q))
+  (GET "/search" {{q :q cid :cid} :params} (search-page q cid))
 
   (GET "/category/:cid" {params :params} (category-page params))
   (GET "/about" [] (about-page))

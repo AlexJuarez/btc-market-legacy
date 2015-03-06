@@ -46,6 +46,7 @@
   :profiles
   {:user {:env {:db-user "devil"
                 :db-pass "admin"
+                :domain "http://grandmpdsznzevvs.onion/listing/"
                 :fee 0.06}}
    :uberjar
    {:aot :all},

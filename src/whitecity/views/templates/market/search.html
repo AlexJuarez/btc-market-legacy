@@ -1,4 +1,10 @@
 {% extends "whitecity/views/templates/layout/side-menu.html" %}
+{% block menu %}
+<div class="title">
+  Browse
+</div>
+{{categories|render-tree}}
+{% endblock %}
 {% block container %}
 {% if message %}
     <p class="well">
@@ -27,10 +33,10 @@
   </tbody>
 </table>
 {% endif %}
-{% if not categories|empty? %}
+{% if not category-results|empty? %}
     <h3>Categories</h3>
     <ul>
-      {% for category in categories %}
+      {% for category in category-results %}
       <li><a href="/category/{{category.id}}">{{category.name}}</a></li>
       {% endfor %}
     </ul>
