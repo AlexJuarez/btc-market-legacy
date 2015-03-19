@@ -1,7 +1,7 @@
 (ns whitecity.models.category
   (:refer-clojure :exclude [get])
-  (:use 
-    [whitecity.db :only [category]]
+  (:use
+    [whitecity.db :only [category listings]]
     [korma.core]
     [whitecity.models.predicates]
     [korma.db :only (transaction)]
@@ -16,16 +16,34 @@
     (select category (where {:id (util/parse-int id)}))))
 
 (defn search [query]
-  (select category 
+  (select category
           (where {:name [ilike query]})
           (limit 10)))
 
-(defn all 
+(defn all
   ([]
     (cache/cache! "categories"
       (select category (order :id :ASC))))
   ([cache?]
     (select category (order :id :ASC))))
+
+(defn all-search [query]
+  (let [categories (all)
+        counts (select
+                [(subselect listings
+                           (where {:public true :quantity [> 0] :title [ilike query]})) :l2]
+                (fields [:l2.category_id :id])
+                (aggregate (count :*) :count)
+                (group :l2.category_id)
+                (order :l2.category_id :ASC))]))
+
+(let [cats (apply merge (map #(hash-map (:id %) (assoc % :count 0)) (all)))]
+  (->>
+   (all-search "%cat%")
+   (map #(hash-map (:id %) (assoc (cats (:id %)) :count (:count %))))
+   (apply merge)
+   (merge cats)
+   (vals)))
 
 ;;cache the tree
 
