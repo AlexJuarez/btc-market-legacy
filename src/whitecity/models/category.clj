@@ -61,20 +61,31 @@
     (assoc tree :count (reduce + (:count tree) (map #(:count (tally-count %)) children)) :children (map tally-count children))
     tree))
 
-(defn prune [tree cid]
+(defn prune [cid tree]
   (if-let [children (:children tree)]
     (if (and (> cid (:gt tree)) (<= cid (:lte tree)))
-      (assoc tree :children (map #(prune % cid) children))
+      (assoc tree :children (map #(prune cid %) children))
+      (dissoc tree :children))
+    tree))
+
+(defn prune-count [cid tree]
+  (if-let [children (:children tree)]
+    (if (or (and (> cid (:gt tree)) (<= cid (:lte tree))) (> (:count tree) 0))
+      (assoc tree :children (map #(prune-count cid %) children))
       (dissoc tree :children))
     tree))
 
 (defn public
   ([cid]
     (let [cats (all false)]
-      (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid))))
+      (prune (util/parse-int cid) (tally-count (first (walk-tree cats 0))))))
   ([cid query]
     (let [cats (all-search query)]
-      (prune (tally-count (first (walk-tree cats 0))) (util/parse-int cid)))))
+      (->>
+       (walk-tree cats 0)
+       first
+       tally-count
+       (prune-count (util/parse-int cid))))))
 
 (defn add! [categories]
   (insert category (values categories)))
