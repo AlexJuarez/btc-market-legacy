@@ -22,8 +22,6 @@
 
 ;; Gets
 
-(first (select users))
-
 (defn search [query]
   (select users
           (fields :alias :fans :last_login :rating :listings :id :vendor)

@@ -75,6 +75,15 @@
                 (float :amount))))
   (down [] (drop (table :withdrawal))))
 
+(defmigration add-feedback-table
+  (up [] (create
+           (tbl :feedback
+                  (boolean :read (default false))
+                  (text :content)
+                  (varchar :subject 100)
+                  (refer-to :user))))
+  (down [] (drop (table :feedback))))
+
 (defmigration add-messages-table
   (up [] (create
            (tbl :message
@@ -295,16 +304,6 @@
                 (refer-to :user)
                 (varchar :type 10 :not-null))))
   (down [] (drop (table :report))))
-
-(defmigration add-feedback-table
-  (up [] (create
-           (tbl :feedback
-                  (boolean :read (default false))
-                  (text :content)
-                  (varchar :subject 100)
-                  (refer-to :user))))
-  (down [] (drop (table :feedback))))
-
 
 (defmigration add-pgpkeyid-to-users
   (up [] (alter :add
